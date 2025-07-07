@@ -59,14 +59,54 @@ class LifeSkillsPage extends StatelessWidget {
 
   Widget _buildSkillsList() {
     final skills = [
-      'Financial Literacy for Teens',
-      'Digital Citizenship & Internet Safety',
-      'Communication & Public Speaking',
-      'Time Management & Study Skills',
-      'Leadership & Teamwork',
-      'Emotional Intelligence (EQ)',
-      'Basic Legal & Civic Awareness',
-      'Goal Setting & Self-Motivation',
+      {
+        'title': 'Financial Literacy for Teens',
+        'description': 'Budgeting, saving, digital payments (UPI, wallets), understanding banks, avoiding scams.'
+      },
+      {
+        'title':'Digital Citizenship & Internet Safety',
+        'description':'Cyberbullying, privacy settings, fake news, screen time balance, digital footprint.'
+      },
+      {
+        'title':'Communication & Public Speaking',
+        'description': 'Storytelling, debates, presentations, body language, active listening.'
+      },
+      {
+        'title':'Time Management & Study Skills',
+        'description': 'Prioritizing tasks, planners, Pomodoro technique, overcoming distractions.'
+      },
+      {
+        'title': 'Leadership & Teamwork',
+        'description': 'Group roles, collaboration, leading projects, resolving conflicts.'
+      },
+      {
+        'title': 'Emotional Intelligence (EQ)',
+        'description': 'Identifying feelings, managing emotions, self-awareness, empathy exercises.'
+      },
+      {
+        'title':'Basic Legal & Civic Awareness',
+        'description': 'Student rights, voting basics, equality, safety laws, RTI & digital consent.'
+      },
+      {
+        'title':'Goal Setting & Self-Motivation',
+        'description': 'SMART goals, vision boards, intrinsic vs extrinsic motivation, habit loops.'
+      },
+      {
+        'title': 'First Aid & Personal Safety',
+        'description': 'CPR basics, handling minor injuries, emergency contact awareness, street safety.'
+      },
+      {
+        'title': 'Mindfulness & Mental Well-being',
+        'description': 'Meditation, stress management, gratitude journaling, self-reflection techniques.'
+      },
+      {
+        'title': 'Nutrition & Fireless Cooking',
+        'description': 'Healthy eating habits, decoding food labels, making simple no-flame recipes.'
+      },
+      {
+        'title': 'Career Awareness & Future Readiness',
+        'description': 'Career exploration, 21st-century jobs, freelancing basics, resume writing.'
+      }
     ];
 
     return Padding(
@@ -75,9 +115,12 @@ class LifeSkillsPage extends StatelessWidget {
         spacing: 24,
         runSpacing: 24,
         alignment: WrapAlignment.center, // Center the skill cards in the row
-        children: skills.map((skill) {
+        children: skills.map((skillData) {
+          final title = skillData['title']!;
+          final description = skillData['description']!;
           return Container(
             width: 300,
+            height: 220,
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -94,7 +137,7 @@ class LifeSkillsPage extends StatelessWidget {
                 Icon(Icons.check_circle, color: Color(0xFFFF6B00), size: 40),
                 SizedBox(height: 12),
                 Text(
-                  skill,
+                  title,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -102,6 +145,20 @@ class LifeSkillsPage extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
+                SizedBox(height: 8),
+                Expanded(
+                  child: Text(
+                  description,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black87,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 3, // 👈 Limits to 3 lines
+                  overflow: TextOverflow.ellipsis,
+                  ),
+                )
+                
               ],
             ),
           );
