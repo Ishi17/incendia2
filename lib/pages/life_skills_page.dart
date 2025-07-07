@@ -59,12 +59,14 @@ class LifeSkillsPage extends StatelessWidget {
 
   Widget _buildSkillsList() {
     final skills = [
-      'Communication',
-      'Teamwork',
-      'Time Management',
-      'Critical Thinking',
-      'Emotional Intelligence',
-      'Financial Literacy',
+      'Financial Literacy for Teens',
+      'Digital Citizenship & Internet Safety',
+      'Communication & Public Speaking',
+      'Time Management & Study Skills',
+      'Leadership & Teamwork',
+      'Emotional Intelligence (EQ)',
+      'Basic Legal & Civic Awareness',
+      'Goal Setting & Self-Motivation',
     ];
 
     return Padding(
