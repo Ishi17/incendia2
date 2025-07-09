@@ -63,80 +63,94 @@ class LifeSkillsPage extends StatelessWidget {
         'title': 'Financial Literacy for Teens',
         'description': 'Budgeting, saving, digital payments (UPI, wallets), understanding banks, avoiding scams.',
         'icon': Icons.account_balance,
+        'color': Color(0xFFE3F2FD), // Light Blue
       },
       {
         'title': 'Digital Citizenship & Internet Safety',
         'description': 'Cyberbullying, privacy settings, fake news, screen time balance, digital footprint.',
         'icon': Icons.security,
+        'color': Color(0xFFFCE4EC), // Pink
       },
       {
         'title': 'Communication & Public Speaking',
         'description': 'Storytelling, debates, presentations, body language, active listening.',
         'icon': Icons.record_voice_over,
+        'color': Color(0xFFE8F5E9), // Green
       },
       {
         'title': 'Time Management & Study Skills',
         'description': 'Prioritizing tasks, planners, Pomodoro technique, overcoming distractions.',
         'icon': Icons.schedule,
+        'color': Color(0xFFFFF3E0), // Orange
       },
       {
         'title': 'Leadership & Teamwork',
         'description': 'Group roles, collaboration, leading projects, resolving conflicts.',
         'icon': Icons.group,
+        'color': Color(0xFFF3E5F5), // Purple
       },
       {
         'title': 'Emotional Intelligence (EQ)',
         'description': 'Identifying feelings, managing emotions, self-awareness, empathy exercises.',
         'icon': Icons.sentiment_satisfied,
+        'color': Color(0xFFE0F7FA), // Cyan
       },
       {
         'title': 'Basic Legal & Civic Awareness',
         'description': 'Student rights, voting basics, equality, safety laws, RTI & digital consent.',
         'icon': Icons.gavel,
+        'color': Color(0xFFFFEBEE), // Light Red
       },
       {
         'title': 'Goal Setting & Self-Motivation',
         'description': 'SMART goals, vision boards, intrinsic vs extrinsic motivation, habit loops.',
         'icon': Icons.flag,
+        'color': Color(0xFFFFF9C4), // Yellow
       },
       {
         'title': 'First Aid & Personal Safety',
         'description': 'CPR basics, handling minor injuries, emergency contact awareness, street safety.',
         'icon': Icons.medical_services,
+        'color': Color(0xFFE1F5FE), // Light Blue
       },
       {
         'title': 'Mindfulness & Mental Well-being',
         'description': 'Meditation, stress management, gratitude journaling, self-reflection techniques.',
         'icon': Icons.self_improvement,
+        'color': Color(0xFFF1F8E9), // Light Green
       },
       {
         'title': 'Nutrition & Fireless Cooking',
         'description': 'Healthy eating habits, decoding food labels, making simple no-flame recipes.',
         'icon': Icons.restaurant,
+        'color': Color(0xFFFFFDE7), // Light Yellow
       },
       {
         'title': 'Career Awareness & Future Readiness',
         'description': 'Career exploration, 21st-century jobs, freelancing basics, resume writing.',
         'icon': Icons.work,
+        'color': Color(0xFFEDE7F6), // Lavender
       },
     ];
 
-  return Padding(
-    padding: const EdgeInsets.all(24.0),
-    child: Wrap(
-      spacing: 24,
-      runSpacing: 24,
-      alignment: WrapAlignment.center,
-      children: skills.map<Widget>((skillData) {
-        return SkillCard(
-          title: skillData['title']!,
-          description: skillData['description']!,
-          icon: skillData['icon'],
-        );
-      }).toList(),
-    ),
-  );
-}
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: Wrap(
+        spacing: 24,
+        runSpacing: 24,
+        alignment: WrapAlignment.center,
+        children: skills.map<Widget>((skillData) {
+          return SkillCard(
+            title: skillData['title']!,
+            description: skillData['description']!,
+            icon: skillData['icon'],
+            color: skillData['color'],
+          );
+        }).toList(),
+      ),
+    );
+  }
+
 
   Widget _buildTestimonialSection() {
     return Container(
@@ -190,8 +204,9 @@ class SkillCard extends StatefulWidget {
   final String title;
   final String description;
   final IconData icon;
+  final Color color;
 
-  const SkillCard({required this.title, required this.description, required this.icon, Key? key}) : super(key: key);
+  const SkillCard({required this.title, required this.description, required this.icon, required this.color, Key? key}) : super(key: key);
 
   @override
   _SkillCardState createState() => _SkillCardState();
@@ -291,7 +306,7 @@ class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMix
               width: 300,
               height: 220,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: widget.color,
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(

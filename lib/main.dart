@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:incendia_webpage/pages/life_skills_page.dart';
+import 'package:incendia_webpage/pages/admissions_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -57,7 +58,7 @@ class MyApp extends StatelessWidget {
         '/academic': (context) => PlaceholderPage('Academic Mastery'),
         '/life-skills': (context) => LifeSkillsPage(),
         '/schedule': (context) => PlaceholderPage('Schedule & Locations'),
-        '/admissions': (context) => PlaceholderPage('Admissions'),
+        '/admissions': (context) => AdmissionsPage(),
         '/gallery': (context) => PlaceholderPage('Gallery'),
         '/careers': (context) => PlaceholderPage('Careers'),
         '/contact': (context) => PlaceholderPage('Contact Us'),
