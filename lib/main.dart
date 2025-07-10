@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart'
+import 'package:flutter/material.dart';
 import 'package:incendia_webpage/pages/life_skills_page.dart';
-import 'package:incendia_webpage/pages/admissions_page.dart'
+import 'package:incendia_webpage/pages/admissions_page.dart';
 import 'package:incendia_webpage/pages/about_page.dart';
 import 'package:incendia_webpage/pages/home_page.dart';
 
