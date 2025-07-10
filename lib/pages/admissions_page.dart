@@ -20,14 +20,17 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
       curve: Curves.easeInOut,
     );
   }
+
   final List<Map<String, String>> benefits = [
     {
-      'title': 'Real-World Skills',
-      'desc': 'Gain financial literacy, communication, and problem-solving abilities.',
+      'title': 'Life-World Skills',
+      'desc':
+          'Gain financial literacy, communication, and problem-solving abilities.',
     },
     {
       'title': 'Student-Centered',
-      'desc': 'Our program is designed to be interactive, inclusive, and empowering.',
+      'desc':
+          'Our program is designed to be interactive, inclusive, and empowering.',
     },
     {
       'title': 'Future Readiness',
@@ -51,15 +54,17 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
   final List<Map<String, String>> faqs = [
     {
       'question': 'Who can apply?',
-      'answer': 'Students aged 12–18, parents, and educators can enroll in our programs.'
+      'answer':
+          'Students aged 12–18, parents, and educators can enroll in our programs.',
     },
     {
       'question': 'Are the courses online or offline?',
-      'answer': 'We offer both online modules and in-person workshops.'
+      'answer': 'We offer both online modules and in-person workshops.',
     },
     {
       'question': 'Is there a fee?',
-      'answer': 'Some programs are free; others have nominal fees based on duration.'
+      'answer':
+          'Some programs are free; others have nominal fees based on duration.',
     },
   ];
 
@@ -92,9 +97,11 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 60, horizontal: 24),
       color: Color(0xFF002B5B),
-      child: Center( // centers the Column itself
+      child: Center(
+        // centers the Column itself
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center, // centers children inside column
+          crossAxisAlignment:
+              CrossAxisAlignment.center, // centers children inside column
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
@@ -134,7 +141,6 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
       ),
     );
   }
-
 
   Widget _buildWhyJoinCarousel() {
     return Padding(
@@ -177,9 +183,13 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(item['title']!,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18)),
+                      Text(
+                        item['title']!,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
                       SizedBox(height: 8),
                       Text(item['desc']!),
                     ],
@@ -201,7 +211,6 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
       ),
     );
   }
-
 
   Widget _buildWhoCanApplyCards() {
     return Padding(
@@ -265,12 +274,14 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
       {
         'step': '3',
         'title': 'Batch Allocation',
-        'desc': 'We suggest the right batch and schedule based on your board and grade.',
+        'desc':
+            'We suggest the right batch and schedule based on your board and grade.',
       },
       {
         'step': '4',
         'title': 'Registration & Fees',
-        'desc': 'Once finalized, complete the registration and pay the fees to confirm your seat.',
+        'desc':
+            'Once finalized, complete the registration and pay the fees to confirm your seat.',
       },
     ];
 
@@ -279,8 +290,10 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Admission Process',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          Text(
+            'Admission Process',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
           SizedBox(height: 16),
           Column(
             children: steps.map((step) {
@@ -294,8 +307,10 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
                         CircleAvatar(
                           backgroundColor: Colors.deepPurple,
                           radius: 16,
-                          child: Text(step['step']!,
-                              style: TextStyle(color: Colors.white)),
+                          child: Text(
+                            step['step']!,
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                         if (step != steps.last)
                           Container(
@@ -310,20 +325,26 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(step['title']!,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text(
+                            step['title']!,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
                           SizedBox(height: 4),
-                          Text(step['desc']!,
-                              style: TextStyle(color: Colors.grey[700])),
+                          Text(
+                            step['desc']!,
+                            style: TextStyle(color: Colors.grey[700]),
+                          ),
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               );
             }).toList(),
-          )
+          ),
         ],
       ),
     );
@@ -335,8 +356,10 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Enquiry / Registration Form',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          Text(
+            'Enquiry / Registration Form',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
           SizedBox(height: 16),
           _requiredField('Student’s Name'),
           _requiredField('Grade'),
@@ -347,25 +370,25 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
           _requiredField('Subjects'),
           _requiredField('Message or Comments', maxLines: 3),
           SizedBox(height: 16),
-          ElevatedButton(onPressed: () {}, child: Text('Submit'))
+          ElevatedButton(onPressed: () {}, child: Text('Submit')),
         ],
       ),
     );
   }
 
-Widget _requiredField(String label, {int maxLines = 1}) {
-  return Padding(
-    padding: const EdgeInsets.only(bottom: 12.0),
-    child: TextField(
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(),
-        suffixIcon: Icon(Icons.star, color: Colors.redAccent, size: 12),
+  Widget _requiredField(String label, {int maxLines = 1}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: TextField(
+        maxLines: maxLines,
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(),
+          suffixIcon: Icon(Icons.star, color: Colors.redAccent, size: 12),
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildFAQs() {
     return Padding(
@@ -373,15 +396,22 @@ Widget _requiredField(String label, {int maxLines = 1}) {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('FAQs', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          Text(
+            'FAQs',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
           SizedBox(height: 12),
-          ...faqs.map((faq) => ExpansionTile(
-            title: Text(faq['question']!),
-            children: [Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(faq['answer']!),
-            )],
-          ))
+          ...faqs.map(
+            (faq) => ExpansionTile(
+              title: Text(faq['question']!),
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text(faq['answer']!),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -397,7 +427,7 @@ Widget _requiredField(String label, {int maxLines = 1}) {
           SizedBox(height: 8),
           Text('info@lifeskills.org | +91 98765 43210'),
           SizedBox(height: 12),
-          Text('© 2025 Life Skills Program')
+          Text('© 2025 Life Skills Program'),
         ],
       ),
     );
