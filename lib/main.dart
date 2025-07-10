@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:incendia_webpage/pages/academic.dart';
+import 'package:incendia_webpage/pages/careers_page.dart';
+import 'package:incendia_webpage/pages/contact_us_page.dart';
+import 'package:incendia_webpage/pages/gallery_page.dart';
 import 'package:incendia_webpage/pages/life_skills_page.dart';
 import 'package:incendia_webpage/pages/admissions_page.dart';
 import 'package:incendia_webpage/pages/about_page.dart';
 import 'package:incendia_webpage/pages/home_page.dart';
+import 'package:incendia_webpage/pages/schedule_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -54,13 +59,13 @@ class MyApp extends StatelessWidget {
       home: HomePage(),
       routes: {
         '/about': (context) => AboutUsPage(),
-        '/academic': (context) => PlaceholderPage('Academic Mastery'),
+        '/academic': (context) => AcademicPage(),
         '/lifeskills': (context) => LifeSkillsPage(),
-        '/schedule': (context) => PlaceholderPage('Schedule & Locations'),
+        '/schedule': (context) => SchedulePage(),
         '/admissions': (context) => AdmissionsPage(),
-        '/gallery': (context) => PlaceholderPage('Gallery'),
-        '/careers': (context) => PlaceholderPage('Careers'),
-        '/contact': (context) => PlaceholderPage('Contact Us'),
+        '/gallery': (context) => GalleryPage(),
+        '/careers': (context) => CareersPage(),
+        '/contact': (context) => ContactUsPage(),
       },
     );
   }
