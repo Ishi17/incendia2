@@ -23,7 +23,7 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
 
   final List<Map<String, String>> benefits = [
     {
-      'title': 'Life-World Skills',
+      'title': 'Real-World Skills',
       'desc':
           'Gain financial literacy, communication, and problem-solving abilities.',
     },
