@@ -77,16 +77,19 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildHeroBanner(),
-            _buildWhyJoinCarousel(),
-            _buildWhoCanApplyCards(),
-            _buildAdmissionFlowchart(),
-            _buildRegistrationForm(),
-            _buildFAQs(),
-            _buildFooter(),
-          ],
+        child: Center( 
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              _buildHeroBanner(),
+              _buildWhyJoinCarousel(),
+              _buildWhoCanApplyCards(),
+              _buildAdmissionFlowchart(),
+              _buildRegistrationForm(),
+              _buildFAQs(),
+              _buildFooter(),
+            ],
+          ),
         ),
       ),
     );
@@ -181,7 +184,7 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
                         item['title']!,
@@ -216,7 +219,7 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             'Who Can Apply?',
@@ -285,76 +288,86 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
       },
     ];
 
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Admission Process',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 16),
-          Column(
-            children: steps.map((step) {
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: Colors.deepPurple,
-                          radius: 16,
-                          child: Text(
-                            step['step']!,
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        if (step != steps.last)
-                          Container(
-                            width: 2,
-                            height: 50,
-                            color: Colors.deepPurple.shade200,
-                          ),
-                      ],
-                    ),
-                    SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+    return Center(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 600),
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Admission Process',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 16),
+              Column(
+                children: List.generate(steps.length, (index) {
+                  final step = steps[index];
+                  final isLast = index == steps.length - 1;
+
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Left column: avatar and vertical line
+                      Column(
                         children: [
-                          Text(
-                            step['title']!,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                          CircleAvatar(
+                            backgroundColor: Colors.deepPurple,
+                            radius: 16,
+                            child: Text(
+                              step['step']!,
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
-                          SizedBox(height: 4),
-                          Text(
-                            step['desc']!,
-                            style: TextStyle(color: Colors.grey[700]),
-                          ),
+                          if (!isLast)
+                            Container(
+                              width: 2,
+                              height: 60,
+                              color: Colors.deepPurple.shade200,
+                            ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
+                      SizedBox(width: 16),
+                      // Right column: title and description
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 4), // aligns with top of avatar
+                            Text(
+                              step['title']!,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              step['desc']!,
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
+                            SizedBox(height: 24),
+                          ],
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
-
+       
   Widget _buildRegistrationForm() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             'Enquiry / Registration Form',
@@ -394,7 +407,7 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             'FAQs',
