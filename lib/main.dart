@@ -60,13 +60,13 @@ class MyApp extends StatelessWidget {
       home: HomePage(),
       routes: {
         '/about': (context) => AboutUsPage(),
-        '/academic': (context) => PlaceholderPage('Academic Mastery'),
-        '/lifeskills': (context) => PlaceholderPage('Life Skills Program'),
-        '/schedule': (context) => PlaceholderPage('Schedule & Locations'),
-        '/admissions': (context) => PlaceholderPage('Admissions'),
-        '/gallery': (context) => PlaceholderPage('Gallery'),
-        '/careers': (context) => PlaceholderPage('Careers'),
-        '/contact': (context) => PlaceholderPage('Contact Us'),
+        '/academic': (context) => AcademicPage(),
+        '/lifeskills': (context) => LifeSkillsPage(),
+        '/schedule': (context) => SchedulePage(),
+        '/admissions': (context) => AdmissionsPage(),
+        '/gallery': (context) => GalleryPage(),
+        '/careers': (context) => CareersPage(),
+        '/contact': (context) => ContactUsPage(),
       },
     );
   }
