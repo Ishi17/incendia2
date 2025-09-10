@@ -9,12 +9,13 @@ import 'package:incendia_webpage/pages/about_page.dart';
 import 'package:incendia_webpage/pages/home_page.dart';
 import 'package:incendia_webpage/pages/schedule_page.dart';
 
-
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -72,11 +73,10 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 class PlaceholderPage extends StatelessWidget {
   final String title;
 
-  PlaceholderPage(this.title);
+  const PlaceholderPage(this.title, {super.key});
 
   @override
   Widget build(BuildContext context) {
