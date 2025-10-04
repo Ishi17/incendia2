@@ -254,7 +254,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Widget _buildAppBar() {
-    final menuItems = ['About', 'Academic', 'Admissions','Careers','Life Skills', 'Schedule', 'Gallery', 'Contact'];
+    final menuItems = ['About','Academic','Admissions','Careers','Life Skills','Schedule','Gallery','Contact'];
 
     return SliverAppBar(
       expandedHeight: 70,
@@ -262,7 +262,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       pinned: true,
       backgroundColor: _isScrolled ? Colors.white : Colors.transparent,
       elevation: _isScrolled ? 4 : 0,
-      leading: isMobile ? null : SizedBox.shrink(),
+
+      // keep the hamburger on mobile, remove auto back arrows elsewhere
+      automaticallyImplyLeading: false,
+      leading: isMobile
+          ? Builder(
+              builder: (ctx) => IconButton(
+                icon: const Icon(Icons.menu, color: Color(0xFF002B5B)),
+                onPressed: () => Scaffold.of(ctx).openDrawer(),
+              ),
+            )
+          : null,
+
+      // ensure the title stays on the left when collapsed (not centered)
+      centerTitle: false,
+
       flexibleSpace: Container(
         decoration: _isScrolled
             ? BoxDecoration(
@@ -271,14 +285,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
                     blurRadius: 4,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 2),
                   ),
                 ],
               )
             : null,
         child: FlexibleSpaceBar(
-          title: Padding(
-            padding: EdgeInsets.only(left: isMobile ? 60 : 24),
+          // <<< left padding so it’s not glued to the edge
+          titlePadding: const EdgeInsetsDirectional.only(start: 20, bottom: 16),
+
+          // <<< clickable brand → Home
+          title: InkWell(
+            onTap: () => _navigateTo('Home'),
+            borderRadius: BorderRadius.circular(8),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -286,22 +305,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
                     ),
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(
-                        color: Color(0xFFFF6B00).withOpacity(0.3),
+                        color: const Color(0xFFFF6B00).withOpacity(0.3),
                         blurRadius: 6,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
-                  child: Icon(Icons.menu_book, color: Colors.white, size: 20),
+                  child: const Icon(Icons.menu_book, color: Colors.white, size: 20),
                 ),
-                SizedBox(width: 12),
-                Text(
+                const SizedBox(width: 12),
+                const Text(
                   'Incendia',
                   style: TextStyle(
                     color: Color(0xFF002B5B),
@@ -312,42 +331,35 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ],
             ),
           ),
-          titlePadding: EdgeInsets.only(bottom: 16),
         ),
       ),
+
       actions: isMobile
           ? null
           : [
               Container(
-                margin: EdgeInsets.only(right: 24),
+                margin: const EdgeInsets.only(right: 24),
                 child: Row(
-                  children: menuItems
-                      .map(
-                        (item) => Container(
-                          margin: EdgeInsets.symmetric(horizontal: 2),
-                          child: TextButton(
-                            onPressed: () => _navigateTo(item),
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            child: Text(
-                              item,
-                              style: TextStyle(
-                                color: Color(0xFF002B5B),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15,
-                              ),
-                            ),
+                  children: menuItems.map(
+                    (item) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: TextButton(
+                        onPressed: () => _navigateTo(item),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                        child: Text(
+                          item,
+                          style: const TextStyle(
+                            color: Color(0xFF002B5B),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
                           ),
                         ),
-                      )
-                      .toList(),
+                      ),
+                    ),
+                  ).toList(),
                 ),
               ),
             ],
@@ -548,7 +560,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 runSpacing: 24,
                 children: services
                     .map(
-                      (service) => Container(
+                      (service) => SizedBox(
                         width: isMobile
                             ? constraints.maxWidth
                             : (constraints.maxWidth - 48) / 3,
