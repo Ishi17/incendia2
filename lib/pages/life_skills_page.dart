@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 class LifeSkillsPage extends StatelessWidget {
+  const LifeSkillsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,7 +13,7 @@ class LifeSkillsPage extends StatelessWidget {
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           width: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -206,7 +208,7 @@ class SkillCard extends StatefulWidget {
   final IconData icon;
   final Color color;
 
-  const SkillCard({required this.title, required this.description, required this.icon, required this.color, Key? key}) : super(key: key);
+  const SkillCard({required this.title, required this.description, required this.icon, required this.color, super.key});
 
   @override
   _SkillCardState createState() => _SkillCardState();

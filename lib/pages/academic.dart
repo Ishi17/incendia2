@@ -39,6 +39,8 @@ class AcademicPage extends StatelessWidget {
     },
   ];
 
+  AcademicPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -109,7 +111,7 @@ class AcademicPage extends StatelessWidget {
   }
 
   Widget _buildCurriculumVerticalSwiper() {
-    return Container(
+    return SizedBox(
       height: 600,
       child: Row(
         children: [

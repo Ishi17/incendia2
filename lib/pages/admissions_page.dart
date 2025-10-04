@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
 class AdmissionsPage extends StatefulWidget {
+  const AdmissionsPage({super.key});
+
   @override
   _AdmissionsPageState createState() => _AdmissionsPageState();
 }
