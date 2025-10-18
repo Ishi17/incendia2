@@ -7,6 +7,12 @@ import 'package:incendia_webpage/pages/contact_us_page.dart';
 import 'package:incendia_webpage/pages/gallery_page.dart';
 import 'package:incendia_webpage/pages/life_skills_page.dart';
 import 'package:incendia_webpage/pages/schedule_page.dart';
+import 'package:incendia_webpage/pages/home/widgets/hero_section.dart';
+import 'package:incendia_webpage/pages/home/widgets/combined_services_offerings.dart';
+import 'package:incendia_webpage/pages/home/widgets/stats_section.dart';
+import 'package:incendia_webpage/pages/home/widgets/testimonials_section.dart';
+import 'package:incendia_webpage/pages/home/widgets/cta_section.dart';
+import 'package:incendia_webpage/pages/home/widgets/footer_section.dart';
 
 // Main HomePage
 class HomePage extends StatefulWidget {
@@ -119,13 +125,17 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           SliverToBoxAdapter(
             child: Column(
               children: [
-                _buildHeroSection(),
-                _buildServicesSection(),
-                _buildOfferingsSection(),
-                _buildStatsSection(),
-                _buildTestimonialsSection(),
-                _buildCtaSection(),
-                _buildFooter(),
+                HeroSection(
+                  isMobile: isMobile,
+                  fadeAnimation: _fadeAnimation,
+                  slideAnimation: _slideAnimation,
+                  navigateTo: _navigateTo,
+                ),
+                CombinedServicesOfferings(isMobile: isMobile),
+                StatsSection(isMobile: isMobile),
+                TestimonialsSection(isMobile: isMobile),
+                CtaSection(isMobile: isMobile, navigateTo: _navigateTo),
+                FooterSection(isMobile: isMobile),
               ],
             ),
           ),
@@ -254,7 +264,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Widget _buildAppBar() {
-    final menuItems = ['About', 'Academic', 'Admissions','Careers','Life Skills', 'Schedule', 'Gallery', 'Contact'];
+    final menuItems = [
+      'About',
+      'Academic',
+      'Admissions',
+      'Careers',
+      'Life Skills',
+      'Schedule',
+      'Gallery',
+      'Contact',
+    ];
 
     return SliverAppBar(
       expandedHeight: 70,
@@ -262,7 +281,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       pinned: true,
       backgroundColor: _isScrolled ? Colors.white : Colors.transparent,
       elevation: _isScrolled ? 4 : 0,
-      leading: isMobile ? null : SizedBox.shrink(),
+
+      // keep the hamburger on mobile, remove auto back arrows elsewhere
+      automaticallyImplyLeading: false,
+      leading: isMobile
+          ? Builder(
+              builder: (ctx) => IconButton(
+                icon: const Icon(Icons.menu, color: Color(0xFF002B5B)),
+                onPressed: () => Scaffold.of(ctx).openDrawer(),
+              ),
+            )
+          : null,
+
+      // ensure the title stays on the left when collapsed (not centered)
+      centerTitle: false,
+
       flexibleSpace: Container(
         decoration: _isScrolled
             ? BoxDecoration(
@@ -271,14 +304,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
                     blurRadius: 4,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 2),
                   ),
                 ],
               )
             : null,
         child: FlexibleSpaceBar(
-          title: Padding(
-            padding: EdgeInsets.only(left: isMobile ? 60 : 24),
+          // <<< left padding so it’s not glued to the edge
+          titlePadding: const EdgeInsetsDirectional.only(start: 20, bottom: 16),
+
+          // <<< clickable brand → Home
+          title: InkWell(
+            onTap: () => _navigateTo('Home'),
+            borderRadius: BorderRadius.circular(8),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -286,22 +324,26 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
                     ),
                     borderRadius: BorderRadius.circular(10),
                     boxShadow: [
                       BoxShadow(
-                        color: Color(0xFFFF6B00).withOpacity(0.3),
+                        color: const Color(0xFFFF6B00).withOpacity(0.3),
                         blurRadius: 6,
-                        offset: Offset(0, 3),
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
-                  child: Icon(Icons.menu_book, color: Colors.white, size: 20),
+                  child: const Icon(
+                    Icons.menu_book,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
-                SizedBox(width: 12),
-                Text(
+                const SizedBox(width: 12),
+                const Text(
                   'Incendia',
                   style: TextStyle(
                     color: Color(0xFF002B5B),
@@ -312,23 +354,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ],
             ),
           ),
-          titlePadding: EdgeInsets.only(bottom: 16),
         ),
       ),
+
       actions: isMobile
           ? null
           : [
               Container(
-                margin: EdgeInsets.only(right: 24),
+                margin: const EdgeInsets.only(right: 24),
                 child: Row(
                   children: menuItems
                       .map(
-                        (item) => Container(
-                          margin: EdgeInsets.symmetric(horizontal: 2),
+                        (item) => Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 2),
                           child: TextButton(
                             onPressed: () => _navigateTo(item),
                             style: TextButton.styleFrom(
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                                 vertical: 8,
                               ),
@@ -338,7 +380,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             ),
                             child: Text(
                               item,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Color(0xFF002B5B),
                                 fontWeight: FontWeight.w600,
                                 fontSize: 15,
@@ -354,696 +396,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildHeroSection() {
-    return Container(
-      height: isMobile ? 550 : 650,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF002B5B), Color(0xFF004080), Color(0xFF0056B3)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Stack(
-        children: [
-          Positioned(
-            top: -80,
-            right: -80,
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [Colors.white.withOpacity(0.1), Colors.transparent],
-                ),
-              ),
-            ),
-          ),
-          Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: isMobile ? 20 : 40),
-              child: AnimatedBuilder(
-                animation: _fadeAnimation,
-                builder: (context, child) {
-                  return FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: SlideTransition(
-                      position: _slideAnimation,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'Empowering Students\nfor Academic Excellence',
-                            style: TextStyle(
-                              fontSize: isMobile ? 28 : 48,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                              height: 1.2,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(height: 20),
-                          Text(
-                            'Comprehensive education programs combining academic mastery with essential life skills.',
-                            style: TextStyle(
-                              fontSize: isMobile ? 16 : 18,
-                              color: Colors.white.withOpacity(0.9),
-                              height: 1.6,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(height: 32),
-                          Wrap(
-                            spacing: 16,
-                            runSpacing: 12,
-                            children: [
-                              _buildGradientButton(
-                                'Start Your Journey',
-                                () => _navigateTo('Admissions'),
-                              ),
-                              _buildOutlineButton(
-                                'Learn More',
-                                () => _navigateTo('About'),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Extracted to ServicesSection widget (widgets/services_section.dart)
 
-  Widget _buildGradientButton(String text, VoidCallback onPressed) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
-        ),
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [
-          BoxShadow(
-            color: Color(0xFFFF6B00).withOpacity(0.4),
-            blurRadius: 12,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-            fontSize: 16,
-          ),
-        ),
-      ),
-    );
-  }
+  // Extracted to OfferingsSection widget (widgets/offerings_section.dart)
 
-  Widget _buildOutlineButton(String text, VoidCallback onPressed) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.white, width: 2),
-      ),
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          side: BorderSide.none,
-          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-            fontSize: 16,
-          ),
-        ),
-      ),
-    );
-  }
+  // Extracted to StatsSection widget (widgets/stats_section.dart)
 
-  Widget _buildServicesSection() {
-    final services = [
-      {
-        'icon': Icons.person,
-        'title': 'Personalized Learning',
-        'desc': 'Tailored curriculum for individual needs',
-      },
-      {
-        'icon': Icons.people,
-        'title': 'Expert Mentorship',
-        'desc': 'Guidance from experienced educators',
-      },
-      {
-        'icon': Icons.computer,
-        'title': 'Modern Technology',
-        'desc': 'Cutting-edge learning tools',
-      },
-    ];
+  // Extracted to TestimonialsSection widget (widgets/testimonials_section.dart)
 
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 50,
-        horizontal: isMobile ? 20 : 40,
-      ),
-      color: Color(0xFFF8F9FA),
-      child: Column(
-        children: [
-          Text(
-            'Our Educational Services',
-            style: TextStyle(
-              fontSize: isMobile ? 28 : 36,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFF002B5B),
-            ),
-          ),
-          SizedBox(height: 40),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              return Wrap(
-                spacing: 24,
-                runSpacing: 24,
-                children: services
-                    .map(
-                      (service) => Container(
-                        width: isMobile
-                            ? constraints.maxWidth
-                            : (constraints.maxWidth - 48) / 3,
-                        child: _buildServiceCard(service),
-                      ),
-                    )
-                    .toList(),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildServiceCard(Map<String, dynamic> service) {
-    return Container(
-      padding: EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 15,
-            offset: Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
-              ),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Icon(service['icon'], color: Colors.white, size: 30),
-          ),
-          SizedBox(height: 16),
-          Text(
-            service['title'],
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF002B5B),
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 8),
-          Text(
-            service['desc'],
-            style: TextStyle(
-              color: Color(0xFF666666),
-              height: 1.5,
-              fontSize: 14,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOfferingsSection() {
-    final offerings = [
-      {
-        'icon': Icons.book,
-        'title': 'Academic Mastery',
-        'desc': 'Board-wise curriculum',
-        'color': Color(0xFF4CAF50),
-      },
-      {
-        'icon': Icons.psychology,
-        'title': 'Life Skills',
-        'desc': 'Critical thinking & communication',
-        'color': Color(0xFF2196F3),
-      },
-      {
-        'icon': Icons.schedule,
-        'title': 'Flexible Schedule',
-        'desc': 'Convenient timings',
-        'color': Color(0xFF9C27B0),
-      },
-      {
-        'icon': Icons.groups,
-        'title': 'Small Classes',
-        'desc': 'Personalized attention',
-        'color': Color(0xFFFF6B00),
-      },
-    ];
-
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 60,
-        horizontal: isMobile ? 20 : 40,
-      ),
-      child: Column(
-        children: [
-          Text(
-            'Our Programs',
-            style: TextStyle(
-              fontSize: isMobile ? 28 : 36,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFF002B5B),
-            ),
-          ),
-          SizedBox(height: 40),
-          GridView.count(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            crossAxisCount: isMobile ? 1 : 2,
-            crossAxisSpacing: 24,
-            mainAxisSpacing: 24,
-            childAspectRatio: 1.3,
-            children: offerings
-                .map(
-                  (item) => Container(
-                    padding: EdgeInsets.all(32),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: (item['color'] as Color).withOpacity(0.1),
-                        width: 2,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: (item['color'] as Color).withOpacity(0.1),
-                          blurRadius: 20,
-                          offset: Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 70,
-                          height: 70,
-                          decoration: BoxDecoration(
-                            color: (item['color'] as Color).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Icon(
-                            item['icon'] as IconData,
-                            size: 36,
-                            color: item['color'] as Color,
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Text(
-                          item['title'] as String,
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF002B5B),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 12),
-                        Text(
-                          item['desc'] as String,
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Color(0xFF666666),
-                            height: 1.5,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-                .toList(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatsSection() {
-    final stats = [
-      {'number': '10K+', 'label': 'Students Enrolled'},
-      {'number': '95%', 'label': 'Success Rate'},
-      {'number': '50+', 'label': 'Expert Teachers'},
-      {'number': '15+', 'label': 'Years Experience'},
-    ];
-
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 60,
-        horizontal: isMobile ? 20 : 40,
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF002B5B), Color(0xFF004080)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Column(
-        children: [
-          Text(
-            'Our Achievement',
-            style: TextStyle(
-              fontSize: isMobile ? 28 : 36,
-              fontWeight: FontWeight.w800,
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(height: 40),
-          GridView.count(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            crossAxisCount: isMobile ? 2 : 4,
-            children: stats
-                .map(
-                  (stat) => Column(
-                    children: [
-                      Text(
-                        stat['number']!,
-                        style: TextStyle(
-                          fontSize: isMobile ? 36 : 44,
-                          fontWeight: FontWeight.w900,
-                          color: Color(0xFFFF6B00),
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        stat['label']!,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white.withOpacity(0.9),
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                )
-                .toList(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTestimonialsSection() {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 60,
-        horizontal: isMobile ? 20 : 40,
-      ),
-      color: Color(0xFFF8F9FA),
-      child: Column(
-        children: [
-          Text(
-            'What Parents Say',
-            style: TextStyle(
-              fontSize: isMobile ? 28 : 36,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFF002B5B),
-            ),
-          ),
-          SizedBox(height: 40),
-          Container(
-            constraints: BoxConstraints(maxWidth: 800),
-            padding: EdgeInsets.all(40),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: Color(0xFFFF6B00).withOpacity(0.1),
-                  blurRadius: 20,
-                  offset: Offset(0, 10),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    5,
-                    (index) =>
-                        Icon(Icons.star, color: Color(0xFFFF6B00), size: 28),
-                  ),
-                ),
-                SizedBox(height: 24),
-                Text(
-                  '"Incendia has transformed my child\'s learning experience. The personalized approach and dedicated teachers have helped unlock her true potential."',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Color(0xFF002B5B),
-                    height: 1.6,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 24),
-                Text(
-                  '— Sarah Johnson, Parent',
-                  style: TextStyle(
-                    color: Color(0xFFFF6B00),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCtaSection() {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 60,
-        horizontal: isMobile ? 20 : 40,
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF002B5B), Color(0xFF004080)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Column(
-        children: [
-          Text(
-            'Ready to Begin Your Journey?',
-            style: TextStyle(
-              fontSize: isMobile ? 28 : 40,
-              fontWeight: FontWeight.w800,
-              color: Colors.white,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 16),
-          Text(
-            'Join thousands of students who have transformed their academic performance.',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.white.withOpacity(0.9),
-              height: 1.6,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 40),
-          Wrap(
-            spacing: 16,
-            runSpacing: 12,
-            children: [
-              _buildGradientButton(
-                'Apply Now',
-                () => _navigateTo('Admissions'),
-              ),
-              _buildOutlineButton('Contact Us', () => _navigateTo('Contact')),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFooter() {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 40,
-        horizontal: isMobile ? 20 : 40,
-      ),
-      color: Color(0xFF1A1A1A),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(Icons.menu_book, color: Colors.white),
-              ),
-              SizedBox(width: 16),
-              Text(
-                'Incendia',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 20),
-          Text(
-            'Empowering students with comprehensive education programs.',
-            style: TextStyle(color: Colors.grey[400], height: 1.6),
-          ),
-          SizedBox(height: 30),
-          Divider(color: Colors.grey[800]),
-          SizedBox(height: 20),
-          Text(
-            '© 2024 Incendia. All rights reserved.',
-            style: TextStyle(color: Colors.grey[600], fontSize: 14),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildContactCard(
-    IconData icon,
-    String title,
-    String info,
-    String subtitle,
-  ) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 20),
-      padding: EdgeInsets.all(25),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
-              ),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Icon(icon, color: Colors.white, size: 30),
-          ),
-          SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF002B5B),
-                  ),
-                ),
-                SizedBox(height: 5),
-                Text(
-                  info,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color(0xFF666666),
-                    height: 1.4,
-                  ),
-                ),
-                SizedBox(height: 5),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFFFF6B00),
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Extracted to CtaSection widget (widgets/cta_section.dart)
 }
 
 // // About Page
@@ -1636,5 +997,4 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //     );
 //   }
 // }
-
 

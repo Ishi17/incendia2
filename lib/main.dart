@@ -6,7 +6,7 @@ import 'package:incendia_webpage/pages/gallery_page.dart';
 import 'package:incendia_webpage/pages/life_skills_page.dart';
 import 'package:incendia_webpage/pages/admissions_page.dart';
 import 'package:incendia_webpage/pages/about_page.dart';
-import 'package:incendia_webpage/pages/home_page.dart';
+import 'package:incendia_webpage/pages/home/home_page.dart';
 import 'package:incendia_webpage/pages/schedule_page.dart';
 
 void main() {
