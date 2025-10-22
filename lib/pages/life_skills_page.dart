@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math';
 
 class LifeSkillsPage extends StatelessWidget {
   const LifeSkillsPage({super.key});
@@ -296,34 +295,42 @@ class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMix
       child: AnimatedBuilder(
         animation: _animation,
         builder: (context, child) {
-          final angle = _animation.value * pi;
-          final isFront = _animation.value <= 0.5;
+          final scale = 1.0 + (0.045 * _animation.value);
+          final lift = 6.0 * _animation.value;
+          final shadowOpacity = 0.05 + (0.15 * _animation.value);
+          final shadowBlur = 10.0 + (12.0 * _animation.value);
 
-          return Transform(
-            alignment: Alignment.center,
-            transform: Matrix4.identity()
-              ..setEntry(3, 2, 0.001) // perspective
-              ..rotateX(angle),       // rotateX for vertical flip
-            child: Container(
-              width: 300,
-              height: 220,
-              decoration: BoxDecoration(
-                color: widget.color,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                  ),
-                ],
-              ),
-              child: isFront
-                  ? _buildFront()
-                  : Transform(
-                      alignment: Alignment.center,
-                      transform: Matrix4.rotationX(pi),
-                      child: _buildBack(),
+          return Transform.translate(
+            offset: Offset(0, -lift),
+            child: Transform.scale(
+              scale: scale,
+              alignment: Alignment.center,
+              child: Container(
+                width: 300,
+                height: 220,
+                decoration: BoxDecoration(
+                  color: widget.color,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(shadowOpacity),
+                      blurRadius: shadowBlur,
+                      offset: Offset(0, 8),
                     ),
+                  ],
+                ),
+                child: AnimatedSwitcher(
+                  duration: Duration(milliseconds: 200),
+                  switchInCurve: Curves.easeIn,
+                  switchOutCurve: Curves.easeOut,
+                  transitionBuilder: (child, animation) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                  child: isHovered
+                      ? Container(key: ValueKey('back'), child: _buildBack())
+                      : Container(key: ValueKey('front'), child: _buildFront()),
+                ),
+              ),
             ),
           );
         },
