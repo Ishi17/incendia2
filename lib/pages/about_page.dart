@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../components/custom_navbar.dart';
 
 class AboutUsPage extends StatefulWidget {
   const AboutUsPage({super.key});
@@ -40,6 +41,11 @@ class _AboutUsPageState extends State<AboutUsPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomNavbar(
+        title: 'About Us',
+        showBackButton: true,
+      ),
+      drawer: const CustomDrawer(),
       backgroundColor: Color(0xFFF5F5F5),
       body: SingleChildScrollView(
         child: Column(
@@ -92,7 +98,7 @@ class _AboutUsPageState extends State<AboutUsPage>
 
             // Main Content
             Padding(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.all(MediaQuery.of(context).size.width < 768 ? 15 : 20),
               child: SlideTransition(
                 position: _slideAnimation,
                 child: FadeTransition(
@@ -125,8 +131,10 @@ class _AboutUsPageState extends State<AboutUsPage>
   }
 
   Widget _buildStoryCard() {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    
     return Container(
-      padding: EdgeInsets.all(30),
+      padding: EdgeInsets.all(isMobile ? 20 : 30),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -141,37 +149,67 @@ class _AboutUsPageState extends State<AboutUsPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Color(0xFFFF6B00).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+          isMobile 
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFF6B00).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        Icons.auto_stories,
+                        color: Color(0xFFFF6B00),
+                        size: 24,
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    Text(
+                      'Our Story — The Spark Behind Incendia',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF002B5B),
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                  ],
+                )
+              : Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFF6B00).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        Icons.auto_stories,
+                        color: Color(0xFFFF6B00),
+                        size: 24,
+                      ),
+                    ),
+                    SizedBox(width: 15),
+                    Expanded(
+                      child: Text(
+                        'Our Story — The Spark Behind Incendia',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF002B5B),
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                child: Icon(
-                  Icons.auto_stories,
-                  color: Color(0xFFFF6B00),
-                  size: 24,
-                ),
-              ),
-              SizedBox(width: 15),
-              Text(
-                'Our Story — The Spark Behind Incendia',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF002B5B),
-                  fontFamily: 'Poppins',
-                ),
-              ),
-            ],
-          ),
           SizedBox(height: 20),
           Text(
             'In every child lies a spark — a quiet curiosity, a restless question, a flicker of confidence waiting to ignite. But in crowded classrooms and exam-driven systems, that spark is often overlooked.',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: isMobile ? 14 : 16,
               height: 1.6,
               color: Colors.grey[700],
               fontFamily: 'Inter',
@@ -179,7 +217,7 @@ class _AboutUsPageState extends State<AboutUsPage>
           ),
           SizedBox(height: 15),
           Container(
-            padding: EdgeInsets.all(20),
+            padding: EdgeInsets.all(isMobile ? 15 : 20),
             decoration: BoxDecoration(
               color: Color(0xFF002B5B).withOpacity(0.05),
               borderRadius: BorderRadius.circular(15),
@@ -191,7 +229,7 @@ class _AboutUsPageState extends State<AboutUsPage>
             child: Text(
               'At Incendia, we exist to protect that spark. To fan it. To turn it into a steady flame of understanding, clarity, and purpose. We\'re reimagining what tuition means.',
               style: TextStyle(
-                fontSize: 18,
+                fontSize: isMobile ? 16 : 18,
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF002B5B),
                 fontFamily: 'Poppins',
@@ -202,7 +240,7 @@ class _AboutUsPageState extends State<AboutUsPage>
           Text(
             'We started as educators, mentors, and parents who believed that real learning goes beyond finishing the syllabus. It\'s about mastering fundamentals, building the confidence to ask \'why,\' and learning skills that last a lifetime — not just till the next test.',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: isMobile ? 14 : 16,
               height: 1.6,
               color: Colors.grey[700],
               fontFamily: 'Inter',
@@ -322,32 +360,54 @@ class _AboutUsPageState extends State<AboutUsPage>
   }
 
   Widget _buildMissionCards() {
-    return Row(
-      children: [
-        Expanded(
-          child: _buildMissionCard(
-            Icons.school,
-            'Academic Excellence',
-            'Mastering fundamentals with confidence',
-            Color(0xFFFF6B00),
-          ),
-        ),
-        SizedBox(width: 20),
-        Expanded(
-          child: _buildMissionCard(
-            Icons.psychology,
-            'Life Skills',
-            'Building mindset for tomorrow',
-            Color(0xFF002B5B),
-          ),
-        ),
-      ],
-    );
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    
+    return isMobile 
+        ? Column(
+            children: [
+              _buildMissionCard(
+                Icons.school,
+                'Academic Excellence',
+                'Mastering fundamentals with confidence',
+                Color(0xFFFF6B00),
+              ),
+              SizedBox(height: 20),
+              _buildMissionCard(
+                Icons.psychology,
+                'Life Skills',
+                'Building mindset for tomorrow',
+                Color(0xFF002B5B),
+              ),
+            ],
+          )
+        : Row(
+            children: [
+              Expanded(
+                child: _buildMissionCard(
+                  Icons.school,
+                  'Academic Excellence',
+                  'Mastering fundamentals with confidence',
+                  Color(0xFFFF6B00),
+                ),
+              ),
+              SizedBox(width: 20),
+              Expanded(
+                child: _buildMissionCard(
+                  Icons.psychology,
+                  'Life Skills',
+                  'Building mindset for tomorrow',
+                  Color(0xFF002B5B),
+                ),
+              ),
+            ],
+          );
   }
 
   Widget _buildMissionCard(IconData icon, String title, String subtitle, Color color) {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    
     return Container(
-      padding: EdgeInsets.all(25),
+      padding: EdgeInsets.all(isMobile ? 20 : 25),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -362,7 +422,7 @@ class _AboutUsPageState extends State<AboutUsPage>
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(15),
+            padding: EdgeInsets.all(isMobile ? 12 : 15),
             decoration: BoxDecoration(
               color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(15),
@@ -370,25 +430,26 @@ class _AboutUsPageState extends State<AboutUsPage>
             child: Icon(
               icon,
               color: color,
-              size: 30,
+              size: isMobile ? 25 : 30,
             ),
           ),
           SizedBox(height: 15),
           Text(
             title,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: isMobile ? 16 : 18,
               fontWeight: FontWeight.bold,
               color: Color(0xFF002B5B),
               fontFamily: 'Poppins',
             ),
+            textAlign: TextAlign.center,
           ),
           SizedBox(height: 8),
           Text(
             subtitle,
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: isMobile ? 12 : 14,
               color: Colors.grey[600],
               fontFamily: 'Inter',
             ),
@@ -399,8 +460,10 @@ class _AboutUsPageState extends State<AboutUsPage>
   }
 
   Widget _buildStatsSection() {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    
     return Container(
-      padding: EdgeInsets.all(30),
+      padding: EdgeInsets.all(isMobile ? 20 : 30),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [Color(0xFF002B5B), Color(0xFF1E3A8A)],
@@ -409,62 +472,83 @@ class _AboutUsPageState extends State<AboutUsPage>
         ),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildStat('Grades', '9-12', Icons.grade),
-          _buildStat('Boards', 'CBSE, ICSE, IB', Icons.school),
-          _buildStat('Focus', 'Excellence', Icons.star),
-        ],
-      ),
+      child: isMobile 
+          ? Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildStat('Grades', '9-12', Icons.grade),
+                    _buildStat('Boards', 'CBSE, ICSE, IB', Icons.school),
+                  ],
+                ),
+                SizedBox(height: 20),
+                _buildStat('Focus', 'Excellence', Icons.star),
+              ],
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildStat('Grades', '9-12', Icons.grade),
+                _buildStat('Boards', 'CBSE, ICSE, IB', Icons.school),
+                _buildStat('Focus', 'Excellence', Icons.star),
+              ],
+            ),
     );
   }
 
   Widget _buildStat(String title, String value, IconData icon) {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    
     return Column(
       children: [
         Icon(
           icon,
           color: Color(0xFFFF6B00),
-          size: 30,
+          size: isMobile ? 25 : 30,
         ),
         SizedBox(height: 10),
         Text(
           value,
           style: TextStyle(
-            fontSize: 16,
+            fontSize: isMobile ? 14 : 16,
             fontWeight: FontWeight.bold,
             color: Colors.white,
             fontFamily: 'Poppins',
           ),
+          textAlign: TextAlign.center,
         ),
         Text(
           title,
           style: TextStyle(
-            fontSize: 12,
+            fontSize: isMobile ? 10 : 12,
             color: Colors.white70,
             fontFamily: 'Inter',
           ),
+          textAlign: TextAlign.center,
         ),
       ],
     );
   }
 
   Widget _buildValuesSection() {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    
     return Column(
       children: [
         Text(
           'Our Values',
           style: TextStyle(
-            fontSize: 28,
+            fontSize: isMobile ? 24 : 28,
             fontWeight: FontWeight.bold,
             color: Color(0xFF002B5B),
             fontFamily: 'Poppins',
           ),
+          textAlign: TextAlign.center,
         ),
         SizedBox(height: 20),
         Container(
-          padding: EdgeInsets.all(25),
+          padding: EdgeInsets.all(isMobile ? 20 : 25),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
@@ -486,7 +570,7 @@ class _AboutUsPageState extends State<AboutUsPage>
         ),
         SizedBox(height: 30),
         Container(
-          padding: EdgeInsets.all(25),
+          padding: EdgeInsets.all(isMobile ? 20 : 25),
           decoration: BoxDecoration(
             color: Color(0xFFFF6B00).withOpacity(0.1),
             borderRadius: BorderRadius.circular(20),
@@ -500,20 +584,22 @@ class _AboutUsPageState extends State<AboutUsPage>
               Text(
                 'Trusted by parents. Loved by students.',
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: isMobile ? 18 : 20,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF002B5B),
                   fontFamily: 'Poppins',
                 ),
+                textAlign: TextAlign.center,
               ),
               SizedBox(height: 10),
               Text(
                 'Where marks open doors, but mindset shapes destinies.',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: isMobile ? 14 : 16,
                   color: Colors.grey[700],
                   fontFamily: 'Inter',
                 ),
+                textAlign: TextAlign.center,
               ),
             ],
           ),
@@ -523,6 +609,8 @@ class _AboutUsPageState extends State<AboutUsPage>
   }
 
   Widget _buildValueItem(String text, IconData icon) {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10),
       child: Row(
@@ -530,14 +618,14 @@ class _AboutUsPageState extends State<AboutUsPage>
           Icon(
             icon,
             color: Color(0xFFFF6B00),
-            size: 24,
+            size: isMobile ? 20 : 24,
           ),
           SizedBox(width: 15),
           Expanded(
             child: Text(
               text,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: isMobile ? 14 : 16,
                 color: Colors.grey[700],
                 fontFamily: 'Inter',
               ),
@@ -548,3 +636,4 @@ class _AboutUsPageState extends State<AboutUsPage>
     );
   }
 }
+

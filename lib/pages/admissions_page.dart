@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import '../components/custom_navbar.dart';
 
 class AdmissionsPage extends StatefulWidget {
   const AdmissionsPage({super.key});
@@ -73,11 +74,11 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Admissions'),
-        backgroundColor: Color(0xFF002B5B),
-        foregroundColor: Colors.white,
+      appBar: CustomNavbar(
+        title: 'Admissions',
+        showBackButton: true,
       ),
+      drawer: const CustomDrawer(),
       body: SingleChildScrollView(
         child: Center( 
           child: Column(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../components/custom_navbar.dart';
 
 class CareersPage extends StatefulWidget {
   const CareersPage({super.key});
@@ -75,6 +76,11 @@ class _CareersPageState extends State<CareersPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CustomNavbar(
+        title: 'Careers',
+        showBackButton: true,
+      ),
+      drawer: const CustomDrawer(),
       backgroundColor: const Color(0xFFFFFDF7),
       body: SingleChildScrollView(
         child: Column(
@@ -88,6 +94,7 @@ class _CareersPageState extends State<CareersPage>
   }
 
   Widget _buildHeader() {
+    final isMobile = MediaQuery.of(context).size.width < 768;
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -102,7 +109,7 @@ class _CareersPageState extends State<CareersPage>
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(32.0),
+          padding: EdgeInsets.all(isMobile ? 20.0 : 32.0),
           child: FadeTransition(
             opacity: _fadeAnimation,
             child: SlideTransition(
@@ -114,7 +121,7 @@ class _CareersPageState extends State<CareersPage>
                   Text(
                     'Join Our Team',
                     style: TextStyle(
-                      fontSize: 40,
+                      fontSize: isMobile ? 32 : 40,
                       fontWeight: FontWeight.w300,
                       color: Colors.white,
                       height: 1.1,
@@ -124,7 +131,7 @@ class _CareersPageState extends State<CareersPage>
                   Text(
                     'At Incendia, we believe great teachers don\'t just teach — they ignite, mentor, and transform.',
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: isMobile ? 14 : 16,
                       color: Colors.white.withOpacity(0.9),
                       height: 1.5,
                     ),
@@ -141,6 +148,32 @@ class _CareersPageState extends State<CareersPage>
   }
 
   Widget _buildFeatureCards() {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    
+    if (isMobile) {
+      return Column(
+        children: [
+          _buildFeatureCard(
+            '🎯',
+            'Purpose-Driven',
+            'Make a real impact on students\' lives',
+          ),
+          const SizedBox(height: 16),
+          _buildFeatureCard(
+            '💡',
+            'Innovation',
+            'Use cutting-edge teaching methods',
+          ),
+          const SizedBox(height: 16),
+          _buildFeatureCard(
+            '📚',
+            'Growth',
+            'Continuous learning opportunities',
+          ),
+        ],
+      );
+    }
+    
     return Row(
       children: [
         Expanded(
@@ -208,9 +241,10 @@ class _CareersPageState extends State<CareersPage>
   }
 
   Widget _buildApplicationForm() {
+    final isMobile = MediaQuery.of(context).size.width < 768;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(32),
+      padding: EdgeInsets.all(isMobile ? 20 : 32),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 800),
         child: Form(

@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
+import '../components/custom_navbar.dart';
 
 class LifeSkillsPage extends StatelessWidget {
   const LifeSkillsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    final isTablet = MediaQuery.of(context).size.width >= 768 && MediaQuery.of(context).size.width < 1024;
+    
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Life Skills'),
-        backgroundColor: Color(0xFF002B5B),
-        foregroundColor: Colors.white,
+      appBar: CustomNavbar(
+        title: 'Life Skills',
+        showBackButton: true,
       ),
+      drawer: const CustomDrawer(),
       body: SingleChildScrollView(
         child: SizedBox(
           width: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _buildHeaderSection(),
-              _buildSkillsList(),
-              _buildTestimonialSection(),
-              _buildFooter(context),
+              _buildHeaderSection(isMobile, isTablet),
+              _buildSkillsList(context, isMobile, isTablet),
+              _buildTestimonialSection(isMobile, isTablet),
+              _buildFooter(context, isMobile, isTablet),
             ],
           ),
         ),
@@ -28,37 +32,57 @@ class LifeSkillsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildHeaderSection() {
+  Widget _buildHeaderSection(bool isMobile, bool isTablet) {
+    
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 60, horizontal: 24),
-      color: Color(0xFF002B5B),
+      padding: EdgeInsets.symmetric(
+        vertical: isMobile ? 40 : isTablet ? 50 : 60, 
+        horizontal: isMobile ? 16 : 24
+      ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF002B5B), Color(0xFF1E3A8A)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          Icon(
+            Icons.psychology,
+            size: isMobile ? 50 : isTablet ? 60 : 70,
+            color: Color(0xFFFF6B00),
+          ),
+          SizedBox(height: isMobile ? 15 : 20),
           Text(
             'Life Skills for the Real World',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 36,
+              fontSize: isMobile ? 28 : isTablet ? 32 : 36,
               fontWeight: FontWeight.bold,
               color: Colors.white,
+              fontFamily: 'Poppins',
             ),
           ),
-          SizedBox(height: 16),
+          SizedBox(height: isMobile ? 12 : 16),
           Text(
             'Empowering students with critical thinking, communication, and emotional intelligence.',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: isMobile ? 14 : isTablet ? 16 : 18,
               color: Colors.white.withOpacity(0.9),
+              fontFamily: 'Inter',
+              height: 1.5,
             ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSkillsList() {
+  Widget _buildSkillsList(BuildContext context, bool isMobile, bool isTablet) {
     final List<Map<String, dynamic>> skills = [
       {
         'title': 'Financial Literacy for Teens',
@@ -135,43 +159,86 @@ class LifeSkillsPage extends StatelessWidget {
     ];
 
     return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Wrap(
-        spacing: 24,
-        runSpacing: 24,
-        alignment: WrapAlignment.center,
-        children: skills.map<Widget>((skillData) {
-          return SkillCard(
-            title: skillData['title']!,
-            description: skillData['description']!,
-            icon: skillData['icon'],
-            color: skillData['color'],
+      padding: EdgeInsets.all(isMobile ? 16.0 : 24.0),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          
+          return Wrap(
+            spacing: isMobile ? 12 : isTablet ? 16 : 20,
+            runSpacing: isMobile ? 12 : isTablet ? 16 : 20,
+            alignment: WrapAlignment.center,
+            children: skills.map<Widget>((skillData) {
+              return SizedBox(
+                width: isMobile 
+                    ? (constraints.maxWidth - 32) / 2
+                    : isTablet 
+                        ? (constraints.maxWidth - 48) / 3
+                        : 320,
+                child: SkillCard(
+                  title: skillData['title']!,
+                  description: skillData['description']!,
+                  icon: skillData['icon'],
+                  color: skillData['color'],
+                ),
+              );
+            }).toList(),
           );
-        }).toList(),
+        },
       ),
     );
   }
 
 
-  Widget _buildTestimonialSection() {
+  Widget _buildTestimonialSection(bool isMobile, bool isTablet) {
+    
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(24),
-      color: Color(0xFFEEF2F7),
+      padding: EdgeInsets.all(isMobile ? 20 : isTablet ? 24 : 32),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFFEEF2F7), Color(0xFFF8FAFC)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
       child: Column(
         children: [
+          Icon(
+            Icons.format_quote,
+            size: isMobile ? 40 : 50,
+            color: Color(0xFFFF6B00),
+          ),
+          SizedBox(height: isMobile ? 15 : 20),
           Text(
             'What Our Students Say',
             style: TextStyle(
-              fontSize: 24,
+              fontSize: isMobile ? 20 : isTablet ? 22 : 24,
               fontWeight: FontWeight.bold,
               color: Color(0xFF002B5B),
+              fontFamily: 'Poppins',
             ),
+            textAlign: TextAlign.center,
           ),
-          SizedBox(height: 16),
+          SizedBox(height: isMobile ? 12 : 16),
           Text(
             '"Learning life skills here helped me become more confident and independent."',
-            style: TextStyle(fontSize: 16, color: Color(0xFF333333)),
+            style: TextStyle(
+              fontSize: isMobile ? 14 : isTablet ? 15 : 16, 
+              color: Color(0xFF333333),
+              fontFamily: 'Inter',
+              height: 1.6,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: isMobile ? 15 : 20),
+          Text(
+            '- Sarah, Grade 11',
+            style: TextStyle(
+              fontSize: isMobile ? 12 : 14,
+              color: Color(0xFF666666),
+              fontStyle: FontStyle.italic,
+              fontFamily: 'Inter',
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -179,22 +246,87 @@ class LifeSkillsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildFooter(BuildContext context) {
+  Widget _buildFooter(BuildContext context, bool isMobile, bool isTablet) {
+    
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(24),
-      color: Color(0xFF001122),
+      padding: EdgeInsets.all(isMobile ? 20 : isTablet ? 24 : 32),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF002B5B), Color(0xFF001122)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
       child: Column(
         children: [
+          Icon(
+            Icons.rocket_launch,
+            color: Color(0xFFFF6B00),
+            size: isMobile ? 40 : 50,
+          ),
+          SizedBox(height: isMobile ? 15 : 20),
           Text(
             'Interested in Life Skills Programs?',
-            style: TextStyle(color: Colors.white, fontSize: 18),
+            style: TextStyle(
+              color: Colors.white, 
+              fontSize: isMobile ? 16 : isTablet ? 18 : 20,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Poppins',
+            ),
+            textAlign: TextAlign.center,
           ),
-          SizedBox(height: 12),
-          ElevatedButton(
-            onPressed: () => Navigator.pushNamed(context, '/admissions'),
-            child: Text('Apply Now'),
+          SizedBox(height: isMobile ? 8 : 12),
+          Text(
+            'Join thousands of students developing essential life skills for success',
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: isMobile ? 14 : 16,
+              fontFamily: 'Inter',
+            ),
+            textAlign: TextAlign.center,
           ),
+          SizedBox(height: isMobile ? 20 : 24),
+          isMobile 
+              ? SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pushNamed(context, '/admissions'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFFF6B00),
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                    child: Text(
+                      'Apply Now',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                )
+              : ElevatedButton(
+                  onPressed: () => Navigator.pushNamed(context, '/admissions'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFFFF6B00),
+                    padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
+                  child: Text(
+                    'Apply Now',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
         ],
       ),
     );
@@ -250,19 +382,27 @@ class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMix
   }
 
   Widget _buildFront() {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    final isTablet = MediaQuery.of(context).size.width >= 768 && MediaQuery.of(context).size.width < 1024;
+    
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: EdgeInsets.all(isMobile ? 16.0 : 20.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(widget.icon, color: Color(0xFFFF6B00), size: 40),
-          SizedBox(height: 12),
+          Icon(
+            widget.icon, 
+            color: Color(0xFFFF6B00), 
+            size: isMobile ? 32 : isTablet ? 36 : 40
+          ),
+          SizedBox(height: isMobile ? 10 : 12),
           Text(
             widget.title,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: isMobile ? 14 : isTablet ? 16 : 18,
               fontWeight: FontWeight.bold,
               color: Color(0xFF002B5B),
+              fontFamily: 'Poppins',
             ),
             textAlign: TextAlign.center,
           ),
@@ -272,16 +412,23 @@ class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMix
   }
 
   Widget _buildBack() {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    final isTablet = MediaQuery.of(context).size.width >= 768 && MediaQuery.of(context).size.width < 1024;
+    
     return Padding(
-      padding: const EdgeInsets.all(20.0),
+      padding: EdgeInsets.all(isMobile ? 16.0 : 20.0),
       child: Center(
-        child: Text(
-          widget.description,
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.black87,
+        child: SingleChildScrollView(
+          child: Text(
+            widget.description,
+            style: TextStyle(
+              fontSize: isMobile ? 12 : isTablet ? 13 : 14,
+              color: Colors.black87,
+              fontFamily: 'Inter',
+              height: 1.4,
+            ),
+            textAlign: TextAlign.center,
           ),
-          textAlign: TextAlign.center,
         ),
       ),
     );
@@ -289,6 +436,9 @@ class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    final isTablet = MediaQuery.of(context).size.width >= 768 && MediaQuery.of(context).size.width < 1024;
+    
     return MouseRegion(
       onEnter: (_) => _onEnter(true),
       onExit: (_) => _onEnter(false),
@@ -306,11 +456,11 @@ class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMix
               scale: scale,
               alignment: Alignment.center,
               child: Container(
-                width: 300,
-                height: 220,
+                width: double.infinity,
+                height: isMobile ? 180 : isTablet ? 200 : 220,
                 decoration: BoxDecoration(
                   color: widget.color,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(isMobile ? 12 : 16),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(shadowOpacity),

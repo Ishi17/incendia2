@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../components/custom_navbar.dart';
 
 class ContactUsPage extends StatefulWidget {
   const ContactUsPage({super.key});
@@ -42,23 +43,11 @@ class _ContactUsPageState extends State<ContactUsPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF002B5B)),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          'Contact Us',
-          style: TextStyle(
-            color: Color(0xFF002B5B),
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        centerTitle: true,
+      appBar: CustomNavbar(
+        title: 'Contact Us',
+        showBackButton: true,
       ),
+      drawer: const CustomDrawer(),
       body: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
@@ -67,7 +56,7 @@ class _ContactUsPageState extends State<ContactUsPage>
             child: SlideTransition(
               position: _slideAnimation,
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -122,8 +111,9 @@ class _ContactUsPageState extends State<ContactUsPage>
   }
 
   Widget _buildHeader() {
+    final isMobile = MediaQuery.of(context).size.width < 768;
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: EdgeInsets.all(isMobile ? 16 : 24),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [Color(0xFF002B5B), Color(0xFF1E3A8A)],

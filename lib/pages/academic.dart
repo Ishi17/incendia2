@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../components/custom_navbar.dart';
  
 
 class AcademicPage extends StatefulWidget {
@@ -71,12 +72,11 @@ class _AcademicPageState extends State<AcademicPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Academics'),
-        backgroundColor: const Color(0xFF002B5B),
-        foregroundColor: Colors.white,
-        centerTitle: false,
+      appBar: CustomNavbar(
+        title: 'Academics',
+        showBackButton: true,
       ),
+      drawer: const CustomDrawer(),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -93,28 +93,49 @@ class _AcademicPageState extends State<AcademicPage> {
   // --- Sections ---
 
   Widget _buildHeaderSection() {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    final isTablet = MediaQuery.of(context).size.width >= 768 && MediaQuery.of(context).size.width < 1024;
+    
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 60, horizontal: 24),
-      color: const Color(0xFF002B5B),
+      padding: EdgeInsets.symmetric(
+        vertical: isMobile ? 40 : isTablet ? 50 : 60, 
+        horizontal: isMobile ? 16 : 24
+      ),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF002B5B), Color(0xFF1E3A8A)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const Text(
+          Icon(
+            Icons.school,
+            size: isMobile ? 50 : isTablet ? 60 : 70,
+            color: Color(0xFFFF6B00),
+          ),
+          SizedBox(height: isMobile ? 15 : 20),
+          Text(
             'Academics',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 40,
+              fontSize: isMobile ? 32 : isTablet ? 36 : 40,
               fontWeight: FontWeight.bold,
               color: Colors.white,
+              fontFamily: 'Poppins',
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: isMobile ? 8 : 10),
           Text(
             'Empowering students with academic mastery, real-world relevance, and confidence.',
             style: TextStyle(
-              fontSize: 16,
+              fontSize: isMobile ? 14 : isTablet ? 15 : 16,
               color: Colors.white.withOpacity(0.9),
+              fontFamily: 'Inter',
+              height: 1.5,
             ),
             textAlign: TextAlign.center,
           ),
@@ -124,25 +145,47 @@ class _AcademicPageState extends State<AcademicPage> {
   }
 
   Widget _buildGradesCaptionBox() {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    final isTablet = MediaQuery.of(context).size.width >= 768 && MediaQuery.of(context).size.width < 1024;
+    
     return Container(
       width: double.infinity,
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+      padding: EdgeInsets.symmetric(
+        vertical: isMobile ? 16 : isTablet ? 18 : 20, 
+        horizontal: isMobile ? 16 : 24
+      ),
       child: Column(
-        children: const [
-          Text(
-            'Grades 9–12',
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF002B5B),
-            ),
-            textAlign: TextAlign.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.grade,
+                color: Color(0xFFFF6B00),
+                size: isMobile ? 20 : 24,
+              ),
+              SizedBox(width: 8),
+              Text(
+                'Grades 9–12',
+                style: TextStyle(
+                  fontSize: isMobile ? 20 : isTablet ? 22 : 24,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF002B5B),
+                  fontFamily: 'Poppins',
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ),
-          SizedBox(height: 6),
+          SizedBox(height: isMobile ? 8 : 10),
           Text(
             'Curriculum options tailored for every learner',
-            style: TextStyle(fontSize: 14, color: Color(0xFF445566)),
+            style: TextStyle(
+              fontSize: isMobile ? 13 : isTablet ? 14 : 15,
+              color: Color(0xFF445566),
+              fontFamily: 'Inter',
+            ),
             textAlign: TextAlign.center,
           ),
         ],
@@ -150,78 +193,113 @@ class _AcademicPageState extends State<AcademicPage> {
     );
   }
   Widget _buildCurriculumCarousel() {
-    return SizedBox(
-      height: 460,
-      child: Stack(
-        alignment: Alignment.center,
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    final isTablet = MediaQuery.of(context).size.width >= 768 && MediaQuery.of(context).size.width < 1024;
+    
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: isMobile ? 20 : 30,
+        horizontal: isMobile ? 4 : 24,
+      ),
+      child: Column(
         children: [
-          PageView.builder(
-            controller: _carouselController,
-            itemCount: curriculums.length,
-            onPageChanged: (i) => setState(() => _currentIndex = i),
-            itemBuilder: (context, index) {
-              final item = curriculums[index];
-              final List<String> highlights =
-                  (item['highlights'] as List<dynamic>).cast<String>();
+          // Page indicators
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              curriculums.length,
+              (index) => Container(
+                margin: EdgeInsets.symmetric(horizontal: 4),
+                width: isMobile ? 8 : 10,
+                height: isMobile ? 8 : 10,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _currentIndex == index 
+                      ? Color(0xFFFF6B00) 
+                      : Color(0xFFFF6B00).withOpacity(0.3),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: isMobile ? 20 : 30),
+          
+          // Carousel
+          Container(
+            height: isMobile ? 500 : isTablet ? 450 : 450,
+            child: PageView.builder(
+              controller: _carouselController,
+              itemCount: curriculums.length,
+              onPageChanged: (i) => setState(() => _currentIndex = i),
+              itemBuilder: (context, index) {
+                final item = curriculums[index];
+                final List<String> highlights =
+                    (item['highlights'] as List<dynamic>).cast<String>();
 
-              return AnimatedBuilder(
-                animation: _carouselController,
-                builder: (context, child) {
-                  final page = _carouselController.hasClients
-                      ? (_carouselController.page ?? _currentIndex.toDouble())
-                      : _currentIndex.toDouble();
-                  final distance = (index - page).abs();
-                  final clamped = distance.clamp(0.0, 1.0);
-
-                  // Exactly 3 visible: center big, sides smaller & fainter
-                  final scale = 0.8 + (0.2 * (1.0 - clamped)); // 0.8..1.0
-                  final opacity = 0.5 + (0.5 * (1.0 - clamped)); // 0.5..1.0
-
-                  return Opacity(
-                    opacity: opacity,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
-                      child: Transform.scale(
-                        scale: scale,
-                        alignment: Alignment.center,
-                        child: _CurriculumCard(
-                          name: item['name'] as String,
-                          desc: item['desc'] as String,
-                          image: item['image'] as String,
-                          bgColor: item['bgColor'] as Color,
-                          highlights: highlights,
-                        ),
-                      ),
+                return Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isMobile ? 2.0 : 32.0, 
+                    vertical: 8
+                  ),
+                  child: _CurriculumCard(
+                    name: item['name'] as String,
+                    desc: item['desc'] as String,
+                    image: item['image'] as String,
+                    bgColor: item['bgColor'] as Color,
+                    highlights: highlights,
+                  ),
+                );
+              },
+            ),
+          ),
+          
+          // Navigation buttons
+          SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 10,
+                      offset: Offset(0, 3),
                     ),
-                  );
-                },
-              );
-            },
-          ),
-
-          Positioned(
-            left: 16,
-            child: IconButton(
-              onPressed: () => _goTo(-1),
-              icon: const Icon(Icons.chevron_left, size: 32),
-              style: IconButton.styleFrom(
-                backgroundColor: Colors.white,
-                shadowColor: Colors.black26,
-                elevation: 2,
+                  ],
+                ),
+                child: IconButton(
+                  onPressed: () => _goTo(-1),
+                  icon: Icon(
+                    Icons.chevron_left, 
+                    size: isMobile ? 28 : 32,
+                    color: Color(0xFF002B5B),
+                  ),
+                ),
               ),
-            ),
-          ),
-          Positioned(
-            right: 16,
-            child: IconButton(
-              onPressed: () => _goTo(1),
-              icon: const Icon(Icons.chevron_right, size: 32),
-              style: IconButton.styleFrom(
-                backgroundColor: Colors.white,
-                shadowColor: Colors.black26,
-                elevation: 2,
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.15),
+                      blurRadius: 10,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: IconButton(
+                  onPressed: () => _goTo(1),
+                  icon: Icon(
+                    Icons.chevron_right, 
+                    size: isMobile ? 28 : 32,
+                    color: Color(0xFF002B5B),
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),
@@ -229,34 +307,139 @@ class _AcademicPageState extends State<AcademicPage> {
   }
 
   Widget _buildFooter(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    final isTablet = MediaQuery.of(context).size.width >= 768 && MediaQuery.of(context).size.width < 1024;
+    
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(32),
-      color: const Color(0xFF001122),
+      padding: EdgeInsets.all(isMobile ? 24 : isTablet ? 28 : 32),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF002B5B), Color(0xFF001122)],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
       child: Column(
         children: [
-          const Text(
+          Icon(
+            Icons.rocket_launch,
+            color: Color(0xFFFF6B00),
+            size: isMobile ? 40 : 50,
+          ),
+          SizedBox(height: isMobile ? 15 : 20),
+          Text(
             'Ready to take the next step?',
-            style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              color: Colors.white, 
+              fontSize: isMobile ? 18 : isTablet ? 20 : 22, 
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Poppins',
+            ),
+            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 12,
-            children: [
-              ElevatedButton(
-                onPressed: () => Navigator.pushNamed(context, '/admissions'),
-                child: const Text('Apply Now'),
-              ),
-              OutlinedButton(
-                onPressed: () => Navigator.pushNamed(context, '/contact'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  side: const BorderSide(color: Colors.white70),
+          SizedBox(height: isMobile ? 8 : 12),
+          Text(
+            'Join thousands of students who have found their academic spark with us',
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: isMobile ? 14 : 16,
+              fontFamily: 'Inter',
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: isMobile ? 20 : 24),
+          isMobile 
+              ? Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.pushNamed(context, '/admissions'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFFF6B00),
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                        ),
+                        child: Text(
+                          'Apply Now',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pushNamed(context, '/contact'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          side: BorderSide(color: Colors.white70, width: 2),
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                        ),
+                        child: Text(
+                          'Talk to a Counselor',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              : Wrap(
+                  spacing: 16,
+                  runSpacing: 16,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.pushNamed(context, '/admissions'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFFF6B00),
+                        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                      child: Text(
+                        'Apply Now',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    OutlinedButton(
+                      onPressed: () => Navigator.pushNamed(context, '/contact'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        side: BorderSide(color: Colors.white70, width: 2),
+                        padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                      child: Text(
+                        'Talk to a Counselor',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                child: const Text('Talk to a Counselor'),
-              ),
-            ],
-          ),
         ],
       ),
     );
@@ -280,94 +463,291 @@ class _CurriculumCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        width: 960,
-        height: 380,
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    final isTablet = MediaQuery.of(context).size.width >= 768 && MediaQuery.of(context).size.width < 1024;
+    
+    return Container(
+      width: isMobile ? double.infinity : isTablet ? 800 : 1000,
+      height: isMobile ? 480 : isTablet ? 400 : 380,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 18,
-              offset: const Offset(0, 10),
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+            BoxShadow(
+              color: bgColor.withOpacity(0.1),
+              blurRadius: 30,
+              offset: const Offset(0, 15),
             ),
           ],
-          border: Border.all(color: bgColor.withOpacity(0.9)),
+          border: Border.all(color: bgColor.withOpacity(0.3), width: 2),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: bgColor,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Image.asset(image, fit: BoxFit.contain, height: 200),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 24),
-              Expanded(
-                flex: 2,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          padding: EdgeInsets.all(isMobile ? 10.0 : 28.0),
+          child: isMobile 
+              ? Column(
                   children: [
-                    Text(
-                      name,
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF002B5B),
+                    // Header with icon and title
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: bgColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Icons.school,
+                            color: bgColor,
+                            size: 18,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            name,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF002B5B),
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    
+                    // Image container
+                    Container(
+                      height: 130,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [bgColor.withOpacity(0.8), bgColor],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: bgColor.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset(
+                            image, 
+                            fit: BoxFit.contain, 
+                            height: 90,
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 12),
-                    Text(
-                      desc,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF334155),
-                        height: 1.6,
+                    SizedBox(height: 12),
+                    
+                    // Description
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Text(
+                          desc,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF334155),
+                            height: 1.5,
+                            fontFamily: 'Inter',
+                          ),
+                        ),
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: highlights
-                          .map((h) => Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 8),
+                    SizedBox(height: 10),
+                    
+                    // Highlights
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Key Features:',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Color(0xFF002B5B),
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
+                        SizedBox(height: 6),
+                        Wrap(
+                          spacing: 4,
+                          runSpacing: 4,
+                          children: highlights
+                              .map((h) => Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [bgColor.withOpacity(0.8), bgColor],
+                                        begin: Alignment.topLeft,
+                                        end: Alignment.bottomRight,
+                                      ),
+                                      borderRadius: BorderRadius.circular(14),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: bgColor.withOpacity(0.3),
+                                          blurRadius: 4,
+                                          offset: Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Text(
+                                      h,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                        fontFamily: 'Inter',
+                                      ),
+                                    ),
+                                  ))
+                              .toList(),
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+              : Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [bgColor.withOpacity(0.8), bgColor],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: bgColor.withOpacity(0.3),
+                              blurRadius: 15,
+                              offset: Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Image.asset(
+                              image, 
+                              fit: BoxFit.contain, 
+                              height: isTablet ? 200 : 220,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: isTablet ? 24 : 32),
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: bgColor.withOpacity(0.6),
-                                  borderRadius: BorderRadius.circular(999),
+                                  color: bgColor.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: Text(
-                                  h,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFF002B5B),
-                                  ),
+                                child: Icon(
+                                  Icons.school,
+                                  color: bgColor,
+                                  size: 20,
                                 ),
-                              ))
-                          .toList(),
+                              ),
+                              SizedBox(width: 12),
+                              Expanded(
+                                child:                           Text(
+                            name,
+                            style: TextStyle(
+                              fontSize: isTablet ? 26 : 30,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF002B5B),
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            desc,
+                            style: TextStyle(
+                              fontSize: isTablet ? 15 : 17,
+                              color: Color(0xFF334155),
+                              height: 1.6,
+                              fontFamily: 'Inter',
+                            ),
+                          ),
+                          SizedBox(height: 20),
+                          Text(
+                            'Key Features:',
+                            style: TextStyle(
+                              fontSize: isTablet ? 14 : 16,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF002B5B),
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                          SizedBox(height: 12),
+                          Wrap(
+                            spacing: 10,
+                            runSpacing: 10,
+                            children: highlights
+                                .map((h) => Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 10),
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [bgColor.withOpacity(0.8), bgColor],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        ),
+                                        borderRadius: BorderRadius.circular(20),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: bgColor.withOpacity(0.3),
+                                            blurRadius: 5,
+                                            offset: Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Text(
+                                        h,
+                                        style: TextStyle(
+                                          fontSize: isTablet ? 11 : 12,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                          fontFamily: 'Inter',
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
