@@ -12,9 +12,9 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
   int _currentPage = 0;
   final PageController _pageController = PageController(viewportFraction: 0.8);
 
-  void _scrollToNextCard(int totalCards) {
+  void _scrollToNextCard(int totalPages) {
     setState(() {
-      _currentPage = (_currentPage + 1) % totalCards;
+      _currentPage = (_currentPage + 1) % totalPages;
     });
     _pageController.animateToPage(
       _currentPage,
@@ -26,17 +26,27 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
   final List<Map<String, String>> benefits = [
     {
       'title': 'Real-World Skills',
-      'desc':
-          'Gain financial literacy, communication, and problem-solving abilities.',
+      'desc': 'Gain financial literacy, communication, and problem-solving abilities.',
     },
     {
       'title': 'Student-Centered',
-      'desc':
-          'Our program is designed to be interactive, inclusive, and empowering.',
+      'desc': 'Our program is designed to be interactive, inclusive, and empowering.',
     },
     {
       'title': 'Future Readiness',
       'desc': 'We prepare students for careers, relationships, and adult life.',
+    },
+    {
+      'title': 'Expert Mentors',
+      'desc': 'Guidance from experienced educators who care deeply about growth.',
+    },
+    {
+      'title': 'Small Batch Sizes',
+      'desc': 'Get personalized attention and peer interaction that matters.',
+    },
+    {
+      'title': 'Holistic Development',
+      'desc': 'Focus on emotional, social, and cognitive growth equally.',
     },
   ];
 
@@ -147,7 +157,12 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
     );
   }
 
+  
   Widget _buildWhyJoinCarousel() {
+    final Color accentColor = Color(0xFFFF6B00); // Incendia brand orange
+    final int cardsPerPage = 3;
+    final int totalPages = (benefits.length / cardsPerPage).ceil();
+
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -162,60 +177,90 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
           ),
           SizedBox(height: 8),
           Text(
-            'At Incendia, we don’t just offer tuition — we build confidence, clarity, and capability. '
-            'With expert faculty, small batch sizes, and personalized attention, we ensure every student reaches their full potential.',
+            'At Incendia, we don’t just offer tuition — we build confidence, clarity, and capability.',
             style: TextStyle(color: Colors.grey[700]),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 16),
+          SizedBox(height: 24),
 
-          // 📦 Swipeable card area
+          // 🔁 Horizontal PageView with 3 cards per page
           SizedBox(
-            height: 180,
+            height: 260,
             child: PageView.builder(
               controller: _pageController,
-              itemCount: benefits.length,
-              itemBuilder: (context, index) {
-                final item = benefits[index];
-                return AnimatedContainer(
-                  duration: Duration(milliseconds: 300),
-                  margin: EdgeInsets.symmetric(horizontal: 8.0),
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.shade100,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        item['title']!,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
+              itemCount: totalPages,
+              itemBuilder: (context, pageIndex) {
+                int start = pageIndex * cardsPerPage;
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: List.generate(cardsPerPage, (i) {
+                    int cardIndex = start + i;
+                    if (cardIndex >= benefits.length) return Expanded(child: SizedBox());
+                    final item = benefits[cardIndex];
+                    return Expanded(
+                      child: Container(
+                        margin: EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 8,
+                              offset: Offset(0, 4),
+                            ),
+                          ],
+                          border: Border.all(color: accentColor.withOpacity(0.2)),
+                        ),
+                        padding: EdgeInsets.all(20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Icon(Icons.school, size: 32, color: accentColor),
+                            SizedBox(height: 12),
+                            Text(
+                              item['title']!,
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.black87,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              item['desc']!,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[700],
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(height: 8),
-                      Text(item['desc']!),
-                    ],
-                  ),
+                    );
+                  }),
                 );
               },
             ),
           ),
 
-          SizedBox(height: 12),
+          SizedBox(height: 16),
           Align(
             alignment: Alignment.centerRight,
-            child: ElevatedButton(
-              onPressed: () => _scrollToNextCard(benefits.length),
-              child: Text("Next →"),
+            child: TextButton.icon(
+              onPressed: () => _scrollToNextCard(totalPages),
+              icon: Text("Next", style: TextStyle(color: accentColor)),
+              label: Icon(Icons.arrow_forward, color: accentColor),
             ),
           ),
         ],
       ),
     );
   }
+
+
 
   Widget _buildWhoCanApplyCards() {
     return Padding(
