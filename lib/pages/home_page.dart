@@ -7,7 +7,6 @@ import 'package:incendia_webpage/pages/contact_us_page.dart';
 import 'package:incendia_webpage/pages/gallery_page.dart';
 import 'package:incendia_webpage/pages/life_skills_page.dart';
 import 'package:incendia_webpage/pages/schedule_page.dart';
-import 'package:incendia_webpage/components/custom_navbar.dart';
 
 // Main HomePage
 class HomePage extends StatefulWidget {
@@ -112,14 +111,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomNavbar(
-        isTransparent: false,
-        isScrolled: _isScrolled,
-      ),
-      drawer: const CustomDrawer(),
+      drawer: isMobile ? _buildDrawer() : null,
       body: CustomScrollView(
         controller: _scrollController,
         slivers: [
+          _buildAppBar(),
           SliverToBoxAdapter(
             child: Column(
               children: [
@@ -138,32 +134,307 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
+  Widget _buildDrawer() {
+    final menuItems = [
+      {'name': 'Home', 'icon': Icons.home},
+      {'name': 'About', 'icon': Icons.info_outline},
+      {'name': 'Academic', 'icon': Icons.school},
+      {'name': 'Life Skills', 'icon': Icons.psychology},
+      {'name': 'Schedule', 'icon': Icons.schedule},
+      {'name': 'Admissions', 'icon': Icons.how_to_reg},
+      {'name': 'Gallery', 'icon': Icons.photo_library},
+      {'name': 'Careers', 'icon': Icons.work},
+      {'name': 'Contact', 'icon': Icons.contact_phone},
+    ];
 
+    return Drawer(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF002B5B), Color(0xFF004080)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              Container(
+                padding: EdgeInsets.all(24),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFFFF6B00).withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        Icons.menu_book,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                    SizedBox(width: 16),
+                    Text(
+                      'Incendia',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(24),
+                      topRight: Radius.circular(24),
+                    ),
+                  ),
+                  child: ListView(
+                    padding: EdgeInsets.all(16),
+                    children: menuItems
+                        .map(
+                          (item) => Container(
+                            margin: EdgeInsets.only(bottom: 8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: Colors.grey.shade50,
+                            ),
+                            child: ListTile(
+                              leading: Icon(
+                                item['icon'] as IconData,
+                                color: Color(0xFFFF6B00),
+                                size: 24,
+                              ),
+                              title: Text(
+                                item['name'] as String,
+                                style: TextStyle(
+                                  color: Color(0xFF002B5B),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 16,
+                                ),
+                              ),
+                              trailing: Icon(
+                                Icons.arrow_forward_ios,
+                                size: 16,
+                                color: Color(0xFFFF6B00),
+                              ),
+                              onTap: () {
+                                Navigator.pop(context);
+                                _navigateTo(item['name'] as String);
+                              },
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAppBar() {
+    final menuItems = ['About','Academic','Admissions','Careers','Life Skills','Schedule','Gallery','Contact'];
+
+    return SliverAppBar(
+      expandedHeight: 70,
+      floating: true,
+      pinned: true,
+      backgroundColor: _isScrolled ? Colors.white : Colors.transparent,
+      elevation: _isScrolled ? 4 : 0,
+
+      // keep the hamburger on mobile, remove auto back arrows elsewhere
+      automaticallyImplyLeading: false,
+      leading: isMobile
+          ? Builder(
+              builder: (ctx) => IconButton(
+                icon: const Icon(Icons.menu, color: Color(0xFF002B5B)),
+                onPressed: () => Scaffold.of(ctx).openDrawer(),
+              ),
+            )
+          : null,
+
+      // ensure the title stays on the left when collapsed (not centered)
+      centerTitle: false,
+
+      flexibleSpace: Container(
+        decoration: _isScrolled
+            ? BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              )
+            : null,
+        child: FlexibleSpaceBar(
+          // <<< left padding so it's not glued to the edge, proper vertical positioning
+          titlePadding: EdgeInsets.only(
+            left: isMobile ? 56 : 20,
+            bottom: 16,
+          ),
+          centerTitle: false,
+
+          // <<< clickable brand → Home
+          title: InkWell(
+            onTap: () => _navigateTo('Home'),
+            borderRadius: BorderRadius.circular(8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: isMobile ? 32 : 36,
+                  height: isMobile ? 32 : 36,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
+                    ),
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFFFF6B00).withOpacity(0.3),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.menu_book,
+                    color: Colors.white,
+                    size: isMobile ? 18 : 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  'Incendia',
+                  style: TextStyle(
+                    color: Color(0xFF002B5B),
+                    fontSize: isMobile ? 20 : 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+
+      actions: isMobile
+          ? null
+          : [
+              Container(
+                margin: const EdgeInsets.only(right: 24),
+                child: Row(
+                  children: menuItems.map(
+                    (item) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
+                      child: TextButton(
+                        onPressed: () => _navigateTo(item),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        ),
+                        child: Text(
+                          item,
+                          style: const TextStyle(
+                            color: Color(0xFF002B5B),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ).toList(),
+                ),
+              ),
+            ],
+    );
+  }
 
   Widget _buildHeroSection() {
     return Container(
-      height: isMobile ? 550 : 650,
+      height: isMobile ? 600 : 700,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF002B5B), Color(0xFF004080), Color(0xFF0056B3)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: Color(0xFF002B5B), // Solid blue background like reference
       ),
       child: Stack(
         children: [
+          // Floating decorative icons - top left
           Positioned(
-            top: -80,
-            right: -80,
+            top: 80,
+            left: 30,
             child: Container(
-              width: 200,
-              height: 200,
+              width: 80,
+              height: 80,
               decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
                 shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [Colors.white.withOpacity(0.1), Colors.transparent],
-                ),
               ),
+              child: Icon(Icons.psychology, color: Colors.white.withOpacity(0.6), size: 40),
+            ),
+          ),
+          Positioned(
+            top: 160,
+            left: 40,
+            child: Container(
+              width: 70,
+              height: 70,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.trending_up, color: Colors.white.withOpacity(0.6), size: 35),
+            ),
+          ),
+          
+          // Floating decorative icons - top right
+          Positioned(
+            top: 100,
+            right: 50,
+            child: Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.school, color: Colors.white.withOpacity(0.6), size: 40),
+            ),
+          ),
+          Positioned(
+            top: 180,
+            right: 40,
+            child: Container(
+              width: 70,
+              height: 70,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.stars, color: Colors.white.withOpacity(0.6), size: 35),
             ),
           ),
           Center(
@@ -222,8 +493,66 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ),
             ),
           ),
+          
+          // Glassmorphism statistics bar at bottom
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              margin: EdgeInsets.symmetric(horizontal: isMobile ? 20 : 40, vertical: 30),
+              padding: EdgeInsets.symmetric(horizontal: isMobile ? 20 : 40, vertical: 20),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.white.withOpacity(0.2)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 20,
+                    offset: Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _buildStatItem(Icons.people, '10K+', 'Students'),
+                  _buildStatItem(Icons.percent, '95%', 'Success Rate'),
+                  _buildStatItem(Icons.person, '50+', 'Expert Teachers'),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
+    );
+  }
+  
+  Widget _buildStatItem(IconData icon, String number, String label) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: Colors.white.withOpacity(0.8), size: isMobile ? 32 : 40),
+        SizedBox(height: 8),
+        Text(
+          number,
+          style: TextStyle(
+            fontSize: isMobile ? 28 : 36,
+            fontWeight: FontWeight.w900,
+            color: Color(0xFFFF6B00),
+          ),
+        ),
+        SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: isMobile ? 12 : 14,
+            color: Colors.white.withOpacity(0.9),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ],
     );
   }
 

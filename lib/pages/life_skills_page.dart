@@ -439,10 +439,7 @@ class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMix
     final isMobile = MediaQuery.of(context).size.width < 768;
     final isTablet = MediaQuery.of(context).size.width >= 768 && MediaQuery.of(context).size.width < 1024;
     
-    return MouseRegion(
-      onEnter: (_) => _onEnter(true),
-      onExit: (_) => _onEnter(false),
-      child: AnimatedBuilder(
+    Widget content = AnimatedBuilder(
         animation: _animation,
         builder: (context, child) {
           final scale = 1.0 + (0.045 * _animation.value);
@@ -484,6 +481,19 @@ class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMix
             ),
           );
         },
+    );
+    
+    return GestureDetector(
+      onTap: () {
+        // Toggle expanded state on mobile when tapped
+        if (isMobile) {
+          _onEnter(!isHovered);
+        }
+      },
+      child: MouseRegion(
+        onEnter: isMobile ? null : (_) => _onEnter(true),
+        onExit: isMobile ? null : (_) => _onEnter(false),
+        child: content,
       ),
     );
   }
