@@ -40,7 +40,7 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: isTransparent 
           ? (isScrolled ? Colors.white : Colors.transparent)
           : const Color(0xFF002B5B),
-      foregroundColor: isTransparent && !isScrolled ? Colors.white : Colors.white,
+      foregroundColor: Colors.white,
       elevation: isTransparent ? (isScrolled ? 4 : 0) : 0,
       centerTitle: false,
       automaticallyImplyLeading: showBackButton,
@@ -48,7 +48,7 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
           ? IconButton(
               icon: Icon(
                 Icons.arrow_back_ios, 
-                color: isTransparent && !isScrolled ? Colors.white : Colors.white
+                color: Colors.white
               ),
               onPressed: onBackPressed ?? () => Navigator.pop(context),
             )
@@ -57,7 +57,7 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
           ? Text(
               title!,
               style: TextStyle(
-                color: isTransparent && !isScrolled ? Colors.white : Colors.white,
+                color: Colors.white,
                 fontSize: isMobile ? 18 : isTablet ? 20 : 22,
                 fontWeight: FontWeight.w600,
               ),
@@ -104,7 +104,7 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
           Text(
             'Incendia',
             style: TextStyle(
-              color: isTransparent && !isScrolled ? Colors.white : Colors.white,
+              color: Colors.white,
               fontSize: isMobile ? 20 : isTablet ? 24 : 28,
               fontWeight: FontWeight.bold,
             ),
@@ -121,7 +121,7 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
           builder: (context) => IconButton(
             icon: Icon(
               Icons.menu, 
-              color: isTransparent && !isScrolled ? Colors.white : Colors.white
+              color: Colors.white
             ),
             onPressed: () => Scaffold.of(context).openDrawer(),
           ),
@@ -160,7 +160,7 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
                 child: Text(
                   item,
                   style: TextStyle(
-                    color: isTransparent && !isScrolled ? Colors.white : Colors.white,
+                    color: Colors.white,
                     fontWeight: FontWeight.w600,
                     fontSize: isDesktop ? 16 : isTablet ? 15 : 14,
                   ),
