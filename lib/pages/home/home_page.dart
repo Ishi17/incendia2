@@ -9,7 +9,6 @@ import 'package:incendia_webpage/pages/life_skills_page.dart';
 import 'package:incendia_webpage/pages/schedule_page.dart';
 import 'package:incendia_webpage/pages/home/widgets/hero_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/combined_services_offerings.dart';
-import 'package:incendia_webpage/pages/home/widgets/stats_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/testimonials_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/cta_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/footer_section.dart';
@@ -132,7 +131,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   navigateTo: _navigateTo,
                 ),
                 CombinedServicesOfferings(isMobile: isMobile),
-                StatsSection(isMobile: isMobile),
                 TestimonialsSection(isMobile: isMobile),
                 CtaSection(isMobile: isMobile, navigateTo: _navigateTo),
                 FooterSection(isMobile: isMobile),
