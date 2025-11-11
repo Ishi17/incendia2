@@ -27,63 +27,65 @@ class HeroSection extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          // Professional floating elements
+          // Professional floating elements - positioned at edges on mobile with minimal margin, no overlap
           _buildFloatingElement(
-            top: 80,
-            right: 60,
-            size: 100,
+            top: isMobile ? 40 : 80,
+            right: isMobile ? 0 : 60,
+            size: isMobile ? 50 : 100,
             icon: Icons.school_outlined,
             color: Colors.amber,
             delay: 0,
           ),
+          // Science/lab icon - hidden on mobile
+          if (!isMobile)
+            _buildFloatingElement(
+              top: 200,
+              left: 40,
+              size: 80,
+              icon: Icons.science_outlined,
+              color: Colors.lightBlue,
+              delay: 800,
+            ),
           _buildFloatingElement(
-            top: 200,
-            left: 40,
-            size: 80,
-            icon: Icons.science_outlined,
-            color: Colors.lightBlue,
-            delay: 800,
-          ),
-          _buildFloatingElement(
-            top: 120,
-            left: 120,
-            size: 90,
+            top: isMobile ? 60 : 80,
+            left: isMobile ? 0 : 50,
+            size: isMobile ? 48 : 90,
             icon: Icons.menu_book_outlined,
             color: Colors.greenAccent,
             delay: 1600,
           ),
           _buildFloatingElement(
-            bottom: 120,
-            right: 100,
-            size: 110,
+            bottom: isMobile ? 120 : 120,
+            right: isMobile ? 1 : 100,
+            size: isMobile ? 52 : 110,
             icon: Icons.biotech_outlined,
             color: Colors.purpleAccent,
             delay: 2400,
           ),
           _buildFloatingElement(
-            bottom: 250,
-            left: 60,
-            size: 85,
+            top: isMobile ? 220 : 180,
+            right: isMobile ? 0 : 60,
+            size: isMobile ? 46 : 85,
             icon: Icons.history_edu_outlined,
             color: Colors.orangeAccent,
             delay: 3200,
           ),
           _buildFloatingElement(
-            top: 180,
-            right: 150,
-            size: 95,
+            top: isMobile ? 340 : 180,
+            left: isMobile ? 0 : 120,
+            size: isMobile ? 44 : 95,
             icon: Icons.architecture_outlined,
             color: Colors.pinkAccent,
             delay: 4000,
           ),
 
-          // Background decorative elements
+          // Background decorative elements - positioned at edges on mobile with minimal margin
           Positioned(
-            top: -100,
-            right: -100,
+            top: isMobile ? -60 : -100,
+            right: isMobile ? -40 : -100,
             child: Container(
-              width: 300,
-              height: 300,
+              width: isMobile ? 140 : 300,
+              height: isMobile ? 140 : 300,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
@@ -93,11 +95,11 @@ class HeroSection extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 200,
-            left: -80,
+            top: isMobile ? 200 : 200,
+            left: isMobile ? -30 : -80,
             child: Container(
-              width: 200,
-              height: 200,
+              width: isMobile ? 100 : 200,
+              height: isMobile ? 100 : 200,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
@@ -107,11 +109,11 @@ class HeroSection extends StatelessWidget {
             ),
           ),
           Positioned(
-            bottom: -80,
-            right: 150,
+            bottom: isMobile ? -20 : -80,
+            right: isMobile ? -10 : 150,
             child: Container(
-              width: 180,
-              height: 180,
+              width: isMobile ? 90 : 180,
+              height: isMobile ? 90 : 180,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
@@ -121,10 +123,13 @@ class HeroSection extends StatelessWidget {
             ),
           ),
 
-          // Main content
+          // Main content - with extra padding on mobile to avoid circles
           Center(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: isMobile ? 20 : 40),
+              padding: EdgeInsets.symmetric(
+                horizontal: isMobile ? 24 : 40,
+                vertical: isMobile ? 20 : 0,
+              ),
               child: AnimatedBuilder(
                 animation: fadeAnimation,
                 builder: (context, child) {
@@ -136,49 +141,52 @@ class HeroSection extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           // Main heading
-                          const Text(
+                          Text(
                             'Empowering Students\nfor Academic Excellence',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontWeight: FontWeight.w900,
                               color: Colors.white,
                               height: 1.2,
-                              fontSize: 28,
+                              fontSize: isMobile ? 24 : 28,
                             ),
                           ),
-                          const SizedBox(height: 20),
+                          SizedBox(height: isMobile ? 16 : 20),
 
                           // Subtitle
                           Text(
                             'Comprehensive education programs combining academic mastery with essential life skills.',
                             style: TextStyle(
-                              fontSize: isMobile ? 16 : 18,
+                              fontSize: isMobile ? 14 : 18,
                               color: Colors.white.withOpacity(0.9),
                               height: 1.6,
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: 40),
+                          SizedBox(height: isMobile ? 30 : 40),
 
                           // Action buttons
                           Wrap(
-                            spacing: 16,
-                            runSpacing: 12,
+                            spacing: isMobile ? 12 : 16,
+                            runSpacing: isMobile ? 12 : 12,
+                            alignment: WrapAlignment.center,
                             children: [
                               _GradientActionButton(
                                 text: 'Start Your Journey',
                                 onPressed: () => navigateTo('Admissions'),
+                                isMobile: isMobile,
                               ),
                               _OutlineActionButton(
                                 text: 'Learn More',
                                 onPressed: () => navigateTo('About'),
+                                isMobile: isMobile,
                               ),
                             ],
                           ),
-                          const SizedBox(height: 40),
+                          SizedBox(height: isMobile ? 30 : 40),
 
                           // Student images and stats
-                          _buildStudentShowcase(),
+                          _buildStudentShowcase(isMobile: isMobile),
                         ],
                       ),
                     ),
@@ -260,7 +268,7 @@ class HeroSection extends StatelessWidget {
     );
   }
 
-  Widget _buildStudentShowcase() {
+  Widget _buildStudentShowcase({bool isMobile = false}) {
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 1500),
       tween: Tween(begin: 0.0, end: 1.0),
@@ -270,7 +278,7 @@ class HeroSection extends StatelessWidget {
           child: Opacity(
             opacity: value,
             child: Container(
-              padding: const EdgeInsets.all(24),
+              padding: EdgeInsets.all(isMobile ? 16 : 24),
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.12),
                 borderRadius: BorderRadius.circular(24),
@@ -292,28 +300,40 @@ class HeroSection extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _buildAnimatedStudentAvatar(Icons.person, 'Alex', 0),
-                      const SizedBox(width: 12),
-                      _buildAnimatedStudentAvatar(Icons.person, 'Sarah', 200),
-                      const SizedBox(width: 12),
-                      _buildAnimatedStudentAvatar(Icons.person, 'Mike', 400),
-                      const SizedBox(width: 12),
-                      _buildAnimatedStudentAvatar(Icons.person, 'Emma', 600),
-                      const SizedBox(width: 12),
-                      _buildAnimatedStudentAvatar(Icons.person, 'David', 800),
+                      _buildAnimatedStudentAvatar(Icons.person, 'Alex', 0, isMobile),
+                      SizedBox(width: isMobile ? 8 : 12),
+                      _buildAnimatedStudentAvatar(Icons.person, 'Sarah', 200, isMobile),
+                      SizedBox(width: isMobile ? 8 : 12),
+                      _buildAnimatedStudentAvatar(Icons.person, 'Mike', 400, isMobile),
+                      if (!isMobile) ...[
+                        const SizedBox(width: 12),
+                        _buildAnimatedStudentAvatar(Icons.person, 'Emma', 600, isMobile),
+                        const SizedBox(width: 12),
+                        _buildAnimatedStudentAvatar(Icons.person, 'David', 800, isMobile),
+                      ],
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: isMobile ? 16 : 20),
 
                   // Success stats with animation
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildAnimatedStatItem('10K+', 'Students', 0),
-                      _buildAnimatedStatItem('95%', 'Success Rate', 300),
-                      _buildAnimatedStatItem('50+', 'Expert Teachers', 600),
-                    ],
-                  ),
+                  isMobile
+                      ? Column(
+                          children: [
+                            _buildAnimatedStatItem('10K+', 'Students', 0, isMobile),
+                            const SizedBox(height: 12),
+                            _buildAnimatedStatItem('95%', 'Success Rate', 300, isMobile),
+                            const SizedBox(height: 12),
+                            _buildAnimatedStatItem('50+', 'Expert Teachers', 600, isMobile),
+                          ],
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            _buildAnimatedStatItem('10K+', 'Students', 0, isMobile),
+                            _buildAnimatedStatItem('95%', 'Success Rate', 300, isMobile),
+                            _buildAnimatedStatItem('50+', 'Expert Teachers', 600, isMobile),
+                          ],
+                        ),
                 ],
               ),
             ),
@@ -323,7 +343,7 @@ class HeroSection extends StatelessWidget {
     );
   }
 
-  Widget _buildAnimatedStudentAvatar(IconData icon, String name, int delay) {
+  Widget _buildAnimatedStudentAvatar(IconData icon, String name, int delay, bool isMobile) {
     return TweenAnimationBuilder<double>(
       duration: Duration(milliseconds: 800 + delay),
       tween: Tween(begin: 0.0, end: 1.0),
@@ -335,8 +355,8 @@ class HeroSection extends StatelessWidget {
             child: Opacity(
               opacity: value,
               child: Container(
-                width: 55,
-                height: 55,
+                width: isMobile ? 45 : 55,
+                height: isMobile ? 45 : 55,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
@@ -346,7 +366,7 @@ class HeroSection extends StatelessWidget {
                       Colors.white.withOpacity(0.1),
                     ],
                   ),
-                  borderRadius: BorderRadius.circular(27.5),
+                  borderRadius: BorderRadius.circular(isMobile ? 22.5 : 27.5),
                   border: Border.all(
                     color: Colors.white.withOpacity(0.4),
                     width: 2,
@@ -363,7 +383,7 @@ class HeroSection extends StatelessWidget {
                   child: Icon(
                     icon,
                     color: Colors.white.withOpacity(0.9),
-                    size: 28,
+                    size: isMobile ? 22 : 28,
                   ),
                 ),
               ),
@@ -374,7 +394,7 @@ class HeroSection extends StatelessWidget {
     );
   }
 
-  Widget _buildAnimatedStatItem(String number, String label, int delay) {
+  Widget _buildAnimatedStatItem(String number, String label, int delay, bool isMobile) {
     return TweenAnimationBuilder<double>(
       duration: Duration(milliseconds: 1000 + delay),
       tween: Tween(begin: 0.0, end: 1.0),
@@ -387,17 +407,17 @@ class HeroSection extends StatelessWidget {
               children: [
                 Text(
                   number,
-                  style: const TextStyle(
-                    fontSize: 22,
+                  style: TextStyle(
+                    fontSize: isMobile ? 18 : 22,
                     fontWeight: FontWeight.w900,
                     color: Color(0xFFFF6B00),
                   ),
                 ),
-                const SizedBox(height: 6),
+                SizedBox(height: isMobile ? 4 : 6),
                 Text(
                   label,
                   style: TextStyle(
-                    fontSize: 13,
+                    fontSize: isMobile ? 11 : 13,
                     color: Colors.white.withOpacity(0.9),
                     fontWeight: FontWeight.w600,
                   ),
@@ -414,8 +434,13 @@ class HeroSection extends StatelessWidget {
 class _GradientActionButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
+  final bool isMobile;
 
-  const _GradientActionButton({required this.text, required this.onPressed});
+  const _GradientActionButton({
+    required this.text,
+    required this.onPressed,
+    this.isMobile = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -438,17 +463,20 @@ class _GradientActionButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+          padding: EdgeInsets.symmetric(
+            vertical: isMobile ? 14 : 16,
+            horizontal: isMobile ? 24 : 32,
+          ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),
         ),
         child: Text(
           text,
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w700,
-            fontSize: 16,
+            fontSize: isMobile ? 14 : 16,
           ),
         ),
       ),
@@ -459,8 +487,13 @@ class _GradientActionButton extends StatelessWidget {
 class _OutlineActionButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
+  final bool isMobile;
 
-  const _OutlineActionButton({required this.text, required this.onPressed});
+  const _OutlineActionButton({
+    required this.text,
+    required this.onPressed,
+    this.isMobile = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -473,17 +506,20 @@ class _OutlineActionButton extends StatelessWidget {
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
           side: BorderSide.none,
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+          padding: EdgeInsets.symmetric(
+            vertical: isMobile ? 14 : 16,
+            horizontal: isMobile ? 24 : 32,
+          ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),
         ),
         child: Text(
           text,
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w700,
-            fontSize: 16,
+            fontSize: isMobile ? 14 : 16,
           ),
         ),
       ),
