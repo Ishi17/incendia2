@@ -1,5 +1,6 @@
 // Gallery Page
 import 'package:flutter/material.dart';
+import 'package:incendia_webpage/components/custom_drawer.dart';
 import '../components/custom_navbar.dart';
 
 class GalleryPage extends StatelessWidget {
@@ -15,7 +16,7 @@ class GalleryPage extends StatelessWidget {
         title: 'Gallery',
         showBackButton: true,
       ),
-      drawer: const CustomDrawer(),
+      drawer: CustomDrawer(),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(isMobile ? 12 : 16),
         child: Column(

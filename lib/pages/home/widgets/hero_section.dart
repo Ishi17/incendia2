@@ -319,19 +319,19 @@ class HeroSection extends StatelessWidget {
                   isMobile
                       ? Column(
                           children: [
-                            _buildAnimatedStatItem('10K+', 'Students', 0, isMobile),
+                            _buildAnimatedStatItem(10, 'K+', 'Students', 0, isMobile),
                             const SizedBox(height: 12),
-                            _buildAnimatedStatItem('95%', 'Success Rate', 300, isMobile),
+                            _buildAnimatedStatItem(95, '%', 'Success Rate', 300, isMobile),
                             const SizedBox(height: 12),
-                            _buildAnimatedStatItem('50+', 'Expert Teachers', 600, isMobile),
+                            _buildAnimatedStatItem(50, '+', 'Expert Teachers', 600, isMobile),
                           ],
                         )
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            _buildAnimatedStatItem('10K+', 'Students', 0, isMobile),
-                            _buildAnimatedStatItem('95%', 'Success Rate', 300, isMobile),
-                            _buildAnimatedStatItem('50+', 'Expert Teachers', 600, isMobile),
+                            _buildAnimatedStatItem(10, 'K+', 'Students', 0, isMobile),
+                            _buildAnimatedStatItem(95, '%', 'Success Rate', 300, isMobile),
+                            _buildAnimatedStatItem(50, '+', 'Expert Teachers', 600, isMobile),
                           ],
                         ),
                 ],
@@ -394,19 +394,31 @@ class HeroSection extends StatelessWidget {
     );
   }
 
-  Widget _buildAnimatedStatItem(String number, String label, int delay, bool isMobile) {
+  Widget _buildAnimatedStatItem(
+    int targetValue,
+    String suffix,
+    String label,
+    int delay,
+    bool isMobile,
+  ) {
     return TweenAnimationBuilder<double>(
-      duration: Duration(milliseconds: 1000 + delay),
-      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(milliseconds: 3500 + delay),
+      tween: Tween(begin: 0.0, end: targetValue.toDouble()),
       builder: (context, value, child) {
+        final currentValue = value.clamp(0, targetValue.toDouble()).round();
+        final progress = targetValue == 0
+            ? 1.0
+            : (value / targetValue).clamp(0.0, 1.0);
+        final delayedSuffix = suffix.trim() == '+';
+        final suffixToShow = delayedSuffix && currentValue < targetValue ? '' : suffix;
         return Transform.translate(
-          offset: Offset(0, 15 * (1 - value)),
+          offset: Offset(0, 15 * (1 - progress)),
           child: Opacity(
-            opacity: value,
+            opacity: progress,
             child: Column(
               children: [
                 Text(
-                  number,
+                  '$currentValue$suffixToShow',
                   style: TextStyle(
                     fontSize: isMobile ? 18 : 22,
                     fontWeight: FontWeight.w900,

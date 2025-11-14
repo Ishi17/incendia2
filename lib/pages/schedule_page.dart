@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:incendia_webpage/components/custom_drawer.dart';
 import '../components/custom_navbar.dart';
 
 class SchedulePage extends StatefulWidget {
@@ -47,7 +48,7 @@ class _SchedulePageState extends State<SchedulePage> with TickerProviderStateMix
         title: 'Schedule',
         showBackButton: true,
       ),
-      drawer: const CustomDrawer(),
+      drawer: CustomDrawer(),
       backgroundColor: Color(0xFFF5F5F5),
       body: SingleChildScrollView(
         child: Column(

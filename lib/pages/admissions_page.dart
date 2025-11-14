@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:incendia_webpage/components/custom_drawer.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import '../components/custom_navbar.dart';
 
@@ -78,7 +79,7 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
         title: 'Admissions',
         showBackButton: true,
       ),
-      drawer: const CustomDrawer(),
+      drawer: CustomDrawer(),
       body: SingleChildScrollView(
         child: Center( 
           child: Column(
@@ -395,14 +396,7 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
   Widget _requiredField(String label, {int maxLines = 1}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
-      child: TextField(
-        maxLines: maxLines,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(),
-          suffixIcon: Icon(Icons.star, color: Colors.redAccent, size: 12),
-        ),
-      ),
+      child: _HoverableAdmissionField(label: label, maxLines: maxLines),
     );
   }
 
@@ -445,6 +439,50 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
           SizedBox(height: 12),
           Text('© 2025 Life Skills Program'),
         ],
+      ),
+    );
+  }
+}
+
+class _HoverableAdmissionField extends StatefulWidget {
+  final String label;
+  final int maxLines;
+
+  const _HoverableAdmissionField({
+    required this.label,
+    this.maxLines = 1,
+  });
+
+  @override
+  State<_HoverableAdmissionField> createState() => _HoverableAdmissionFieldState();
+}
+
+class _HoverableAdmissionFieldState extends State<_HoverableAdmissionField> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final baseBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: Colors.grey.shade300),
+    );
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: TextField(
+        maxLines: widget.maxLines,
+        decoration: InputDecoration(
+          labelText: widget.label,
+          suffixIcon: const Icon(Icons.star, color: Colors.redAccent, size: 12),
+          border: baseBorder,
+          enabledBorder: baseBorder,
+          focusedBorder: baseBorder.copyWith(
+            borderSide: const BorderSide(color: Color(0xFF002B5B), width: 2),
+          ),
+          filled: true,
+          fillColor: _isHovered ? Colors.grey.shade100 : Colors.white,
+        ),
       ),
     );
   }

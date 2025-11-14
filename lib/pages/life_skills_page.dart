@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:incendia_webpage/components/custom_drawer.dart';
 import '../components/custom_navbar.dart';
 
 class LifeSkillsPage extends StatelessWidget {
@@ -14,7 +15,7 @@ class LifeSkillsPage extends StatelessWidget {
         title: 'Life Skills',
         showBackButton: true,
       ),
-      drawer: const CustomDrawer(),
+      drawer: CustomDrawer(),
       body: SingleChildScrollView(
         child: SizedBox(
           width: double.infinity,

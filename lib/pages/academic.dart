@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:incendia_webpage/components/custom_drawer.dart';
 import '../components/custom_navbar.dart';
  
 
@@ -76,7 +77,7 @@ class _AcademicPageState extends State<AcademicPage> {
         title: 'Academics',
         showBackButton: true,
       ),
-      drawer: const CustomDrawer(),
+      drawer: CustomDrawer(),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -524,7 +525,7 @@ class _CurriculumCard extends StatelessWidget {
                     
                     // Image container
                     Container(
-                      height: 130,
+                      height: 90,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [bgColor.withOpacity(0.8), bgColor],
@@ -546,7 +547,7 @@ class _CurriculumCard extends StatelessWidget {
                           child: Image.asset(
                             image, 
                             fit: BoxFit.contain, 
-                            height: 90,
+                            height: 55,
                           ),
                         ),
                       ),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:incendia_webpage/pages/about_page.dart';
 import 'package:incendia_webpage/pages/academic.dart';
@@ -13,6 +15,7 @@ import 'package:incendia_webpage/pages/home/widgets/testimonials_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/cta_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/footer_section.dart';
 import 'package:incendia_webpage/components/custom_navbar.dart';
+import 'package:incendia_webpage/components/custom_drawer.dart';
 
 // Main HomePage
 class HomePage extends StatefulWidget {
@@ -29,6 +32,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late AnimationController _cardAnimationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  Timer? _popupTimer;
+  bool _showUrgencyPopup = true;
 
   @override
   void initState() {
@@ -66,6 +71,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         _cardAnimationController.forward();
       }
     });
+
+    _startUrgencyPopupTimer();
   }
 
   @override
@@ -73,6 +80,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _scrollController.dispose();
     _heroAnimationController.dispose();
     _cardAnimationController.dispose();
+    _popupTimer?.cancel();
     super.dispose();
   }
 
@@ -116,27 +124,58 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 
+  void _startUrgencyPopupTimer() {
+    _popupTimer?.cancel();
+    _popupTimer = Timer(const Duration(seconds: 5), () {
+      if (!mounted) return;
+      setState(() => _showUrgencyPopup = false);
+    });
+  }
+
+  void _dismissUrgencyPopup() {
+    if (!_showUrgencyPopup) return;
+    _popupTimer?.cancel();
+    setState(() => _showUrgencyPopup = false);
+  }
+
+  void _handlePopupCta() {
+    _dismissUrgencyPopup();
+    _navigateTo('Admissions');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomNavbar(),
-      drawer: const CustomDrawer(),
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: Column(
-          children: [
-            HeroSection(
-              isMobile: isMobile,
-              fadeAnimation: _fadeAnimation,
-              slideAnimation: _slideAnimation,
-              navigateTo: _navigateTo,
+      appBar: CustomNavbar(isScrolled: _isScrolled),
+      drawer: CustomDrawer(),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            controller: _scrollController,
+            child: Column(
+              children: [
+                HeroSection(
+                  isMobile: isMobile,
+                  fadeAnimation: _fadeAnimation,
+                  slideAnimation: _slideAnimation,
+                  navigateTo: _navigateTo,
+                ),
+                CombinedServicesOfferings(isMobile: isMobile),
+                TestimonialsSection(isMobile: isMobile),
+                CtaSection(isMobile: isMobile, navigateTo: _navigateTo),
+                FooterSection(isMobile: isMobile),
+              ],
             ),
-            CombinedServicesOfferings(isMobile: isMobile),
-            TestimonialsSection(isMobile: isMobile),
-            CtaSection(isMobile: isMobile, navigateTo: _navigateTo),
-            FooterSection(isMobile: isMobile),
-          ],
-        ),
+          ),
+          if (_showUrgencyPopup)
+            Positioned.fill(
+              child: _UrgencyPopup(
+                isMobile: isMobile,
+                onClose: _dismissUrgencyPopup,
+                onAction: _handlePopupCta,
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -150,7 +189,145 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   // Extracted to TestimonialsSection widget (widgets/testimonials_section.dart)
 
-  // Extracted to CtaSection widget (widgets/cta_section.dart)
+// Extracted to CtaSection widget (widgets/cta_section.dart)
+}
+
+class _UrgencyPopup extends StatelessWidget {
+  final bool isMobile;
+  final VoidCallback onClose;
+  final VoidCallback onAction;
+
+  const _UrgencyPopup({
+    required this.isMobile,
+    required this.onClose,
+    required this.onAction,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 250),
+      opacity: 1,
+      child: GestureDetector(
+        onTap: onClose,
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          color: Colors.black.withOpacity(0.55),
+          child: Center(
+            child: GestureDetector(
+              onTap: () {},
+              behavior: HitTestBehavior.translucent,
+              child: SafeArea(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: isMobile ? 340 : 420,
+                  ),
+                  child: Material(
+                    borderRadius: BorderRadius.circular(24),
+                    clipBehavior: Clip.antiAlias,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 20 : 28,
+                        vertical: isMobile ? 20 : 24,
+                      ),
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Color(0xFF002B5B), Color(0xFF001735)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(
+                                  Icons.local_fire_department,
+                                  color: Color(0xFFFF6B00),
+                                ),
+                              ),
+                              const Spacer(),
+                              IconButton(
+                                onPressed: onClose,
+                                icon: const Icon(Icons.close, color: Colors.white),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Only 2 seats left!',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: isMobile ? 22 : 24,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Secure your child’s seat in the upcoming batch before enrollment closes.',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: isMobile ? 14 : 16,
+                              height: 1.4,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: onAction,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFFF6B00),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: isMobile ? 14 : 16,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Secure Seat',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              TextButton(
+                                onPressed: onClose,
+                                child: Text(
+                                  'Maybe Later',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.85),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 // // About Page

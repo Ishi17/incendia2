@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:incendia_webpage/components/custom_drawer.dart';
 import '../components/custom_navbar.dart';
 
 class CareersPage extends StatefulWidget {
@@ -80,7 +81,7 @@ class _CareersPageState extends State<CareersPage>
         title: 'Careers',
         showBackButton: true,
       ),
-      drawer: const CustomDrawer(),
+      drawer: CustomDrawer(),
       backgroundColor: const Color(0xFFFFFDF7),
       body: SingleChildScrollView(
         child: Column(
@@ -513,36 +514,13 @@ class _CareersPageState extends State<CareersPage>
           ),
         ),
         const SizedBox(height: 8),
-        TextFormField(
+        _HoverableCareerTextField(
           controller: controller,
+          hint: hint,
+          icon: icon,
           keyboardType: keyboardType,
           maxLines: maxLines,
-          validator: isRequired
-              ? (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'This field is required';
-                  }
-                  return null;
-                }
-              : null,
-          decoration: InputDecoration(
-            hintText: hint,
-            prefixIcon: Icon(icon, color: const Color(0xFF0F1729)), // Updated to darker blue
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey.shade300),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey.shade300),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF0F1729), width: 2), // Updated to darker blue
-            ),
-            filled: true,
-            fillColor: Colors.white,
-          ),
+          isRequired: isRequired,
         ),
       ],
     );
@@ -569,37 +547,10 @@ class _CareersPageState extends State<CareersPage>
               runSpacing: 12,
               children: options.map((option) {
                 final isSelected = selectedOptions.contains(option);
-                return GestureDetector(
+                return _HoverableSelectChip(
+                  label: option,
+                  isSelected: isSelected,
                   onTap: () => onChanged(option),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: isSelected ? const Color(0xFF0F1729) : Colors.white, // Updated to darker blue
-                      borderRadius: BorderRadius.circular(25),
-                      border: Border.all(
-                        color: isSelected ? const Color(0xFF0F1729) : Colors.grey.shade300, // Updated to darker blue
-                        width: 2,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          isSelected ? Icons.check_circle : Icons.circle_outlined,
-                          color: isSelected ? Colors.white : Colors.grey.shade600,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          option,
-                          style: TextStyle(
-                            color: isSelected ? Colors.white : Colors.grey.shade700,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 );
               }).toList(),
             ),
@@ -637,38 +588,10 @@ class _CareersPageState extends State<CareersPage>
               children: options.map((option) {
                 final isSelected = selectedValue == option;
                 return Expanded(
-                  child: GestureDetector(
+                  child: _HoverableRadioChip(
+                    label: option,
+                    isSelected: isSelected,
                     onTap: () => onChanged(option),
-                    child: Container(
-                      margin: const EdgeInsets.only(right: 8),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: isSelected ? const Color(0xFF0F1729) : Colors.white, // Updated to darker blue
-                        borderRadius: BorderRadius.circular(25),
-                        border: Border.all(
-                          color: isSelected ? const Color(0xFF0F1729) : Colors.grey.shade300, // Updated to darker blue
-                          width: 2,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                            color: isSelected ? Colors.white : Colors.grey.shade600,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            option,
-                            style: TextStyle(
-                              color: isSelected ? Colors.white : Colors.grey.shade700,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ),
                 );
               }).toList(),
@@ -694,11 +617,11 @@ class _CareersPageState extends State<CareersPage>
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         gradient: const LinearGradient(
-          colors: [Color(0xFF0F1729), Color(0xFF1E3A8A)], // Updated to darker blues
+          colors: [Color(0xFF0F1729), Color(0xFF1E3A8A)],
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0F1729).withOpacity(0.3), // Updated to darker blue
+            color: const Color(0xFF0F1729).withOpacity(0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -717,7 +640,7 @@ class _CareersPageState extends State<CareersPage>
           'Submit Application',
           style: TextStyle(
             fontSize: 18,
-            fontWeight: FontWeight.w400,
+            fontWeight: FontWeight.w500,
             color: Colors.white,
           ),
         ),
@@ -776,5 +699,199 @@ class _CareersPageState extends State<CareersPage>
       selectedBoards.clear();
       offlineAvailability = '';
     });
+  }
+
+}
+
+class _HoverableCareerTextField extends StatefulWidget {
+  final TextEditingController controller;
+  final String hint;
+  final IconData icon;
+  final TextInputType keyboardType;
+  final int maxLines;
+  final bool isRequired;
+
+  const _HoverableCareerTextField({
+    required this.controller,
+    required this.hint,
+    required this.icon,
+    required this.keyboardType,
+    required this.maxLines,
+    required this.isRequired,
+  });
+
+  @override
+  State<_HoverableCareerTextField> createState() => _HoverableCareerTextFieldState();
+}
+
+class _HoverableCareerTextFieldState extends State<_HoverableCareerTextField> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: Colors.grey.shade300),
+    );
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: TextFormField(
+        controller: widget.controller,
+        keyboardType: widget.keyboardType,
+        maxLines: widget.maxLines,
+        validator: widget.isRequired
+            ? (value) {
+                if (value == null || value.isEmpty) {
+                  return 'This field is required';
+                }
+                return null;
+              }
+            : null,
+        decoration: InputDecoration(
+          hintText: widget.hint,
+          prefixIcon: Icon(widget.icon, color: const Color(0xFF0F1729)),
+          border: border,
+          enabledBorder: border,
+          focusedBorder: border.copyWith(
+            borderSide: const BorderSide(color: Color(0xFF0F1729), width: 2),
+          ),
+          filled: true,
+          fillColor: _isHovered ? Colors.grey.shade100 : Colors.white,
+        ),
+      ),
+    );
+  }
+}
+
+class _HoverableSelectChip extends StatefulWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _HoverableSelectChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  State<_HoverableSelectChip> createState() => _HoverableSelectChipState();
+}
+
+class _HoverableSelectChipState extends State<_HoverableSelectChip> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isSelected = widget.isSelected;
+    final backgroundColor = isSelected
+        ? const Color(0xFF0F1729)
+        : (_isHovered ? const Color(0xFFF1F5F9) : Colors.white);
+    final borderColor = isSelected
+        ? const Color(0xFF0F1729)
+        : (_isHovered ? Colors.grey.shade400 : Colors.grey.shade300);
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(color: borderColor, width: 2),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                isSelected ? Icons.check_circle : Icons.circle_outlined,
+                color: isSelected ? Colors.white : Colors.grey.shade600,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                widget.label,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : Colors.grey.shade700,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _HoverableRadioChip extends StatefulWidget {
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _HoverableRadioChip({
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  State<_HoverableRadioChip> createState() => _HoverableRadioChipState();
+}
+
+class _HoverableRadioChipState extends State<_HoverableRadioChip> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isSelected = widget.isSelected;
+    final backgroundColor = isSelected
+        ? const Color(0xFF0F1729)
+        : (_isHovered ? const Color(0xFFF1F5F9) : Colors.white);
+    final borderColor = isSelected
+        ? const Color(0xFF0F1729)
+        : (_isHovered ? Colors.grey.shade400 : Colors.grey.shade300);
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(25),
+            border: Border.all(color: borderColor, width: 2),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
+                color: isSelected ? Colors.white : Colors.grey.shade600,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                widget.label,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : Colors.grey.shade700,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
