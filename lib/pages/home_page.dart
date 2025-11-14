@@ -1,328 +1,237 @@
+// Replace the contents of your current HomePage file with this.
+// Suggested filename: lib/pages/home_page.dart or lib/homepage_final.dart
+
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:incendia_webpage/pages/about_page.dart';
-import 'package:incendia_webpage/pages/academic.dart';
-import 'package:incendia_webpage/pages/admissions_page.dart';
-import 'package:incendia_webpage/pages/careers_page.dart';
-import 'package:incendia_webpage/pages/contact_us_page.dart';
-import 'package:incendia_webpage/pages/gallery_page.dart';
-import 'package:incendia_webpage/pages/life_skills_page.dart';
-import 'package:incendia_webpage/pages/schedule_page.dart';
-import 'package:incendia_webpage/pages/home/widgets/hero_section.dart';
-import 'package:incendia_webpage/pages/home/widgets/combined_services_offerings.dart';
-import 'package:incendia_webpage/pages/home/widgets/testimonials_section.dart';
-import 'package:incendia_webpage/pages/home/widgets/cta_section.dart';
-import 'package:incendia_webpage/pages/home/widgets/footer_section.dart';
-import 'package:incendia_webpage/components/custom_navbar.dart';
-import 'package:incendia_webpage/components/custom_drawer.dart';
 
-// Main HomePage
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+/// =========================
+/// Design tokens & routes
+/// =========================
+const Color kPrimaryBlue = Color(0xFF002B5B);
+const Color kAccentOrange = Color(0xFFFF6B00);
+const Color kTextDark = Color(0xFF333333);
+const Color kTextMuted = Color(0xFF666666);
+const Color kScaffold = Color(0xFFF5F5F5);
 
-  @override
-  _HomePageState createState() => _HomePageState();
+class Routes {
+  static const home = '/';
+  static const about = '/about';
+  static const academic = '/academic';
+  static const lifeSkills = '/lifeskills';
+  static const schedule = '/schedule';
+  static const admissions = '/admissions';
+  static const gallery = '/gallery';
+  static const careers = '/careers';
+  static const contact = '/contact';
 }
 
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  final ScrollController _scrollController = ScrollController();
-  bool _isScrolled = false;
-  late AnimationController _heroAnimationController;
-  late AnimationController _cardAnimationController;
-  late Animation<double> _fadeAnimation;
-  late Animation<Offset> _slideAnimation;
-  Timer? _popupTimer;
-  bool _showUrgencyPopup = true;
+/// =========================
+/// Responsive helper
+/// =========================
+class Responsive {
+  static bool isMobile(BuildContext context) => MediaQuery.of(context).size.width < 768;
+  static bool isTablet(BuildContext context) =>
+      MediaQuery.of(context).size.width >= 768 && MediaQuery.of(context).size.width < 1024;
+  static bool isDesktop(BuildContext context) => MediaQuery.of(context).size.width >= 1024;
+}
+
+/// =========================
+/// Lead form (modal)
+/// =========================
+Future<void> showLeadForm(BuildContext context) async {
+  final _formKey = GlobalKey<FormState>();
+  String name = '';
+  String phone = '';
+  String grade = '';
+
+  await showDialog<void>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Book Free Counseling'),
+      content: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Name'),
+              validator: (v) => (v == null || v.trim().isEmpty) ? 'Enter name' : null,
+              onSaved: (v) => name = v!.trim(),
+            ),
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Phone'),
+              keyboardType: TextInputType.phone,
+              validator: (v) => (v == null || v.trim().length < 6) ? 'Enter phone' : null,
+              onSaved: (v) => phone = v!.trim(),
+            ),
+            TextFormField(
+              decoration: const InputDecoration(labelText: 'Grade (optional)'),
+              onSaved: (v) => grade = v?.trim() ?? '',
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+        ElevatedButton(
+          onPressed: () async {
+            if (_formKey.currentState?.validate() ?? false) {
+              _formKey.currentState!.save();
+              // TODO: wire this to your LeadService or webhook
+              await Future.delayed(const Duration(milliseconds: 300)); // simulate network
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Thanks! We will contact you soon')));
+              Navigator.pop(context);
+            }
+          },
+          child: const Text('Book Now'),
+        ),
+      ],
+    ),
+  );
+}
+
+/// =========================
+/// Navbar & Drawer (self-contained)
+/// =========================
+class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
+  final bool scrolled;
+  final VoidCallback? onPrimaryCta;
+  const CustomNavbar({Key? key, this.scrolled = false, this.onPrimaryCta}) : super(key: key);
 
   @override
-  void initState() {
-    super.initState();
-
-    _heroAnimationController = AnimationController(
-      duration: Duration(milliseconds: 1000),
-      vsync: this,
-    );
-
-    _cardAnimationController = AnimationController(
-      duration: Duration(milliseconds: 600),
-      vsync: this,
-    );
-
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _heroAnimationController, curve: Curves.easeOut),
-    );
-
-    _slideAnimation = Tween<Offset>(begin: Offset(0, 0.2), end: Offset.zero)
-        .animate(
-          CurvedAnimation(
-            parent: _heroAnimationController,
-            curve: Curves.easeOut,
-          ),
-        );
-
-    _heroAnimationController.forward();
-
-    _scrollController.addListener(() {
-      setState(() => _isScrolled = _scrollController.offset > 50);
-
-      if (_scrollController.offset > 150 &&
-          !_cardAnimationController.isCompleted) {
-        _cardAnimationController.forward();
-      }
-    });
-
-    _startUrgencyPopupTimer();
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    _heroAnimationController.dispose();
-    _cardAnimationController.dispose();
-    _popupTimer?.cancel();
-    super.dispose();
-  }
-
-  bool get isMobile => MediaQuery.of(context).size.width < 768;
-  bool get isTablet => MediaQuery.of(context).size.width >= 768 && MediaQuery.of(context).size.width < 1024;
-  bool get isDesktop => MediaQuery.of(context).size.width >= 1024;
-
-  void _navigateTo(String pageName) {
-    Widget page;
-    switch (pageName.toLowerCase()) {
-      case 'home':
-        return; // Already on home page
-      case 'about':
-        page = const AboutUsPage();
-        break;
-      case 'academic':
-        page = const AcademicPage();
-        break;
-      case 'life skills':
-        page = const LifeSkillsPage();
-        break;
-      case 'schedule':
-        page = const SchedulePage();
-        break;
-      case 'admissions':
-        page = const AdmissionsPage();
-        break;
-      case 'gallery':
-        page = const GalleryPage();
-        break;
-      case 'careers':
-        page = const CareersPage();
-        break;
-      case 'contact':
-        page = const ContactUsPage();
-        break;
-      default:
-        return;
-    }
-
-    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
-  }
-
-  void _startUrgencyPopupTimer() {
-    _popupTimer?.cancel();
-    _popupTimer = Timer(const Duration(seconds: 5), () {
-      if (!mounted) return;
-      setState(() => _showUrgencyPopup = false);
-    });
-  }
-
-  void _dismissUrgencyPopup() {
-    if (!_showUrgencyPopup) return;
-    _popupTimer?.cancel();
-    setState(() => _showUrgencyPopup = false);
-  }
-
-  void _handlePopupCta() {
-    _dismissUrgencyPopup();
-    _navigateTo('Admissions');
-  }
+  Size get preferredSize => const Size.fromHeight(72);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CustomNavbar(isScrolled: _isScrolled),
-      drawer: CustomDrawer(),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            controller: _scrollController,
-            child: Column(
-              children: [
-                HeroSection(
-                  isMobile: isMobile,
-                  fadeAnimation: _fadeAnimation,
-                  slideAnimation: _slideAnimation,
-                  navigateTo: _navigateTo,
-                ),
-                CombinedServicesOfferings(isMobile: isMobile),
-                TestimonialsSection(isMobile: isMobile),
-                CtaSection(isMobile: isMobile, navigateTo: _navigateTo),
-                FooterSection(isMobile: isMobile),
-              ],
-            ),
-          ),
-          if (_showUrgencyPopup)
-            Positioned.fill(
-              child: _UrgencyPopup(
-                isMobile: isMobile,
-                onClose: _dismissUrgencyPopup,
-                onAction: _handlePopupCta,
+    final width = MediaQuery.of(context).size.width;
+    final isMobile = width < 768;
+
+    return AppBar(
+      backgroundColor: Colors.white.withOpacity(scrolled ? 0.98 : 0.0),
+      elevation: scrolled ? 6 : 0,
+      titleSpacing: 20,
+      title: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1200),
+        child: Row(
+          children: [
+            InkWell(
+              onTap: () => Navigator.pushNamed(context, Routes.home),
+              child: Row(
+                children: const [
+                  Icon(Icons.local_fire_department, color: kPrimaryBlue, size: 28),
+                  SizedBox(width: 8),
+                  Text('Incendia', style: TextStyle(color: kPrimaryBlue, fontWeight: FontWeight.bold, fontSize: 18)),
+                ],
               ),
             ),
-        ],
+            const Spacer(),
+            if (!isMobile) ..._desktopNav(context) else _mobileMenuButton(context),
+          ],
+        ),
       ),
     );
   }
 
+  List<Widget> _desktopNav(BuildContext context) {
+    return [
+      _NavItem(label: 'About', route: Routes.about),
+      _NavItem(label: 'Academics', route: Routes.academic),
+      _NavItem(label: 'Life Skills', route: Routes.lifeSkills),
+      _NavItem(label: 'Admissions', route: Routes.admissions),
+      _NavItem(label: 'Gallery', route: Routes.gallery),
+      _NavItem(label: 'Careers', route: Routes.careers),
+      _NavItem(label: 'Contact', route: Routes.contact),
+      const SizedBox(width: 12),
+      ElevatedButton(
+        onPressed: onPrimaryCta ?? () => showLeadForm(context),
+        style: ElevatedButton.styleFrom(backgroundColor: kAccentOrange),
+        child: const Text('Book Free Counseling'),
+      ),
+    ];
+  }
 
-  // Extracted to ServicesSection widget (widgets/services_section.dart)
-
-  // Extracted to OfferingsSection widget (widgets/offerings_section.dart)
-
-  // Extracted to StatsSection widget (widgets/stats_section.dart)
-
-  // Extracted to TestimonialsSection widget (widgets/testimonials_section.dart)
-
-// Extracted to CtaSection widget (widgets/cta_section.dart)
+  Widget _mobileMenuButton(BuildContext context) {
+    return Builder(builder: (context) {
+      return IconButton(
+        icon: const Icon(Icons.menu, color: kPrimaryBlue),
+        onPressed: () => Scaffold.of(context).openDrawer(),
+        tooltip: 'Open menu',
+      );
+    });
+  }
 }
 
-class _UrgencyPopup extends StatelessWidget {
-  final bool isMobile;
-  final VoidCallback onClose;
-  final VoidCallback onAction;
-
-  const _UrgencyPopup({
-    required this.isMobile,
-    required this.onClose,
-    required this.onAction,
-  });
+class _NavItem extends StatelessWidget {
+  final String label;
+  final String route;
+  const _NavItem({Key? key, required this.label, required this.route}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedOpacity(
-      duration: const Duration(milliseconds: 250),
-      opacity: 1,
-      child: GestureDetector(
-        onTap: onClose,
-        behavior: HitTestBehavior.opaque,
-        child: Container(
-          color: Colors.black.withOpacity(0.55),
-          child: Center(
-            child: GestureDetector(
-              onTap: () {},
-              behavior: HitTestBehavior.translucent,
-              child: SafeArea(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxWidth: isMobile ? 340 : 420,
-                  ),
-                  child: Material(
-                    borderRadius: BorderRadius.circular(24),
-                    clipBehavior: Clip.antiAlias,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isMobile ? 20 : 28,
-                        vertical: isMobile ? 20 : 24,
-                      ),
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Color(0xFF002B5B), Color(0xFF001735)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(8),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.12),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: const Icon(
-                                  Icons.local_fire_department,
-                                  color: Color(0xFFFF6B00),
-                                ),
-                              ),
-                              const Spacer(),
-                              IconButton(
-                                onPressed: onClose,
-                                icon: const Icon(Icons.close, color: Colors.white),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Text(
-                            'Only 2 seats left!',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: isMobile ? 22 : 24,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Secure your child’s seat in the upcoming batch before enrollment closes.',
-                            style: TextStyle(
-                              color: Colors.white.withOpacity(0.9),
-                              fontSize: isMobile ? 14 : 16,
-                              height: 1.4,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: ElevatedButton(
-                                  onPressed: onAction,
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFFFF6B00),
-                                    padding: EdgeInsets.symmetric(
-                                      vertical: isMobile ? 14 : 16,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                  ),
-                                  child: const Text(
-                                    'Secure Seat',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              TextButton(
-                                onPressed: onClose,
-                                child: Text(
-                                  'Maybe Later',
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.85),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+    return TextButton(onPressed: () => Navigator.pushNamed(context, route), child: Text(label, style: const TextStyle(color: kPrimaryBlue, fontWeight: FontWeight.w600)));
+  }
+}
+
+class CustomDrawer extends StatelessWidget {
+  const CustomDrawer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          children: [
+            ListTile(leading: const Icon(Icons.home), title: const Text('Home'), onTap: () => Navigator.pushNamed(context, Routes.home)),
+            ListTile(leading: const Icon(Icons.info), title: const Text('About'), onTap: () => Navigator.pushNamed(context, Routes.about)),
+            ListTile(leading: const Icon(Icons.school), title: const Text('Academics'), onTap: () => Navigator.pushNamed(context, Routes.academic)),
+            ListTile(leading: const Icon(Icons.contact_page), title: const Text('Admissions'), onTap: () => Navigator.pushNamed(context, Routes.admissions)),
+            ListTile(leading: const Icon(Icons.photo_library), title: const Text('Gallery'), onTap: () => Navigator.pushNamed(context, Routes.gallery)),
+            const Divider(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text('Book Free Counseling')),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// =========================
+/// Trust strip
+/// =========================
+class TrustStrip extends StatelessWidget {
+  final bool isMobile;
+  const TrustStrip({Key? key, required this.isMobile}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      color: Colors.white,
+      padding: EdgeInsets.symmetric(vertical: isMobile ? 12 : 20, horizontal: 16),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1100),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(children: const [
+                _TrustCounter(number: '15+', label: 'Years'),
+                SizedBox(width: 24),
+                _TrustCounter(number: '10K+', label: 'Students'),
+                SizedBox(width: 24),
+                _TrustCounter(number: '95%', label: 'Parent satisfaction'),
+              ]),
+              ElevatedButton.icon(
+                onPressed: () => showLeadForm(context),
+                icon: const Icon(Icons.phone),
+                label: const Text('Book Free Counseling'),
+                style: ElevatedButton.styleFrom(backgroundColor: kAccentOrange),
+              )
+            ],
           ),
         ),
       ),
@@ -330,593 +239,487 @@ class _UrgencyPopup extends StatelessWidget {
   }
 }
 
-// // About Page
-// class AboutPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('About Incendia', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-//         backgroundColor: Color(0xFF002B5B),
-//         iconTheme: IconThemeData(color: Colors.white),
-//       ),
-//       body: SingleChildScrollView(
-//         padding: EdgeInsets.all(20),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             Container(
-//               width: double.infinity,
-//               padding: EdgeInsets.all(30),
-//               decoration: BoxDecoration(
-//                 gradient: LinearGradient(colors: [Color(0xFF002B5B), Color(0xFF004080)]),
-//                 borderRadius: BorderRadius.circular(20),
-//               ),
-//               child: Column(
-//                 children: [
-//                   Icon(Icons.school, size: 60, color: Color(0xFFFF6B00)),
-//                   SizedBox(height: 20),
-//                   Text(
-//                     'About Incendia',
-//                     style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
-//                     textAlign: TextAlign.center,
-//                   ),
-//                   SizedBox(height: 10),
-//                   Text(
-//                     'Transforming Education Since 2009',
-//                     style: TextStyle(fontSize: 18, color: Colors.white.withOpacity(0.8)),
-//                     textAlign: TextAlign.center,
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             SizedBox(height: 30),
-//             _buildSection('Our Mission', 
-//               'To empower every student with comprehensive education that combines academic excellence with essential life skills, preparing them for future success in an ever-evolving world.'),
-//             _buildSection('Our Vision', 
-//               'To be the leading educational institution that transforms learning experiences through innovative teaching methods, personalized attention, and holistic development.'),
-//             _buildSection('Our Values', '''
-// • Excellence in Education
-// • Personalized Learning Approach
-// • Innovation in Teaching Methods
-// • Character Development
-// • Community Engagement
-// • Lifelong Learning'''),
-//             SizedBox(height: 20),
-//             Container(
-//               width: double.infinity,
-//               padding: EdgeInsets.all(25),
-//               decoration: BoxDecoration(
-//                 color: Color(0xFFF8F9FA),
-//                 borderRadius: BorderRadius.circular(15),
-//                 border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
-//               ),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Text(
-//                     'Why Choose Incendia?',
-//                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF002B5B)),
-//                   ),
-//                   SizedBox(height: 15),
-//                   Text(
-//                     '✓ 15+ years of educational excellence\n✓ 10,000+ successful students\n✓ 95% success rate in board examinations\n✓ Expert faculty with proven track record\n✓ Modern infrastructure and technology\n✓ Personalized attention for every student\n✓ Comprehensive life skills development\n✓ Strong parent-teacher collaboration',
-//                     style: TextStyle(fontSize: 16, color: Color(0xFF666666), height: 1.8),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
+class _TrustCounter extends StatelessWidget {
+  final String number;
+  final String label;
+  const _TrustCounter({Key? key, required this.number, required this.label}) : super(key: key);
 
-//   Widget _buildSection(String title, String content) {
-//     return Container(
-//       margin: EdgeInsets.only(bottom: 25),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Text(
-//             title,
-//             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF002B5B)),
-//           ),
-//           SizedBox(height: 10),
-//           Text(
-//             content,
-//             style: TextStyle(fontSize: 16, color: Color(0xFF666666), height: 1.6),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+  @override
+  Widget build(BuildContext context) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(number, style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: kPrimaryBlue, fontWeight: FontWeight.bold)),
+      Text(label, style: Theme.of(context).textTheme.bodyMedium),
+    ]);
+  }
+}
 
-// // Academic Page
-// class AcademicPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Academic Programs', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-//         backgroundColor: Color(0xFF002B5B),
-//         iconTheme: IconThemeData(color: Colors.white),
-//       ),
-//       body: SingleChildScrollView(
-//         padding: EdgeInsets.all(20),
-//         child: Column(
-//           children: [
-//             Container(
-//               width: double.infinity,
-//               padding: EdgeInsets.all(30),
-//               decoration: BoxDecoration(
-//                 gradient: LinearGradient(colors: [Color(0xFF002B5B), Color(0xFF004080)]),
-//                 borderRadius: BorderRadius.circular(20),
-//               ),
-//               child: Column(
-//                 children: [
-//                   Icon(Icons.book, size: 60, color: Color(0xFFFF6B00)),
-//                   SizedBox(height: 20),
-//                   Text(
-//                     'Academic Excellence',
-//                     style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
-//                     textAlign: TextAlign.center,
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             SizedBox(height: 30),
-//             _buildAcademicCard('CBSE Curriculum', 'Classes 6-12', 
-//               'Comprehensive CBSE curriculum with focus on conceptual learning and board exam preparation.'),
-//             _buildAcademicCard('ICSE Curriculum', 'Classes 6-12', 
-//               'Detailed ICSE syllabus coverage with emphasis on language skills and analytical thinking.'),
-//             _buildAcademicCard('State Board', 'Classes 6-12', 
-//               'State board preparation with local language support and cultural integration.'),
-//             _buildAcademicCard('Competitive Exams', 'JEE/NEET/Others', 
-//               'Specialized coaching for engineering and medical entrance examinations.'),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
+/// =========================
+/// Hero Section
+/// =========================
+class HeroSection extends StatelessWidget {
+  final bool isMobile;
+  final Animation<double> fadeAnimation;
+  final Animation<Offset> slideAnimation;
+  final void Function(String)? navigateTo;
+  final VoidCallback? onPrimaryCta;
 
-//   Widget _buildAcademicCard(String title, String subtitle, String description) {
-//     return Container(
-//       margin: EdgeInsets.only(bottom: 20),
-//       padding: EdgeInsets.all(25),
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(15),
-//         border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
-//         boxShadow: [
-//           BoxShadow(
-//             color: Colors.black.withOpacity(0.05),
-//             blurRadius: 10,
-//             offset: Offset(0, 5),
-//           ),
-//         ],
-//       ),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Row(
-//             children: [
-//               Container(
-//                 width: 50,
-//                 height: 50,
-//                 decoration: BoxDecoration(
-//                   color: Color(0xFFFF6B00).withOpacity(0.1),
-//                   borderRadius: BorderRadius.circular(12),
-//                 ),
-//                 child: Icon(Icons.school, color: Color(0xFFFF6B00), size: 28),
-//               ),
-//               SizedBox(width: 15),
-//               Expanded(
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     Text(
-//                       title,
-//                       style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF002B5B)),
-//                     ),
-//                     Text(
-//                       subtitle,
-//                       style: TextStyle(fontSize: 16, color: Color(0xFFFF6B00), fontWeight: FontWeight.w500),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ],
-//           ),
-//           SizedBox(height: 15),
-//           Text(
-//             description,
-//             style: TextStyle(fontSize: 16, color: Color(0xFF666666), height: 1.5),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+  const HeroSection({
+    Key? key,
+    required this.isMobile,
+    required this.fadeAnimation,
+    required this.slideAnimation,
+    this.navigateTo,
+    this.onPrimaryCta,
+  }) : super(key: key);
 
-// // Life Skills Page
-// class LifeSkillsPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Life Skills', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-//         backgroundColor: Color(0xFF002B5B),
-//         iconTheme: IconThemeData(color: Colors.white),
-//       ),
-//       body: SingleChildScrollView(
-//         padding: EdgeInsets.all(20),
-//         child: Column(
-//           children: [
-//             Container(
-//               width: double.infinity,
-//               padding: EdgeInsets.all(30),
-//               decoration: BoxDecoration(
-//                 gradient: LinearGradient(colors: [Color(0xFF002B5B), Color(0xFF004080)]),
-//                 borderRadius: BorderRadius.circular(20),
-//               ),
-//               child: Column(
-//                 children: [
-//                   Icon(Icons.psychology, size: 60, color: Color(0xFFFF6B00)),
-//                   SizedBox(height: 20),
-//                   Text(
-//                     'Life Skills Development',
-//                     style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
-//                     textAlign: TextAlign.center,
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             SizedBox(height: 30),
-//             _buildSkillCard('Communication Skills', Icons.chat_bubble_outline, 
-//               'Develop effective verbal and written communication abilities for personal and professional success.'),
-//             _buildSkillCard('Critical Thinking', Icons.lightbulb_outline, 
-//               'Enhance analytical and problem-solving skills to make informed decisions.'),
-//             _buildSkillCard('Leadership', Icons.person_outline, 
-//               'Build leadership qualities and learn to inspire and motivate others.'),
-//             _buildSkillCard('Time Management', Icons.schedule, 
-//               'Master the art of managing time effectively and prioritizing tasks.'),
-//             _buildSkillCard('Emotional Intelligence', Icons.favorite_outline, 
-//               'Develop self-awareness and empathy to build better relationships.'),
-//             _buildSkillCard('Digital Literacy', Icons.computer, 
-//               'Stay updated with technology and digital tools for modern learning.'),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
+  @override
+  Widget build(BuildContext context) {
+    final maxWidth = 1100.0;
+    return Container(
+      color: kScaffold,
+      padding: EdgeInsets.symmetric(vertical: isMobile ? 24 : 48, horizontal: 16),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: isMobile ? _buildMobile(context) : _buildDesktop(context),
+        ),
+      ),
+    );
+  }
 
-//   Widget _buildSkillCard(String title, IconData icon, String description) {
-//     return Container(
-//       margin: EdgeInsets.only(bottom: 20),
-//       padding: EdgeInsets.all(25),
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(15),
-//         border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
-//         boxShadow: [
-//           BoxShadow(
-//             color: Colors.black.withOpacity(0.05),
-//             blurRadius: 10,
-//             offset: Offset(0, 5),
-//           ),
-//         ],
-//       ),
-//       child: Row(
-//         children: [
-//           Container(
-//             width: 60,
-//             height: 60,
-//             decoration: BoxDecoration(
-//               gradient: LinearGradient(colors: [Color(0xFFFF6B00), Color(0xFFFF8533)]),
-//               borderRadius: BorderRadius.circular(15),
-//             ),
-//             child: Icon(icon, color: Colors.white, size: 30),
-//           ),
-//           SizedBox(width: 20),
-//           Expanded(
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 Text(
-//                   title,
-//                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF002B5B)),
-//                 ),
-//                 SizedBox(height: 8),
-//                 Text(
-//                   description,
-//                   style: TextStyle(fontSize: 14, color: Color(0xFF666666), height: 1.5),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+  Widget _buildDesktop(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          flex: 6,
+          child: SlideTransition(
+            position: slideAnimation,
+            child: FadeTransition(
+              opacity: fadeAnimation,
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text('Transforming Students Into Confident, Future-Ready Leaders', style: Theme.of(context).textTheme.headlineLarge),
+                const SizedBox(height: 16),
+                Text('Personalized learning, life skills, and academic excellence — Book your free counseling session today.', style: Theme.of(context).textTheme.bodyLarge),
+                const SizedBox(height: 24),
+                Row(children: [
+                  ElevatedButton(onPressed: onPrimaryCta ?? () => showLeadForm(context), child: const Text('Book Free Counseling')),
+                  const SizedBox(width: 16),
+                  OutlinedButton(onPressed: () => navigateTo?.call('admissions'), child: const Text('Admissions')),
+                ]),
+              ]),
+            ),
+          ),
+        ),
+        const SizedBox(width: 28),
+        Expanded(
+          flex: 4,
+          child: SlideTransition(
+            position: slideAnimation,
+            child: FadeTransition(
+              opacity: fadeAnimation,
+              child: Container(
+                height: 300,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.white,
+                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 16)],
+                  image: const DecorationImage(
+                    image: AssetImage('assets/images/incendia.jpg'),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 
-// // Schedule Page
-// class SchedulePage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Schedule', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-//         backgroundColor: Color(0xFF002B5B),
-//         iconTheme: IconThemeData(color: Colors.white),
-//       ),
-//       body: SingleChildScrollView(
-//         padding: EdgeInsets.all(20),
-//         child: Column(
-//           children: [
-//             Container(
-//               width: double.infinity,
-//               padding: EdgeInsets.all(30),
-//               decoration: BoxDecoration(
-//                 gradient: LinearGradient(colors: [Color(0xFF002B5B), Color(0xFF004080)]),
-//                 borderRadius: BorderRadius.circular(20),
-//               ),
-//               child: Column(
-//                 children: [
-//                   Icon(Icons.schedule, size: 60, color: Color(0xFFFF6B00)),
-//                   SizedBox(height: 20),
-//                   Text(
-//                     'Class Schedule',
-//                     style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
-//                     textAlign: TextAlign.center,
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             SizedBox(height: 30),
-//             _buildScheduleCard('Morning Batch', '8:00 AM - 12:00 PM', 
-//               'Perfect for early risers with fresh minds ready to learn.'),
-//             _buildScheduleCard('Afternoon Batch', '1:00 PM - 5:00 PM', 
-//               'Ideal timing for students comfortable with afternoon sessions.'),
-//             _buildScheduleCard('Evening Batch', '6:00 PM - 9:00 PM', 
-//               'Convenient for working students and after school hours.'),
-//             _buildScheduleCard('Weekend Classes', 'Saturday & Sunday', 
-//               'Special weekend batches for comprehensive revision and practice.'),
-//             Container(
-//               margin: EdgeInsets.only(top: 20),
-//               padding: EdgeInsets.all(25),
-//               decoration: BoxDecoration(
-//                 color: Color(0xFFF8F9FA),
-//                 borderRadius: BorderRadius.circular(15),
-//                 border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
-//               ),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Text(
-//                     'Additional Information',
-//                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF002B5B)),
-//                   ),
-//                   SizedBox(height: 10),
-//                   Text(
-//                     '• Flexible batch timings available\n• Small class sizes for personalized attention\n• Make-up classes for missed sessions\n• Online and offline options available',
-//                     style: TextStyle(fontSize: 16, color: Color(0xFF666666), height: 1.6),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
+  Widget _buildMobile(BuildContext context) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      SlideTransition(position: slideAnimation, child: FadeTransition(opacity: fadeAnimation, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text('Transforming Students Into Confident, Future-Ready Leaders', style: Theme.of(context).textTheme.headlineMedium),
+        const SizedBox(height: 12),
+        Text('Personalized learning, life skills, and academic excellence — Book your free counseling session today.', style: Theme.of(context).textTheme.bodyLarge),
+        const SizedBox(height: 16),
+        Row(children: [
+          Expanded(child: ElevatedButton(onPressed: onPrimaryCta ?? () => showLeadForm(context), child: const Text('Book Free Counseling'))),
+        ]),
+      ]))),
+      const SizedBox(height: 16),
+      Container(
+        height: 200,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          color: Colors.white,
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 16)],
+          image: const DecorationImage(image: AssetImage('assets/images/incendia.jpg'), fit: BoxFit.cover),
+        ),
+      ),
+    ]);
+  }
+}
 
-//   Widget _buildScheduleCard(String title, String time, String description) {
-//     return Container(
-//       margin: EdgeInsets.only(bottom: 20),
-//       padding: EdgeInsets.all(25),
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(15),
-//         border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
-//         boxShadow: [
-//           BoxShadow(
-//             color: Colors.black.withOpacity(0.05),
-//             blurRadius: 10,
-//             offset: Offset(0, 5),
-//           ),
-//         ],
-//       ),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Row(
-//             children: [
-//               Container(
-//                 width: 50,
-//                 height: 50,
-//                 decoration: BoxDecoration(
-//                   gradient: LinearGradient(colors: [Color(0xFFFF6B00), Color(0xFFFF8533)]),
-//                   borderRadius: BorderRadius.circular(12),
-//                 ),
-//                 child: Icon(Icons.access_time, color: Colors.white, size: 28),
-//               ),
-//               SizedBox(width: 15),
-//               Expanded(
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     Text(
-//                       title,
-//                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xFF002B5B)),
-//                     ),
-//                     Text(
-//                       time,
-//                       style: TextStyle(fontSize: 16, color: Color(0xFFFF6B00), fontWeight: FontWeight.w500),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ],
-//           ),
-//           SizedBox(height: 15),
-//           Text(
-//             description,
-//             style: TextStyle(fontSize: 16, color: Color(0xFF666666), height: 1.5),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+/// =========================
+/// Combined services (cards)
+/// =========================
+class CombinedServicesOfferings extends StatelessWidget {
+  final bool isMobile;
+  final AnimationController? animationController;
+  const CombinedServicesOfferings({Key? key, required this.isMobile, this.animationController}) : super(key: key);
 
-// // Admissions Page
-// class AdmissionsPage extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Admissions', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-//         backgroundColor: Color(0xFF002B5B),
-//         iconTheme: IconThemeData(color: Colors.white),
-//       ),
-//       body: SingleChildScrollView(
-//         padding: EdgeInsets.all(20),
-//         child: Column(
-//           children: [
-//             Container(
-//               width: double.infinity,
-//               padding: EdgeInsets.all(30),
-//               decoration: BoxDecoration(
-//                 gradient: LinearGradient(colors: [Color(0xFF002B5B), Color(0xFF004080)]),
-//                 borderRadius: BorderRadius.circular(20),
-//               ),
-//               child: Column(
-//                 children: [
-//                   Icon(Icons.how_to_reg, size: 60, color: Color(0xFFFF6B00)),
-//                   SizedBox(height: 20),
-//                   Text(
-//                     'Admissions Open',
-//                     style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
-//                     textAlign: TextAlign.center,
-//                   ),
-//                   SizedBox(height: 10),
-//                   Text(
-//                     'Join the Incendia Family Today!',
-//                     style: TextStyle(fontSize: 18, color: Colors.white.withOpacity(0.8)),
-//                     textAlign: TextAlign.center,
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             SizedBox(height: 30),
-//             _buildAdmissionCard('Step 1', 'Fill Application Form', 
-//               'Complete our online application form with student details and academic history.'),
-//             _buildAdmissionCard('Step 2', 'Document Submission', 
-//               'Submit required documents including previous academic records and ID proof.'),
-//             _buildAdmissionCard('Step 3', 'Assessment Test', 
-//               'Appear for a simple assessment test to determine the appropriate learning level.'),
-//             _buildAdmissionCard('Step 4', 'Counseling Session', 
-//               'Meet with our counselors to discuss goals and choose the right program.'),
-//             _buildAdmissionCard('Step 5', 'Fee Payment', 
-//               'Complete the admission process with fee payment and receive confirmation.'),
-//             Container(
-//               margin: EdgeInsets.only(top: 20),
-//               padding: EdgeInsets.all(25),
-//               decoration: BoxDecoration(
-//                 gradient: LinearGradient(colors: [Color(0xFFFF6B00), Color(0xFFFF8533)]),
-//                 borderRadius: BorderRadius.circular(15),
-//               ),
-//               child: Column(
-//                 children: [
-//                   Text(
-//                     'Ready to Start?',
-//                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-//                   ),
-//                   SizedBox(height: 10),
-//                   Text(
-//                     'Contact us today for admission assistance',
-//                     style: TextStyle(fontSize: 16, color: Colors.white.withOpacity(0.9)),
-//                   ),
-//                   SizedBox(height: 15),
-//                   ElevatedButton(
-//                     onPressed: () {
-//                       ScaffoldMessenger.of(context).showSnackBar(
-//                         SnackBar(content: Text('Admission form will open soon!')),
-//                       );
-//                     },
-//                     style: ElevatedButton.styleFrom(
-//                       backgroundColor: Colors.white,
-//                       padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-//                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-//                     ),
-//                     child: Text(
-//                       'Apply Now',
-//                       style: TextStyle(color: Color(0xFF002B5B), fontWeight: FontWeight.bold, fontSize: 16),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
+  @override
+  Widget build(BuildContext context) {
+    final items = [
+      _ServiceCard(title: 'Academic Excellence', subtitle: 'CBSE / ICSE / State', icon: Icons.school),
+      _ServiceCard(title: 'Life Skills', subtitle: 'Communication & Leadership', icon: Icons.psychology),
+      _ServiceCard(title: 'Exam Prep', subtitle: 'JEE / NEET / Olympiads', icon: Icons.book),
+    ];
 
-//   Widget _buildAdmissionCard(String step, String title, String description) {
-//     return Container(
-//       margin: EdgeInsets.only(bottom: 20),
-//       padding: EdgeInsets.all(25),
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         borderRadius: BorderRadius.circular(15),
-//         border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
-//         boxShadow: [
-//           BoxShadow(
-//             color: Colors.black.withOpacity(0.05),
-//             blurRadius: 10,
-//             offset: Offset(0, 5),
-//           ),
-//         ],
-//       ),
-//       child: Row(
-//         children: [
-//           Container(
-//             width: 60,
-//             height: 60,
-//             decoration: BoxDecoration(
-//               gradient: LinearGradient(colors: [Color(0xFFFF6B00), Color(0xFFFF8533)]),
-//               borderRadius: BorderRadius.circular(15),
-//             ),
-//             child: Center(
-//               child: Text(
-//                 step.split(' ')[1],
-//                 style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
-//               ),
-//             ),
-//           ),
-//           SizedBox(width: 20),
-//           Expanded(
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 Text(
-//                   title,
-//                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF002B5B)),
-//                 ),
-//                 SizedBox(height: 8),
-//                 Text(
-//                   description,
-//                   style: TextStyle(fontSize: 14, color: Color(0xFF666666), height: 1.5),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: isMobile ? 16 : 32),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1100),
+          child: isMobile
+              ? Column(children: items.map((w) => Padding(padding: const EdgeInsets.only(bottom: 12), child: w)).toList())
+              : Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: items),
+        ),
+      ),
+    );
+  }
+}
+
+class _ServiceCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  const _ServiceCard({Key? key, required this.title, required this.subtitle, required this.icon}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Flexible(
+      child: Container(
+        constraints: const BoxConstraints(minWidth: 240, maxWidth: 360),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 12)]),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Container(width: 56, height: 56, decoration: BoxDecoration(color: kAccentOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(icon, color: kAccentOrange)),
+          const SizedBox(height: 12),
+          Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: kPrimaryBlue)),
+          const SizedBox(height: 6),
+          Text(subtitle, style: const TextStyle(fontSize: 14, color: kTextMuted)),
+        ]),
+      ),
+    );
+  }
+}
+
+/// =========================
+/// Testimonials carousel
+/// =========================
+class TestimonialsSection extends StatefulWidget {
+  final bool isMobile;
+  const TestimonialsSection({Key? key, required this.isMobile}) : super(key: key);
+
+  @override
+  State<TestimonialsSection> createState() => _TestimonialsSectionState();
+}
+
+class _TestimonialsSectionState extends State<TestimonialsSection> {
+  final PageController _pageController = PageController(viewportFraction: 0.92);
+  int _index = 0;
+  late Timer _timer;
+
+  final _testimonials = const [
+    {'quote': 'Incendia transformed my child\'s confidence in 3 months.', 'author': 'R. Kumar (Parent)'},
+    {'quote': 'Practical learning and caring teachers — highly recommended.', 'author': 'S. Mehta'},
+    {'quote': 'Great results and life skills focus.', 'author': 'P. Sharma'},
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      _index = (_index + 1) % _testimonials.length;
+      _pageController.animateToPage(_index, duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.symmetric(vertical: widget.isMobile ? 16 : 32),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1100),
+          child: Column(children: [
+            Align(alignment: Alignment.centerLeft, child: Text('What parents say', style: Theme.of(context).textTheme.headlineMedium)),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 140,
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: _testimonials.length,
+                itemBuilder: (context, i) {
+                  final t = _testimonials[i];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(color: kScaffold, borderRadius: BorderRadius.circular(12)),
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text('“${t['quote']}”', style: const TextStyle(fontSize: 15, color: kTextDark)),
+                        const Spacer(),
+                        Text(t['author']!, style: const TextStyle(fontWeight: FontWeight.bold, color: kPrimaryBlue)),
+                      ]),
+                    ),
+                  );
+                },
+              ),
+            )
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+/// =========================
+/// CTA Section
+/// =========================
+class CtaSection extends StatelessWidget {
+  final bool isMobile;
+  final void Function(String)? navigateTo;
+  final VoidCallback? onPrimaryAction;
+  const CtaSection({Key? key, required this.isMobile, this.navigateTo, this.onPrimaryAction}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 24),
+      padding: EdgeInsets.symmetric(vertical: isMobile ? 20 : 28, horizontal: 16),
+      color: kPrimaryBlue,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1100),
+          child: Row(children: [
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text('Ready to transform your child?', style: Theme.of(context).textTheme.headlineMedium?.copyWith(color: Colors.white)),
+                const SizedBox(height: 8),
+                Text('Book a free counseling session and get a personalized plan.', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white70)),
+              ]),
+            ),
+            const SizedBox(width: 16),
+            ElevatedButton(
+              onPressed: onPrimaryAction ?? () => showLeadForm(context),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14)),
+              child: Text('Book Free Counseling', style: TextStyle(color: kPrimaryBlue, fontWeight: FontWeight.bold)),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+/// =========================
+/// Footer
+/// =========================
+class FooterSection extends StatelessWidget {
+  final bool isMobile;
+  const FooterSection({Key? key, required this.isMobile}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      padding: EdgeInsets.symmetric(vertical: isMobile ? 24 : 40, horizontal: 16),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1100),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(children: [
+              const Icon(Icons.local_fire_department, color: kPrimaryBlue),
+              const SizedBox(width: 8),
+              Text('Incendia', style: const TextStyle(color: kPrimaryBlue, fontWeight: FontWeight.bold, fontSize: 18)),
+            ]),
+            const SizedBox(height: 16),
+            Text('© ${DateTime.now().year} Incendia. All rights reserved.', style: const TextStyle(color: kTextMuted)),
+            const SizedBox(height: 8),
+            Wrap(spacing: 12, children: [
+              TextButton(onPressed: () => Navigator.pushNamed(context, Routes.about), child: const Text('About')),
+              TextButton(onPressed: () => Navigator.pushNamed(context, Routes.contact), child: const Text('Contact')),
+              TextButton(onPressed: () => Navigator.pushNamed(context, Routes.admissions), child: const Text('Admissions')),
+            ]),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+/// =========================
+/// Mobile sticky CTA
+/// =========================
+class _MobileStickyCTA extends StatelessWidget {
+  final VoidCallback onTap;
+  const _MobileStickyCTA({Key? key, required this.onTap}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomCenter,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+        child: GestureDetector(
+          onTap: onTap,
+          child: Container(
+            height: 56,
+            decoration: BoxDecoration(color: kAccentOrange, borderRadius: BorderRadius.circular(12), boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(0.15), blurRadius: 8, offset: const Offset(0, 3)),
+            ]),
+            child: const Center(child: Text('Book Free Counseling', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold))),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// =========================
+/// HomePage (final)
+/// =========================
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+  final ScrollController _scrollController = ScrollController();
+  bool _isScrolled = false;
+  Timer? _scrollDebounce;
+
+  late final AnimationController _heroAnimationController;
+  late final AnimationController _cardAnimationController;
+  late final Animation<double> _fadeAnimation;
+  late final Animation<Offset> _slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _heroAnimationController = AnimationController(duration: const Duration(milliseconds: 900), vsync: this);
+    _cardAnimationController = AnimationController(duration: const Duration(milliseconds: 600), vsync: this);
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _heroAnimationController, curve: Curves.easeOut));
+    _slideAnimation = Tween<Offset>(begin: const Offset(0, 0.08), end: Offset.zero).animate(CurvedAnimation(parent: _heroAnimationController, curve: Curves.easeOut));
+
+    _heroAnimationController.forward();
+
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    final scrolled = _scrollController.offset > 50;
+    if (_isScrolled != scrolled) {
+      _scrollDebounce?.cancel();
+      _scrollDebounce = Timer(const Duration(milliseconds: 80), () {
+        if (mounted) setState(() => _isScrolled = scrolled);
+      });
+    }
+
+    if (_scrollController.offset > 150 && !_cardAnimationController.isCompleted) {
+      _cardAnimationController.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollDebounce?.cancel();
+    _scrollController.dispose();
+    _heroAnimationController.dispose();
+    _cardAnimationController.dispose();
+    super.dispose();
+  }
+
+  void _navigateTo(String pageName) {
+    switch (pageName.toLowerCase()) {
+      case 'home':
+        Navigator.pushNamed(context, Routes.home);
+        return;
+      case 'about':
+        Navigator.pushNamed(context, Routes.about);
+        return;
+      case 'academic':
+        Navigator.pushNamed(context, Routes.academic);
+        return;
+      case 'life skills':
+      case 'lifeskills':
+      case 'life-skills':
+        Navigator.pushNamed(context, Routes.lifeSkills);
+        return;
+      case 'schedule':
+        Navigator.pushNamed(context, Routes.schedule);
+        return;
+      case 'admissions':
+      case 'admission':
+        Navigator.pushNamed(context, Routes.admissions);
+        return;
+      case 'gallery':
+        Navigator.pushNamed(context, Routes.gallery);
+        return;
+      case 'careers':
+        Navigator.pushNamed(context, Routes.careers);
+        return;
+      case 'contact':
+        Navigator.pushNamed(context, Routes.contact);
+        return;
+      default:
+        return;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isMobile = Responsive.isMobile(context);
+
+    return Scaffold(
+      appBar: PreferredSize(preferredSize: const Size.fromHeight(72), child: CustomNavbar(scrolled: _isScrolled, onPrimaryCta: () => showLeadForm(context))),
+      drawer: const CustomDrawer(),
+      body: SingleChildScrollView(
+        controller: _scrollController,
+        child: Column(children: [
+          HeroSection(isMobile: isMobile, fadeAnimation: _fadeAnimation, slideAnimation: _slideAnimation, navigateTo: _navigateTo, onPrimaryCta: () => showLeadForm(context)),
+          TrustStrip(isMobile: isMobile),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1100),
+            child: Column(children: [
+              CombinedServicesOfferings(isMobile: isMobile, animationController: _cardAnimationController),
+              const SizedBox(height: 12),
+              TestimonialsSection(isMobile: isMobile),
+              const SizedBox(height: 12),
+              CtaSection(isMobile: isMobile, navigateTo: _navigateTo, onPrimaryAction: () => showLeadForm(context)),
+            ]),
+          ),
+          const SizedBox(height: 24),
+          FooterSection(isMobile: isMobile),
+          if (isMobile) _MobileStickyCTA(onTap: () => showLeadForm(context)),
+          const SizedBox(height: 16),
+        ]),
+      ),
+    );
+  }
+}
