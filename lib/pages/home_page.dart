@@ -563,22 +563,14 @@ class _ServiceItemDialog extends StatelessWidget {
     // Get detailed content for each item
     String getDetailedContent(String title) {
       switch (title) {
-        case 'Personalized Learning':
-          return 'Our personalized learning approach ensures that every student receives individual attention and a curriculum tailored to their unique learning style, pace, and academic goals. We assess each student\'s strengths and areas for improvement to create a customized learning path that maximizes their potential.';
-        case 'Expert Mentorship':
-          return 'Our experienced educators provide one-on-one mentorship and guidance, helping students navigate their academic journey with confidence. Our mentors are not just teachers but academic coaches who inspire, motivate, and guide students toward achieving their educational aspirations.';
-        case 'Modern Technology':
-          return 'We leverage cutting-edge educational technology and digital tools to enhance the learning experience. From interactive learning platforms to AI-powered assessments, our modern approach ensures students are prepared for the digital future while maintaining the human touch in education.';
         case 'Academic Mastery':
           return 'Our comprehensive academic programs cover all major educational boards including CBSE, ICSE, and State boards. We provide structured learning paths with regular assessments, mock tests, and personalized feedback to ensure academic excellence and board exam success.';
         case 'Life Skills':
           return 'Beyond academics, we focus on developing essential life skills including critical thinking, communication, leadership, and emotional intelligence. These skills prepare students for real-world challenges and help them become well-rounded individuals ready for future success.';
-        case 'Flexible Schedule':
-          return 'We understand that every student has different learning patterns and commitments. Our flexible scheduling system allows students to choose convenient timings that fit their lifestyle, ensuring optimal learning without compromising on other important activities.';
-        case 'Small Classes':
-          return 'We maintain small class sizes to ensure personalized attention for every student. This approach allows our educators to focus on individual learning needs, provide immediate feedback, and create a supportive learning environment where every student can thrive.';
-        case 'Progress Tracking':
-          return 'Our comprehensive progress tracking system monitors each student\'s academic journey with detailed analytics and regular assessments. We provide real-time feedback, performance reports, and personalized recommendations to ensure continuous improvement and academic success.';
+        case 'Exam Prep':
+          return 'Focused preparation for board exams, competitive tests, and entrance examinations. Our exam prep program includes mock tests, time management strategies, and personalized study plans to help students achieve their best results.';
+        case 'Career Guidance':
+          return 'Expert career counseling and guidance to help students explore career paths, understand industry requirements, and make informed decisions about their future. We provide resume building, interview preparation, and career readiness support.';
         default:
           return item['desc'] as String;
       }
@@ -690,12 +682,14 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
   bool _isSubmitting = false;
 
   @override
   void dispose() {
     _nameController.dispose();
     _phoneController.dispose();
+    _emailController.dispose();
     super.dispose();
   }
 
@@ -905,6 +899,69 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
                     }
                     if (value.trim().length < 10) {
                       return 'Please enter a valid phone number';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    labelStyle: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                    ),
+                    hintText: 'Enter your email',
+                    hintStyle: TextStyle(
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                    prefixIcon: Icon(
+                      Icons.email_outlined,
+                      color: Colors.white.withOpacity(0.7),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.1),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Color(0xFFFF6B00),
+                        width: 2,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                      ),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    if (!value.contains('@') || !value.contains('.')) {
+                      return 'Please enter a valid email address';
                     }
                     return null;
                   },

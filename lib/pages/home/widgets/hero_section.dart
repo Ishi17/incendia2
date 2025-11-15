@@ -19,7 +19,7 @@ class HeroSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: isMobile ? 900 : 850,
+      height: isMobile ? 820 : 780,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [Color(0xFF001A3A), Color(0xFF002B5B), Color(0xFF003366)],
@@ -130,7 +130,7 @@ class HeroSection extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: isMobile ? 24 : 40,
-                vertical: isMobile ? 10 : 0,
+                vertical: isMobile ? 10 : 10,
               ),
               child: AnimatedBuilder(
                 animation: fadeAnimation,
@@ -194,7 +194,7 @@ class HeroSection extends StatelessWidget {
                           
                           // Service cards below stats
                           _buildServiceCards(isMobile: isMobile),
-                          SizedBox(height: isMobile ? 20 : 30),
+                          SizedBox(height: isMobile ? 5 : 8),
                         ],
                       ),
                     ),
@@ -262,30 +262,30 @@ class HeroSection extends StatelessWidget {
   Widget _buildServiceCards({bool isMobile = false}) {
     final serviceItems = [
       {
-        'icon': Icons.person,
-        'title': 'Personalized Learning',
-        'desc': 'Tailored curriculum for individual needs',
-        'category': 'Service',
-        'color': const Color(0xFFFF6B00),
-      },
-      {
         'icon': Icons.book,
         'title': 'Academic Mastery',
         'desc': 'Board-wise curriculum',
         'category': 'Program',
-        'color': const Color(0xFF4CAF50),
+        'color': const Color(0xFFFF6B00),
       },
       {
         'icon': Icons.psychology,
         'title': 'Life Skills',
         'desc': 'Critical thinking & communication',
         'category': 'Program',
-        'color': const Color(0xFF2196F3),
+        'color': const Color(0xFFFF6B00),
       },
       {
-        'icon': Icons.computer,
-        'title': 'Modern Technology',
-        'desc': 'Cutting-edge learning tools',
+        'icon': Icons.assignment,
+        'title': 'Exam Prep',
+        'desc': 'Comprehensive exam preparation',
+        'category': 'Service',
+        'color': const Color(0xFFFF6B00),
+      },
+      {
+        'icon': Icons.work,
+        'title': 'Career Guidance',
+        'desc': 'Career exploration and guidance',
         'category': 'Service',
         'color': const Color(0xFFFF6B00),
       },
@@ -706,17 +706,18 @@ class _HeroServiceCardState extends State<_HeroServiceCard>
               height: widget.isMobile ? 140 : 150,
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.25),
+                color: Colors.white.withOpacity(0.80),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.4),
+                  color: Colors.white.withOpacity(0.3),
                   width: 1.5,
                 ),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.25),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
+                    blurRadius: 20,
+                    spreadRadius: 1,
+                    offset: const Offset(0, 5),
                   ),
                 ],
               ),
@@ -727,12 +728,12 @@ class _HeroServiceCardState extends State<_HeroServiceCard>
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.25),
+                      color: (widget.item['color'] as Color).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
                       icon,
-                      color: Colors.white,
+                      color: widget.item['color'] as Color,
                       size: 22,
                     ),
                   ),
@@ -742,7 +743,7 @@ class _HeroServiceCardState extends State<_HeroServiceCard>
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
-                      color: Colors.white,
+                      color: Color(0xFF002B5B),
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 2,
@@ -768,22 +769,14 @@ class _HeroItemDialog extends StatelessWidget {
     // Get shorter detailed content for each item
     String getDetailedContent(String title) {
       switch (title) {
-        case 'Personalized Learning':
-          return 'Individual attention and a curriculum tailored to each student\'s unique learning style and pace.';
-        case 'Expert Mentorship':
-          return 'One-on-one mentorship from experienced educators who inspire and guide students toward academic success.';
-        case 'Modern Technology':
-          return 'Cutting-edge educational technology and digital tools to enhance the learning experience.';
         case 'Academic Mastery':
-          return 'Comprehensive programs covering CBSE, ICSE, and State boards with structured learning paths.';
+          return 'Comprehensive programs covering CBSE, ICSE, and State boards with structured learning paths and regular assessments.';
         case 'Life Skills':
-          return 'Development of essential life skills including critical thinking, communication, and leadership.';
-        case 'Flexible Schedule':
-          return 'Convenient timings that fit each student\'s lifestyle and commitments.';
-        case 'Small Classes':
-          return 'Small class sizes ensuring personalized attention and immediate feedback.';
-        case 'Progress Tracking':
-          return 'Comprehensive tracking with detailed analytics and regular assessments for continuous improvement.';
+          return 'Development of essential life skills including critical thinking, communication, leadership, and emotional intelligence.';
+        case 'Exam Prep':
+          return 'Focused preparation for board exams, competitive tests, and entrance examinations with mock tests and personalized strategies.';
+        case 'Career Guidance':
+          return 'Expert career counseling, exploration of career paths, resume building, and guidance for future readiness.';
         default:
           return item['desc'] as String;
       }
