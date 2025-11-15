@@ -167,53 +167,11 @@ class CustomDrawer extends StatelessWidget {
   }
 }
 
-Widget _buildExpansionTile(BuildContext context,
-    {required String title,
-    required IconData icon,
-    required List<Map<String, Object>> children}) {
-  return Container(
-    margin: const EdgeInsets.only(bottom: 8),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(12),
-      color: Colors.grey.shade50,
-    ),
-    child: Theme(
-      data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-      child: ExpansionTile(
-        leading: Icon(icon, color: const Color(0xFFFF6B00), size: 24),
-        title: Text(
-          title,
-          style: const TextStyle(
-            color: Color(0xFF002B5B),
-            fontWeight: FontWeight.w700,
-            fontSize: 16,
-          ),
-        ),
-        iconColor: const Color(0xFFFF6B00),
-        collapsedIconColor: const Color(0xFFFF6B00),
-        children: children
-            .map(
-              (child) => ListTile(
-                title: Text(
-                  child['name'] as String,
-                  style: const TextStyle(
-                    color: Color(0xFF002B5B),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => child['page'] as Widget,
-                    ),
-                  );
-                },
-              ),
-            )
-            .toList(),
-      ),
-    ),
-  );
-}
+
+
+
+
+
+
+
+
