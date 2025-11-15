@@ -7,6 +7,7 @@ import '../pages/admissions_page.dart';
 import '../pages/gallery_page.dart';
 import '../pages/careers_page.dart';
 import '../pages/contact_us_page.dart';
+import '../pages/services_programs_page.dart';
 import '../pages/home_page.dart';
 
 class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
@@ -132,6 +133,7 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
     final menuItems = [
       'Home',
       'About',
+      'Services',
       'Academic',
       'Admissions',
       'Careers',
@@ -181,6 +183,11 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
         break;
       case 'about':
         page = const AboutUsPage();
+        break;
+      case 'services':
+      case 'services and programs':
+      case 'our services and programs':
+        page = const ServicesProgramsPage();
         break;
       case 'academic':
         page = const AcademicPage();
