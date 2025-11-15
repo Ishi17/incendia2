@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class CtaSection extends StatelessWidget {
   final bool isMobile;
   final void Function(String route) navigateTo;
+  final VoidCallback? onConsultationPressed;
 
   const CtaSection({
     super.key,
     required this.isMobile,
     required this.navigateTo,
+    this.onConsultationPressed,
   });
 
   @override
@@ -46,19 +48,11 @@ class CtaSection extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 40),
-          Wrap(
-            spacing: 16,
-            runSpacing: 12,
-            children: [
-              _GradientActionButton(
-                text: 'Apply Now',
-                onPressed: () => navigateTo('Admissions'),
-              ),
-              _OutlineActionButton(
-                text: 'Contact Us',
-                onPressed: () => navigateTo('Contact'),
-              ),
-            ],
+          Center(
+            child: _GradientActionButton(
+              text: 'Book your free consultation',
+              onPressed: onConsultationPressed ?? () => navigateTo('Admissions'),
+            ),
           ),
         ],
       ),
@@ -98,13 +92,22 @@ class _GradientActionButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(30),
           ),
         ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-            fontSize: 16,
-          ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (text.toLowerCase().contains('consultation')) ...[
+              const Icon(Icons.phone, color: Colors.white, size: 18),
+              const SizedBox(width: 8),
+            ],
+            Text(
+              text,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: 16,
+              ),
+            ),
+          ],
         ),
       ),
     );

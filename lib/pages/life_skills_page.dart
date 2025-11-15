@@ -89,73 +89,73 @@ class LifeSkillsPage extends StatelessWidget {
         'title': 'Financial Literacy for Teens',
         'description': 'Budgeting, saving, digital payments (UPI, wallets), understanding banks, avoiding scams.',
         'icon': Icons.account_balance,
-        'color': Color(0xFFE3F2FD), // Light Blue
+        'color': Color(0xFFE8F4F8), // Soft Sky Blue
       },
       {
         'title': 'Digital Citizenship & Internet Safety',
         'description': 'Cyberbullying, privacy settings, fake news, screen time balance, digital footprint.',
         'icon': Icons.security,
-        'color': Color(0xFFFCE4EC), // Pink
+        'color': Color(0xFFF5F7FA), // Warm Off-White
       },
       {
         'title': 'Communication & Public Speaking',
         'description': 'Storytelling, debates, presentations, body language, active listening.',
         'icon': Icons.record_voice_over,
-        'color': Color(0xFFE8F5E9), // Green
+        'color': Color(0xFFE8F4F8), // Soft Sky Blue
       },
       {
         'title': 'Time Management & Study Skills',
         'description': 'Prioritizing tasks, planners, Pomodoro technique, overcoming distractions.',
         'icon': Icons.schedule,
-        'color': Color(0xFFFFF3E0), // Orange
+        'color': Color(0xFFF5F7FA), // Warm Off-White
       },
       {
         'title': 'Leadership & Teamwork',
         'description': 'Group roles, collaboration, leading projects, resolving conflicts.',
         'icon': Icons.group,
-        'color': Color(0xFFF3E5F5), // Purple
+        'color': Color(0xFFE8F4F8), // Soft Sky Blue
       },
       {
         'title': 'Emotional Intelligence (EQ)',
         'description': 'Identifying feelings, managing emotions, self-awareness, empathy exercises.',
         'icon': Icons.sentiment_satisfied,
-        'color': Color(0xFFE0F7FA), // Cyan
+        'color': Color(0xFFF5F7FA), // Warm Off-White
       },
       {
         'title': 'Basic Legal & Civic Awareness',
         'description': 'Student rights, voting basics, equality, safety laws, RTI & digital consent.',
         'icon': Icons.gavel,
-        'color': Color(0xFFFFEBEE), // Light Red
+        'color': Color(0xFFE8F4F8), // Soft Sky Blue
       },
       {
         'title': 'Goal Setting & Self-Motivation',
         'description': 'SMART goals, vision boards, intrinsic vs extrinsic motivation, habit loops.',
         'icon': Icons.flag,
-        'color': Color(0xFFFFF9C4), // Yellow
+        'color': Color(0xFFF5F7FA), // Warm Off-White
       },
       {
         'title': 'First Aid & Personal Safety',
         'description': 'CPR basics, handling minor injuries, emergency contact awareness, street safety.',
         'icon': Icons.medical_services,
-        'color': Color(0xFFE1F5FE), // Light Blue
+        'color': Color(0xFFE8F4F8), // Soft Sky Blue
       },
       {
         'title': 'Mindfulness & Mental Well-being',
         'description': 'Meditation, stress management, gratitude journaling, self-reflection techniques.',
         'icon': Icons.self_improvement,
-        'color': Color(0xFFF1F8E9), // Light Green
+        'color': Color(0xFFF5F7FA), // Warm Off-White
       },
       {
         'title': 'Nutrition & Fireless Cooking',
         'description': 'Healthy eating habits, decoding food labels, making simple no-flame recipes.',
         'icon': Icons.restaurant,
-        'color': Color(0xFFFFFDE7), // Light Yellow
+        'color': Color(0xFFE8F4F8), // Soft Sky Blue
       },
       {
         'title': 'Career Awareness & Future Readiness',
         'description': 'Career exploration, 21st-century jobs, freelancing basics, resume writing.',
         'icon': Icons.work,
-        'color': Color(0xFFEDE7F6), // Lavender
+        'color': Color(0xFFF5F7FA), // Warm Off-White
       },
     ];
 

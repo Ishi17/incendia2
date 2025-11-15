@@ -7,6 +7,7 @@ import '../pages/admissions_page.dart';
 import '../pages/gallery_page.dart';
 import '../pages/careers_page.dart';
 import '../pages/contact_us_page.dart';
+import '../pages/services_programs_page.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -16,6 +17,7 @@ class CustomDrawer extends StatelessWidget {
     final menuItems = [
       {'name': 'Home', 'icon': Icons.home, 'route': '/'},
       {'name': 'About', 'icon': Icons.info_outline, 'page': const AboutUsPage()},
+      {'name': 'Services', 'icon': Icons.business_center, 'page': const ServicesProgramsPage()},
       {'name': 'Academic', 'icon': Icons.school, 'page': const AcademicPage()},
       {'name': 'Life Skills', 'icon': Icons.psychology, 'page': const LifeSkillsPage()},
       {'name': 'Schedule', 'icon': Icons.schedule, 'page': const SchedulePage()},

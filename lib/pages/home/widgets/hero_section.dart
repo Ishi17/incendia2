@@ -5,6 +5,7 @@ class HeroSection extends StatelessWidget {
   final Animation<double> fadeAnimation;
   final Animation<Offset> slideAnimation;
   final void Function(String route) navigateTo;
+  final VoidCallback? onConsultationPressed;
 
   const HeroSection({
     super.key,
@@ -12,12 +13,13 @@ class HeroSection extends StatelessWidget {
     required this.fadeAnimation,
     required this.slideAnimation,
     required this.navigateTo,
+    this.onConsultationPressed,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: isMobile ? 650 : 750,
+      height: isMobile ? 820 : 780,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [Color(0xFF001A3A), Color(0xFF002B5B), Color(0xFF003366)],
@@ -128,7 +130,7 @@ class HeroSection extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: isMobile ? 24 : 40,
-                vertical: isMobile ? 20 : 0,
+                vertical: isMobile ? 10 : 10,
               ),
               child: AnimatedBuilder(
                 animation: fadeAnimation,
@@ -172,8 +174,8 @@ class HeroSection extends StatelessWidget {
                             alignment: WrapAlignment.center,
                             children: [
                               _GradientActionButton(
-                                text: 'Start Your Journey',
-                                onPressed: () => navigateTo('Admissions'),
+                                text: 'Book your free consultation',
+                                onPressed: onConsultationPressed ?? () => navigateTo('Admissions'),
                                 isMobile: isMobile,
                               ),
                               _OutlineActionButton(
@@ -183,10 +185,16 @@ class HeroSection extends StatelessWidget {
                               ),
                             ],
                           ),
-                          SizedBox(height: isMobile ? 30 : 40),
+                          SizedBox(height: isMobile ? 24 : 30),
 
-                          // Student images and stats
-                          _buildStudentShowcase(isMobile: isMobile),
+                          // Stats only (no student avatars)
+                          _buildStatsOnly(isMobile: isMobile),
+                          
+                          SizedBox(height: isMobile ? 30 : 36),
+                          
+                          // Service cards below stats
+                          _buildServiceCards(isMobile: isMobile),
+                          SizedBox(height: isMobile ? 5 : 8),
                         ],
                       ),
                     ),
@@ -197,6 +205,102 @@ class HeroSection extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+  
+  Widget _buildStatsOnly({bool isMobile = false}) {
+    return TweenAnimationBuilder<double>(
+      duration: const Duration(milliseconds: 1500),
+      tween: Tween(begin: 0.0, end: 1.0),
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 30 * (1 - value)),
+          child: Opacity(
+            opacity: value,
+            child: Container(
+              padding: EdgeInsets.all(isMobile ? 16 : 24),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.25),
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 30,
+                    spreadRadius: 5,
+                  ),
+                ],
+              ),
+              child: isMobile
+                  ? Column(
+                      children: [
+                        _buildAnimatedStatItem(10, 'K+', 'Students', 0, isMobile),
+                        const SizedBox(height: 12),
+                        _buildAnimatedStatItem(95, '%', 'Success Rate', 300, isMobile),
+                        const SizedBox(height: 12),
+                        _buildAnimatedStatItem(50, '+', 'Expert Teachers', 600, isMobile),
+                      ],
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildAnimatedStatItem(10, 'K+', 'Students', 0, isMobile),
+                        _buildAnimatedStatItem(95, '%', 'Success Rate', 300, isMobile),
+                        _buildAnimatedStatItem(50, '+', 'Expert Teachers', 600, isMobile),
+                      ],
+                    ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+  
+  Widget _buildServiceCards({bool isMobile = false}) {
+    final serviceItems = [
+      {
+        'icon': Icons.book,
+        'title': 'Academic Mastery',
+        'desc': 'Board-wise curriculum',
+        'category': 'Program',
+        'color': const Color(0xFFFF6B00),
+      },
+      {
+        'icon': Icons.psychology,
+        'title': 'Life Skills',
+        'desc': 'Critical thinking & communication',
+        'category': 'Program',
+        'color': const Color(0xFFFF6B00),
+      },
+      {
+        'icon': Icons.assignment,
+        'title': 'Exam Prep',
+        'desc': 'Comprehensive exam preparation',
+        'category': 'Service',
+        'color': const Color(0xFFFF6B00),
+      },
+      {
+        'icon': Icons.work,
+        'title': 'Career Guidance',
+        'desc': 'Career exploration and guidance',
+        'category': 'Service',
+        'color': const Color(0xFFFF6B00),
+      },
+    ];
+    
+    return Wrap(
+      spacing: isMobile ? 12 : 20,
+      runSpacing: isMobile ? 12 : 20,
+      alignment: WrapAlignment.center,
+      children: serviceItems.map((item) {
+        return _HeroServiceCard(
+          item: item,
+          isMobile: isMobile,
+        );
+      }).toList(),
     );
   }
 
@@ -483,13 +587,286 @@ class _GradientActionButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(30),
           ),
         ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-            fontSize: isMobile ? 14 : 16,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (text.toLowerCase().contains('consultation')) ...[
+              Icon(Icons.phone, color: Colors.white, size: isMobile ? 16 : 18),
+              SizedBox(width: 8),
+            ],
+            Text(
+              text,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w700,
+                fontSize: isMobile ? 14 : 16,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HeroServiceCard extends StatefulWidget {
+  final Map<String, dynamic> item;
+  final bool isMobile;
+
+  const _HeroServiceCard({
+    required this.item,
+    required this.isMobile,
+  });
+
+  @override
+  State<_HeroServiceCard> createState() => _HeroServiceCardState();
+}
+
+class _HeroServiceCardState extends State<_HeroServiceCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _showItemDialog() {
+    _animationController.forward().then((_) {
+      _animationController.reverse();
+    });
+
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Service detail',
+      barrierColor: Colors.black.withOpacity(0.6),
+      transitionDuration: const Duration(milliseconds: 450),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: _HeroItemDialog(item: widget.item),
           ),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curvedAnimation = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+          reverseCurve: Curves.easeInCubic,
+        );
+        return FadeTransition(
+          opacity: curvedAnimation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 0.08),
+              end: Offset.zero,
+            ).animate(curvedAnimation),
+            child: ScaleTransition(
+              scale: Tween<double>(begin: 0.9, end: 1.0).animate(curvedAnimation),
+              child: child,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final color = widget.item['color'] as Color;
+    final icon = widget.item['icon'] as IconData;
+    final title = widget.item['title'] as String;
+
+    return AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: InkWell(
+            onTap: _showItemDialog,
+            borderRadius: BorderRadius.circular(16),
+            child: Container(
+              width: widget.isMobile ? 150 : 160,
+              height: widget.isMobile ? 140 : 150,
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.80),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.3),
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.25),
+                    blurRadius: 20,
+                    spreadRadius: 1,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: (widget.item['color'] as Color).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      icon,
+                      color: widget.item['color'] as Color,
+                      size: 22,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF002B5B),
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _HeroItemDialog extends StatelessWidget {
+  final Map<String, dynamic> item;
+
+  const _HeroItemDialog({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    // Get shorter detailed content for each item
+    String getDetailedContent(String title) {
+      switch (title) {
+        case 'Academic Mastery':
+          return 'Comprehensive programs covering CBSE, ICSE, and State boards with structured learning paths and regular assessments.';
+        case 'Life Skills':
+          return 'Development of essential life skills including critical thinking, communication, leadership, and emotional intelligence.';
+        case 'Exam Prep':
+          return 'Focused preparation for board exams, competitive tests, and entrance examinations with mock tests and personalized strategies.';
+        case 'Career Guidance':
+          return 'Expert career counseling, exploration of career paths, resume building, and guidance for future readiness.';
+        default:
+          return item['desc'] as String;
+      }
+    }
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      elevation: 20,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.white, Color(0xFFF8F9FA)],
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: (item['color'] as Color).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(
+                item['icon'] as IconData,
+                color: item['color'] as Color,
+                size: 30,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              item['title'] as String,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF002B5B),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+              decoration: BoxDecoration(
+                color: (item['color'] as Color).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                item['category'] as String,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: item['color'] as Color,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              getDetailedContent(item['title'] as String),
+              style: const TextStyle(
+                fontSize: 13,
+                color: Color(0xFF666666),
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: item['color'] as Color,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 28,
+                  vertical: 10,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+              ),
+              child: const Text(
+                'Got it!',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+              ),
+            ),
+          ],
         ),
       ),
     );

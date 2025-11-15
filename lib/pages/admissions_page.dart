@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:incendia_webpage/components/custom_drawer.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
@@ -12,16 +13,42 @@ class AdmissionsPage extends StatefulWidget {
 
 class _AdmissionsPageState extends State<AdmissionsPage> {
   int _currentPage = 0;
-  final PageController _pageController = PageController(viewportFraction: 0.8);
+  late final PageController _pageController;
+  Timer? _autoScrollTimer;
 
-  void _scrollToNextCard(int totalCards) {
-    setState(() {
-      _currentPage = (_currentPage + 1) % totalCards;
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(viewportFraction: 0.92);
+    _startAutoScroll();
+  }
+
+  @override
+  void dispose() {
+    _autoScrollTimer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _startAutoScroll() {
+    _autoScrollTimer?.cancel();
+    _autoScrollTimer = Timer.periodic(const Duration(seconds: 6), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      
+      final nextIndex = (_currentPage + 1) % benefits.length;
+      _goTo(nextIndex);
     });
+  }
+
+  void _goTo(int index) {
+    if (!mounted) return;
     _pageController.animateToPage(
-      _currentPage,
-      duration: Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
+      index,
+      duration: const Duration(milliseconds: 480),
+      curve: Curves.easeOutCubic,
     );
   }
 
@@ -150,68 +177,218 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
   }
 
   Widget _buildWhyJoinCarousel() {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
+    final isMobile = MediaQuery.of(context).size.width < 600;
+    final horizontalPadding = isMobile ? 20.0 : 40.0;
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: 60,
+        horizontal: horizontalPadding,
+      ),
+      color: const Color(0xFFF8F9FA),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Center(
-            child: Text(
-              'Why Join Incendia',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
+          const Text(
+            'Why Join Incendia',
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w800,
+              color: Color(0xFF002B5B),
             ),
           ),
-          SizedBox(height: 8),
-          Text(
-            'At Incendia, we don’t just offer tuition — we build confidence, clarity, and capability. '
-            'With expert faculty, small batch sizes, and personalized attention, we ensure every student reaches their full potential.',
-            style: TextStyle(color: Colors.grey[700]),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 16),
+          const SizedBox(height: 28),
 
-          // 📦 Swipeable card area
+          // Carousel area
           SizedBox(
-            height: 180,
-            child: PageView.builder(
-              controller: _pageController,
-              itemCount: benefits.length,
-              itemBuilder: (context, index) {
-                final item = benefits[index];
-                return AnimatedContainer(
-                  duration: Duration(milliseconds: 300),
-                  margin: EdgeInsets.symmetric(horizontal: 8.0),
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.shade100,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        item['title']!,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
+            height: 280,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                PageView.builder(
+                  controller: _pageController,
+                  itemCount: benefits.length,
+                  onPageChanged: (i) {
+                    setState(() => _currentPage = i);
+                    // Reset auto-scroll timer when page changes
+                    _startAutoScroll();
+                  },
+                  itemBuilder: (context, index) {
+                    final item = benefits[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 0.96, end: 1.0),
+                        duration: const Duration(milliseconds: 420),
+                        curve: Curves.easeOutCubic,
+                        builder: (context, scale, child) {
+                          return Transform.scale(scale: scale, child: child);
+                        },
+                        child: Container(
+                          constraints: const BoxConstraints(maxWidth: 900),
+                          padding: const EdgeInsets.all(28),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF002B5B).withOpacity(0.06),
+                                blurRadius: 30,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Icon or visual element
+                              Container(
+                                width: 60,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFFF6B00).withOpacity(0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.check_circle,
+                                  color: Color(0xFFFF6B00),
+                                  size: 30,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 360),
+                                transitionBuilder: (child, anim) {
+                                  return FadeTransition(
+                                    opacity: anim,
+                                    child: SlideTransition(
+                                      position: Tween<Offset>(
+                                        begin: const Offset(0, 0.03),
+                                        end: Offset.zero,
+                                      ).animate(
+                                        CurvedAnimation(
+                                          parent: anim,
+                                          curve: Curves.easeOutCubic,
+                                        ),
+                                      ),
+                                      child: child,
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  item['title']!,
+                                  key: ValueKey(item['title']!),
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    color: Color(0xFF002B5B),
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 360),
+                                child: Text(
+                                  item['desc']!,
+                                  key: ValueKey(item['desc']!),
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(
+                                    color: Color(0xFF002B5B),
+                                    fontSize: 16.5,
+                                    height: 1.6,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      SizedBox(height: 8),
-                      Text(item['desc']!),
-                    ],
+                    );
+                  },
+                ),
+
+                // Left arrow (desktop only)
+                if (!isMobile)
+                  Positioned(
+                    left: 0,
+                    child: Opacity(
+                      opacity: 1.0,
+                      child: IconButton(
+                        tooltip: 'Previous',
+                        onPressed: () {
+                          final prevIndex = (_currentPage - 1 + benefits.length) % benefits.length;
+                          _goTo(prevIndex);
+                        },
+                        icon: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.arrow_back_ios_new_rounded,
+                            size: 18,
+                            color: Color(0xFF002B5B),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                );
-              },
+
+                // Right arrow (desktop only)
+                if (!isMobile)
+                  Positioned(
+                    right: 0,
+                    child: Opacity(
+                      opacity: 1.0,
+                      child: IconButton(
+                        tooltip: 'Next',
+                        onPressed: () {
+                          final nextIndex = (_currentPage + 1) % benefits.length;
+                          _goTo(nextIndex);
+                        },
+                        icon: Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 18,
+                            color: Color(0xFF002B5B),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
           ),
 
-          SizedBox(height: 12),
-          Align(
-            alignment: Alignment.centerRight,
-            child: ElevatedButton(
-              onPressed: () => _scrollToNextCard(benefits.length),
-              child: Text("Next →"),
+          const SizedBox(height: 18),
+
+          // Dots
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              benefits.length,
+              (i) => GestureDetector(
+                onTap: () => _goTo(i),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  margin: const EdgeInsets.symmetric(horizontal: 6),
+                  width: _currentPage == i ? 22 : 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: _currentPage == i
+                        ? const Color(0xFFFF6B00)
+                        : const Color(0xFFCCCCCC),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -220,150 +397,398 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
   }
 
   Widget _buildWhoCanApplyCards() {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+    
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            'Who Can Apply?',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(height: 16),
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.deepPurple.shade50,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.deepPurple.shade100),
-            ),
-            padding: EdgeInsets.all(20),
-            child: RichText(
-              text: TextSpan(
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 24.0 : 40.0,
+        vertical: 40.0,
+      ),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: 700),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Who Can Apply?',
                 style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.grey[800],
-                  height: 1.5,
+                  fontSize: isMobile ? 26 : 32,
+                  fontWeight: FontWeight.w800,
+                  color: Color(0xFF002B5B),
                 ),
-                children: [
-                  TextSpan(text: 'We welcome students from '),
-                  TextSpan(
-                    text: 'Grades 9 to 12 across all boards',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  TextSpan(text: '. Limited seats ensure '),
-                  TextSpan(
-                    text: 'personalized attention',
-                    style: TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  TextSpan(text: ' in every classroom.'),
-                ],
               ),
-            ),
+              SizedBox(height: 24),
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(isMobile ? 28 : 36),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Color(0xFF002B5B).withOpacity(0.1),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color(0xFF002B5B).withOpacity(0.08),
+                      blurRadius: 24,
+                      offset: Offset(0, 8),
+                      spreadRadius: 0,
+                    ),
+                  ],
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Icon
+                    Container(
+                      width: isMobile ? 50 : 60,
+                      height: isMobile ? 50 : 60,
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFF6B00).withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.school,
+                        color: Color(0xFFFF6B00),
+                        size: isMobile ? 26 : 30,
+                      ),
+                    ),
+                    SizedBox(width: 20),
+                    // Content
+                    Expanded(
+                      child: RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                            fontSize: isMobile ? 16 : 18,
+                            color: Color(0xFF002B5B),
+                            height: 1.6,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: 'We welcome students from ',
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
+                            TextSpan(
+                              text: 'Grades 9 to 12 across all boards',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF002B5B),
+                              ),
+                            ),
+                            TextSpan(
+                              text: '. Limited seats ensure ',
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
+                            TextSpan(
+                              text: 'personalized attention',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFFFF6B00),
+                              ),
+                            ),
+                            TextSpan(
+                              text: ' in every classroom.',
+                              style: TextStyle(color: Colors.grey[700]),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildAdmissionFlowchart() {
-    final List<Map<String, String>> steps = [
+    final List<Map<String, dynamic>> steps = [
       {
         'step': '1',
-        'title': 'Submit Enquiry',
-        'desc': 'Fill out the form below or call us directly.',
+        'title': 'Submit Application',
+        'desc': 'Complete our online application form with your academic background and goals',
+        'color': Color(0xFF1976D2), // Medium blue
       },
       {
         'step': '2',
-        'title': 'Free Consultation',
-        'desc': 'Our academic counselor will understand your needs.',
+        'title': 'Assessment Test',
+        'desc': 'Take our comprehensive assessment to determine your current skill level',
+        'color': Color(0xFF1565C0), // Deeper blue
       },
       {
         'step': '3',
-        'title': 'Batch Allocation',
-        'desc':
-            'We suggest the right batch and schedule based on your board and grade.',
+        'title': 'Interview',
+        'desc': 'Meet with our academic advisor to discuss your learning objectives.',
+        'color': Color(0xFF0D47A1), // Darkest blue
       },
       {
         'step': '4',
-        'title': 'Registration & Fees',
-        'desc':
-            'Once finalized, complete the registration and pay the fees to confirm your seat.',
+        'title': 'Enrollment',
+        'desc': 'Receive your acceptance and begin your personalized learning journey.',
+        'color': Color(0xFFFF6B00), // Orange
       },
     ];
 
     return Center(
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: 600),
+        constraints: BoxConstraints(maxWidth: 1200),
         child: Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
-                'Admission Process',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                'Admissions Process',
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF002B5B),
+                ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 16),
-              Column(
-                children: List.generate(steps.length, (index) {
-                  final step = steps[index];
-                  final isLast = index == steps.length - 1;
-
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Left column: avatar and vertical line
-                      Column(
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: Colors.deepPurple,
-                            radius: 16,
-                            child: Text(
-                              step['step']!,
-                              style: TextStyle(color: Colors.white),
+              SizedBox(height: 12),
+              Text(
+                'Follow these simple steps to begin your educational journey with us',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[700],
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 48),
+              // Horizontal flow with connecting line
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final isMobile = constraints.maxWidth < 600;
+                  final isTablet = constraints.maxWidth < 900;
+                  
+                  if (isMobile) {
+                    // Stack vertically on mobile with connecting lines
+                    return Column(
+                      children: List.generate(steps.length, (index) {
+                        final step = steps[index];
+                        final isLast = index == steps.length - 1;
+                        
+                        return Column(
+                          children: [
+                            _buildStepCard(
+                              step: step['step']!,
+                              title: step['title']!,
+                              desc: step['desc']!,
+                              circleColor: step['color'] as Color,
+                              isMobile: true,
+                            ),
+                            if (!isLast) ...[
+                              SizedBox(height: 12),
+                              Container(
+                                width: 2,
+                                height: 24,
+                                color: Color(0xFF002B5B).withOpacity(0.25),
+                              ),
+                              SizedBox(height: 12),
+                            ],
+                          ],
+                        );
+                      }),
+                    );
+                  }
+                  
+                  // Horizontal flow for desktop/tablet
+                  return SizedBox(
+                    height: 200,
+                    child: Stack(
+                      children: [
+                        // Horizontal connecting line - clean and straight
+                        Positioned(
+                          top: 50, // Center of the circles
+                          left: 50,
+                          right: 50,
+                          child: Container(
+                            height: 3,
+                            decoration: BoxDecoration(
+                              color: Color(0xFF002B5B).withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(2),
                             ),
                           ),
-                          if (!isLast)
-                            Container(
-                              width: 2,
-                              height: 60,
-                              color: Colors.deepPurple.shade200,
-                            ),
-                        ],
-                      ),
-                      SizedBox(width: 16),
-                      // Right column: title and description
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 4), // aligns with top of avatar
-                            Text(
-                              step['title']!,
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              step['desc']!,
-                              style: TextStyle(color: Colors.grey[700]),
-                            ),
-                            SizedBox(height: 24),
-                          ],
                         ),
-                      ),
-                    ],
+                        // Steps row
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: List.generate(steps.length, (index) {
+                            final step = steps[index];
+                            
+                            return Expanded(
+                              child: _buildStepCard(
+                                step: step['step']!,
+                                title: step['title']!,
+                                desc: step['desc']!,
+                                circleColor: step['color'] as Color,
+                                isMobile: false,
+                              ),
+                            );
+                          }),
+                        ),
+                      ],
+                    ),
                   );
-                }),
+                },
+              ),
+              SizedBox(height: 64),
+              // Timeframes section - clean and neat box
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(vertical: 40, horizontal: 32),
+                decoration: BoxDecoration(
+                  color: Color(0xFFE8F4F8), // Light blue
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Color(0xFF002B5B).withOpacity(0.1),
+                    width: 1,
+                  ),
+                ),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isMobile = constraints.maxWidth < 600;
+                    
+                    if (isMobile) {
+                      return Column(
+                        children: [
+                          _buildTimeframeItem('24–48hrs', 'Application Review Time', isMobile),
+                          SizedBox(height: 32),
+                          _buildTimeframeItem('90min', 'Assessment Duration', isMobile),
+                          SizedBox(height: 32),
+                          _buildTimeframeItem('7 days', 'Complete Process', isMobile),
+                        ],
+                      );
+                    }
+                    
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(child: _buildTimeframeItem('24–48hrs', 'Application Review Time', isMobile)),
+                        Container(
+                          width: 1,
+                          height: 70,
+                          color: Color(0xFF002B5B).withOpacity(0.15),
+                        ),
+                        Expanded(child: _buildTimeframeItem('90min', 'Assessment Duration', isMobile)),
+                        Container(
+                          width: 1,
+                          height: 70,
+                          color: Color(0xFF002B5B).withOpacity(0.15),
+                        ),
+                        Expanded(child: _buildTimeframeItem('7 days', 'Complete Process', isMobile)),
+                      ],
+                    );
+                  },
+                ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildStepCard({
+    required String step,
+    required String title,
+    required String desc,
+    required Color circleColor,
+    required bool isMobile,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: isMobile ? 70 : 100,
+          height: isMobile ? 70 : 100,
+          decoration: BoxDecoration(
+            color: circleColor,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: circleColor.withOpacity(0.4),
+                blurRadius: 12,
+                spreadRadius: 2,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Center(
+            child: Text(
+              step,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: isMobile ? 28 : 36,
+                fontWeight: FontWeight.bold,
+                letterSpacing: -0.5,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(height: 20),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: isMobile ? 17 : 19,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF002B5B),
+            height: 1.2,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 6),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: isMobile ? 4 : 12),
+          child: Text(
+            desc,
+            style: TextStyle(
+              fontSize: isMobile ? 12 : 13,
+              color: Colors.grey[600],
+              height: 1.4,
+            ),
+            textAlign: TextAlign.center,
+            maxLines: 3,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTimeframeItem(String time, String label, bool isMobile) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          time,
+          style: TextStyle(
+            fontSize: isMobile ? 32 : 36,
+            fontWeight: FontWeight.w900,
+            color: Color(0xFF002B5B),
+            letterSpacing: -0.5,
+            height: 1.0,
+          ),
+        ),
+        SizedBox(height: 12),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: isMobile ? 14 : 15,
+            color: Colors.grey[700],
+            fontWeight: FontWeight.w500,
+            height: 1.3,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
     );
   }
        

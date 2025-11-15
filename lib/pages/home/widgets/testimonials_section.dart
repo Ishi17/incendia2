@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 class Testimonial {
@@ -26,6 +27,7 @@ class _TestimonialsSectionState extends State<TestimonialsSection>
   late final PageController _pageController;
   int _currentIndex = 0;
   late final AnimationController _animController;
+  Timer? _autoScrollTimer;
 
   final List<Testimonial> testimonials = const [
     Testimonial(
@@ -53,21 +55,46 @@ class _TestimonialsSectionState extends State<TestimonialsSection>
       vsync: this,
       duration: const Duration(milliseconds: 420),
     );
+    _startAutoScroll();
   }
 
   @override
   void dispose() {
+    _autoScrollTimer?.cancel();
     _pageController.dispose();
     _animController.dispose();
     super.dispose();
   }
 
+  void _startAutoScroll() {
+    _autoScrollTimer?.cancel();
+    _autoScrollTimer = Timer.periodic(const Duration(seconds: 6), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      
+      final nextIndex = (_currentIndex + 1) % testimonials.length;
+      _goTo(nextIndex);
+    });
+  }
+
+  void _pauseAutoScroll() {
+    _autoScrollTimer?.cancel();
+  }
+
+  void _resumeAutoScroll() {
+    _startAutoScroll();
+  }
+
   void _goTo(int index) {
+    if (!mounted) return;
     _pageController.animateToPage(
       index,
       duration: const Duration(milliseconds: 480),
       curve: Curves.easeOutCubic,
     );
+    // Note: onPageChanged will update _currentIndex when animation completes
   }
 
   @override
@@ -101,7 +128,11 @@ class _TestimonialsSectionState extends State<TestimonialsSection>
                 PageView.builder(
                   controller: _pageController,
                   itemCount: testimonials.length,
-                  onPageChanged: (i) => setState(() => _currentIndex = i),
+                  onPageChanged: (i) {
+                    setState(() => _currentIndex = i);
+                    // Reset auto-scroll timer when page changes
+                    _startAutoScroll();
+                  },
                   itemBuilder: (context, index) {
                     final t = testimonials[index];
                     return Padding(
@@ -200,13 +231,14 @@ class _TestimonialsSectionState extends State<TestimonialsSection>
                 if (!widget.isMobile)
                   Positioned(
                     left: 0,
-                    child: Opacity(
-                      opacity: _currentIndex > 0 ? 1.0 : 0.45,
+                      child: Opacity(
+                      opacity: 1.0,
                       child: IconButton(
                         tooltip: 'Previous',
-                        onPressed: _currentIndex > 0
-                            ? () => _goTo(_currentIndex - 1)
-                            : null,
+                        onPressed: () {
+                          final prevIndex = (_currentIndex - 1 + testimonials.length) % testimonials.length;
+                          _goTo(prevIndex);
+                        },
                         icon: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: const BoxDecoration(
@@ -228,14 +260,13 @@ class _TestimonialsSectionState extends State<TestimonialsSection>
                   Positioned(
                     right: 0,
                     child: Opacity(
-                      opacity: _currentIndex < testimonials.length - 1
-                          ? 1.0
-                          : 0.45,
+                      opacity: 1.0,
                       child: IconButton(
                         tooltip: 'Next',
-                        onPressed: _currentIndex < testimonials.length - 1
-                            ? () => _goTo(_currentIndex + 1)
-                            : null,
+                        onPressed: () {
+                          final nextIndex = (_currentIndex + 1) % testimonials.length;
+                          _goTo(nextIndex);
+                        },
                         icon: Container(
                           padding: const EdgeInsets.all(6),
                           decoration: const BoxDecoration(

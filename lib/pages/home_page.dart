@@ -9,8 +9,8 @@ import 'package:incendia_webpage/pages/contact_us_page.dart';
 import 'package:incendia_webpage/pages/gallery_page.dart';
 import 'package:incendia_webpage/pages/life_skills_page.dart';
 import 'package:incendia_webpage/pages/schedule_page.dart';
+import 'package:incendia_webpage/pages/services_programs_page.dart';
 import 'package:incendia_webpage/pages/home/widgets/hero_section.dart';
-import 'package:incendia_webpage/pages/home/widgets/combined_services_offerings.dart';
 import 'package:incendia_webpage/pages/home/widgets/testimonials_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/cta_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/footer_section.dart';
@@ -117,6 +117,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       case 'contact':
         page = const ContactUsPage();
         break;
+      case 'services':
+      case 'services and programs':
+      case 'our services and programs':
+        page = const ServicesProgramsPage();
+        break;
       default:
         return;
     }
@@ -143,6 +148,72 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _navigateTo('Admissions');
   }
 
+  void _showConsultationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return _ConsultationDialog(isMobile: isMobile);
+      },
+    );
+  }
+
+  Widget _buildServicesPreview({required bool isMobile}) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: 60,
+        horizontal: isMobile ? 20 : 40,
+      ),
+      color: const Color(0xFFF8F9FA),
+      child: Wrap(
+        spacing: 20,
+        runSpacing: 20,
+        alignment: WrapAlignment.center,
+        children: [
+          _ServicePreviewCard(
+            item: {
+              'icon': Icons.person,
+              'title': 'Personalized Learning',
+              'desc': 'Tailored curriculum for individual needs',
+              'category': 'Service',
+              'color': const Color(0xFFFF6B00),
+            },
+            isMobile: isMobile,
+          ),
+          _ServicePreviewCard(
+            item: {
+              'icon': Icons.book,
+              'title': 'Academic Mastery',
+              'desc': 'Board-wise curriculum',
+              'category': 'Program',
+              'color': const Color(0xFF4CAF50),
+            },
+            isMobile: isMobile,
+          ),
+          _ServicePreviewCard(
+            item: {
+              'icon': Icons.psychology,
+              'title': 'Life Skills',
+              'desc': 'Critical thinking & communication',
+              'category': 'Program',
+              'color': const Color(0xFF2196F3),
+            },
+            isMobile: isMobile,
+          ),
+          _ServicePreviewCard(
+            item: {
+              'icon': Icons.computer,
+              'title': 'Modern Technology',
+              'desc': 'Cutting-edge learning tools',
+              'category': 'Service',
+              'color': const Color(0xFFFF6B00),
+            },
+            isMobile: isMobile,
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -159,10 +230,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   fadeAnimation: _fadeAnimation,
                   slideAnimation: _slideAnimation,
                   navigateTo: _navigateTo,
+                  onConsultationPressed: _showConsultationDialog,
                 ),
-                CombinedServicesOfferings(isMobile: isMobile),
                 TestimonialsSection(isMobile: isMobile),
-                CtaSection(isMobile: isMobile, navigateTo: _navigateTo),
+                CtaSection(
+                  isMobile: isMobile,
+                  navigateTo: _navigateTo,
+                  onConsultationPressed: _showConsultationDialog,
+                ),
                 FooterSection(isMobile: isMobile),
               ],
             ),
@@ -322,6 +397,623 @@ class _UrgencyPopup extends StatelessWidget {
                   ),
                 ),
               ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ServicePreviewCard extends StatefulWidget {
+  final Map<String, dynamic> item;
+  final bool isMobile;
+
+  const _ServicePreviewCard({
+    required this.item,
+    required this.isMobile,
+  });
+
+  @override
+  State<_ServicePreviewCard> createState() => _ServicePreviewCardState();
+}
+
+class _ServicePreviewCardState extends State<_ServicePreviewCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _showItemDialog() {
+    _animationController.forward().then((_) {
+      _animationController.reverse();
+    });
+
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Service detail',
+      barrierColor: Colors.black.withOpacity(0.6),
+      transitionDuration: const Duration(milliseconds: 450),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 520),
+            child: _ServiceItemDialog(item: widget.item),
+          ),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curvedAnimation = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+          reverseCurve: Curves.easeInCubic,
+        );
+        return FadeTransition(
+          opacity: curvedAnimation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 0.08),
+              end: Offset.zero,
+            ).animate(curvedAnimation),
+            child: ScaleTransition(
+              scale: Tween<double>(begin: 0.9, end: 1.0).animate(curvedAnimation),
+              child: child,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final color = widget.item['color'] as Color;
+    final icon = widget.item['icon'] as IconData;
+    final title = widget.item['title'] as String;
+
+    return AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: InkWell(
+            onTap: _showItemDialog,
+            borderRadius: BorderRadius.circular(16),
+            child: Container(
+              width: widget.isMobile ? 150 : 180,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: color.withOpacity(0.2),
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: color.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      icon,
+                      color: color,
+                      size: 24,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF002B5B),
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ServiceItemDialog extends StatelessWidget {
+  final Map<String, dynamic> item;
+
+  const _ServiceItemDialog({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    // Get detailed content for each item
+    String getDetailedContent(String title) {
+      switch (title) {
+        case 'Academic Mastery':
+          return 'Our comprehensive academic programs cover all major educational boards including CBSE, ICSE, and State boards. We provide structured learning paths with regular assessments, mock tests, and personalized feedback to ensure academic excellence and board exam success.';
+        case 'Life Skills':
+          return 'Beyond academics, we focus on developing essential life skills including critical thinking, communication, leadership, and emotional intelligence. These skills prepare students for real-world challenges and help them become well-rounded individuals ready for future success.';
+        case 'Exam Prep':
+          return 'Focused preparation for board exams, competitive tests, and entrance examinations. Our exam prep program includes mock tests, time management strategies, and personalized study plans to help students achieve their best results.';
+        case 'Career Guidance':
+          return 'Expert career counseling and guidance to help students explore career paths, understand industry requirements, and make informed decisions about their future. We provide resume building, interview preparation, and career readiness support.';
+        default:
+          return item['desc'] as String;
+      }
+    }
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      elevation: 20,
+      child: Container(
+        padding: const EdgeInsets.all(30),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.white, Color(0xFFF8F9FA)],
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 70,
+              height: 70,
+              decoration: BoxDecoration(
+                color: (item['color'] as Color).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Icon(
+                item['icon'] as IconData,
+                color: item['color'] as Color,
+                size: 35,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              item['title'] as String,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF002B5B),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: (item['color'] as Color).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                item['category'] as String,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: item['color'] as Color,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              getDetailedContent(item['title'] as String),
+              style: const TextStyle(
+                fontSize: 15,
+                color: Color(0xFF666666),
+                height: 1.6,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: item['color'] as Color,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+              ),
+              child: const Text(
+                'Got it!',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ConsultationDialog extends StatefulWidget {
+  final bool isMobile;
+
+  const _ConsultationDialog({
+    required this.isMobile,
+  });
+
+  @override
+  State<_ConsultationDialog> createState() => _ConsultationDialogState();
+}
+
+class _ConsultationDialogState extends State<_ConsultationDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
+  bool _isSubmitting = false;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  void _handleSubmit() {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isSubmitting = true);
+      
+      // Simulate API call
+      Future.delayed(const Duration(seconds: 1), () {
+        if (!mounted) return;
+        setState(() => _isSubmitting = false);
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Thank you! We will contact you soon.'),
+            backgroundColor: Color(0xFF002B5B),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: widget.isMobile ? 340 : 420,
+        ),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF002B5B), Color(0xFF001735)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: widget.isMobile ? 20 : 28,
+            vertical: widget.isMobile ? 20 : 24,
+          ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.calendar_today,
+                        color: Color(0xFFFF6B00),
+                        size: 24,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Book your free consultation',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: widget.isMobile ? 22 : 24,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Fill in your details and we\'ll get back to you shortly.',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: widget.isMobile ? 14 : 16,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                TextFormField(
+                  controller: _nameController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                    labelStyle: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                    ),
+                    hintText: 'Enter your name',
+                    hintStyle: TextStyle(
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                    prefixIcon: Icon(
+                      Icons.person_outline,
+                      color: Colors.white.withOpacity(0.7),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.1),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Color(0xFFFF6B00),
+                        width: 2,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                      ),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter your name';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Phone Number',
+                    labelStyle: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                    ),
+                    hintText: 'Enter your phone number',
+                    hintStyle: TextStyle(
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                    prefixIcon: Icon(
+                      Icons.phone_outlined,
+                      color: Colors.white.withOpacity(0.7),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.1),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Color(0xFFFF6B00),
+                        width: 2,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                      ),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter your phone number';
+                    }
+                    if (value.trim().length < 10) {
+                      return 'Please enter a valid phone number';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    labelStyle: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                    ),
+                    hintText: 'Enter your email',
+                    hintStyle: TextStyle(
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                    prefixIcon: Icon(
+                      Icons.email_outlined,
+                      color: Colors.white.withOpacity(0.7),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.1),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Color(0xFFFF6B00),
+                        width: 2,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                      ),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    if (!value.contains('@') || !value.contains('.')) {
+                      return 'Please enter a valid email address';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _isSubmitting ? null : _handleSubmit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFF6B00),
+                      padding: EdgeInsets.symmetric(
+                        vertical: widget.isMobile ? 14 : 16,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      disabledBackgroundColor: const Color(0xFFFF6B00).withOpacity(0.6),
+                    ),
+                    child: _isSubmitting
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : const Text(
+                            'Submit',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                            ),
+                          ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Center(
+                  child: TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.85),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
