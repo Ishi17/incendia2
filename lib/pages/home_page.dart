@@ -72,7 +72,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       }
     });
 
-    _startUrgencyPopupTimer();
+    // Popup will stay visible until user closes it
+    // Removed auto-dismiss timer
   }
 
   @override
@@ -127,14 +128,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     }
 
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
-  }
-
-  void _startUrgencyPopupTimer() {
-    _popupTimer?.cancel();
-    _popupTimer = Timer(const Duration(seconds: 5), () {
-      if (!mounted) return;
-      setState(() => _showUrgencyPopup = false);
-    });
   }
 
   void _dismissUrgencyPopup() {
