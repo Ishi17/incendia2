@@ -218,10 +218,10 @@ class HeroSection extends StatelessWidget {
           child: Opacity(
             opacity: value,
             child: Container(
-              padding: EdgeInsets.all(isMobile ? 16 : 24),
+              padding: EdgeInsets.all(isMobile ? 12 : 16),
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.12),
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: Colors.white.withOpacity(0.25),
                   width: 1.5,
@@ -229,25 +229,25 @@ class HeroSection extends StatelessWidget {
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.1),
-                    blurRadius: 30,
-                    spreadRadius: 5,
+                    blurRadius: 20,
+                    spreadRadius: 3,
                   ),
                 ],
               ),
               child: isMobile
                   ? Column(
                       children: [
-                        _buildAnimatedStatItem(10, 'K+', 'Students', 0, isMobile),
-                        const SizedBox(height: 12),
+                        _buildAnimatedStatItem(10000, '+', 'Students', 0, isMobile),
+                        const SizedBox(height: 10),
                         _buildAnimatedStatItem(95, '%', 'Success Rate', 300, isMobile),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 10),
                         _buildAnimatedStatItem(50, '+', 'Expert Teachers', 600, isMobile),
                       ],
                     )
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        _buildAnimatedStatItem(10, 'K+', 'Students', 0, isMobile),
+                        _buildAnimatedStatItem(10000, '+', 'Students', 0, isMobile),
                         _buildAnimatedStatItem(95, '%', 'Success Rate', 300, isMobile),
                         _buildAnimatedStatItem(50, '+', 'Expert Teachers', 600, isMobile),
                       ],
@@ -291,17 +291,35 @@ class HeroSection extends StatelessWidget {
       },
     ];
     
-    return Wrap(
-      spacing: isMobile ? 12 : 20,
-      runSpacing: isMobile ? 12 : 20,
-      alignment: WrapAlignment.center,
-      children: serviceItems.map((item) {
-        return _HeroServiceCard(
-          item: item,
-          isMobile: isMobile,
-        );
-      }).toList(),
-    );
+    if (isMobile) {
+      return Wrap(
+        spacing: 12,
+        runSpacing: 12,
+        alignment: WrapAlignment.center,
+        children: serviceItems.map((item) {
+          return _HeroServiceCard(
+            item: item,
+            isMobile: isMobile,
+          );
+        }).toList(),
+      );
+    } else {
+      // Desktop: Make cards extend full width
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: serviceItems.map((item) {
+          return Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: _HeroServiceCard(
+                item: item,
+                isMobile: isMobile,
+              ),
+            ),
+          );
+        }).toList(),
+      );
+    }
   }
 
   Widget _buildFloatingElement({
@@ -506,7 +524,7 @@ class HeroSection extends StatelessWidget {
     bool isMobile,
   ) {
     return TweenAnimationBuilder<double>(
-      duration: Duration(milliseconds: 3500 + delay),
+      duration: Duration(milliseconds: 5500 + delay),
       tween: Tween(begin: 0.0, end: targetValue.toDouble()),
       builder: (context, value, child) {
         final currentValue = value.clamp(0, targetValue.toDouble()).round();
@@ -702,9 +720,9 @@ class _HeroServiceCardState extends State<_HeroServiceCard>
             onTap: _showItemDialog,
             borderRadius: BorderRadius.circular(16),
             child: Container(
-              width: widget.isMobile ? 150 : 160,
+              width: widget.isMobile ? 150 : null, // null allows Expanded to work on desktop
               height: widget.isMobile ? 140 : 150,
-              padding: const EdgeInsets.all(18),
+              padding: EdgeInsets.all(widget.isMobile ? 18 : 20),
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.80),
                 borderRadius: BorderRadius.circular(16),
@@ -725,8 +743,8 @@ class _HeroServiceCardState extends State<_HeroServiceCard>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    width: 48,
-                    height: 48,
+                    width: widget.isMobile ? 48 : 52,
+                    height: widget.isMobile ? 48 : 52,
                     decoration: BoxDecoration(
                       color: (widget.item['color'] as Color).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
@@ -734,16 +752,16 @@ class _HeroServiceCardState extends State<_HeroServiceCard>
                     child: Icon(
                       icon,
                       color: widget.item['color'] as Color,
-                      size: 22,
+                      size: widget.isMobile ? 22 : 26,
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: widget.isMobile ? 10 : 12),
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontSize: 12,
+                    style: TextStyle(
+                      fontSize: widget.isMobile ? 12 : 14,
                       fontWeight: FontWeight.w700,
-                      color: Color(0xFF002B5B),
+                      color: const Color(0xFF002B5B),
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 2,

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:incendia_webpage/components/custom_drawer.dart';
 import '../components/custom_navbar.dart';
@@ -13,6 +14,7 @@ class AcademicPage extends StatefulWidget {
 class _AcademicPageState extends State<AcademicPage> {
   late final PageController _carouselController;
   int _currentIndex = 0;
+  Timer? _autoScrollTimer;
   final List<Map<String, dynamic>> curriculums = [
     {
       'name': 'CBSE',
@@ -52,21 +54,41 @@ class _AcademicPageState extends State<AcademicPage> {
   void initState() {
     super.initState();
     _carouselController = PageController(viewportFraction: 0.50);
+    _startAutoScroll();
   }
 
   @override
   void dispose() {
+    _autoScrollTimer?.cancel();
     _carouselController.dispose();
     super.dispose();
+  }
+
+  void _startAutoScroll() {
+    _autoScrollTimer?.cancel();
+    _autoScrollTimer = Timer.periodic(const Duration(seconds: 4), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      
+      final nextIndex = (_currentIndex + 1) % curriculums.length;
+      _goToIndex(nextIndex);
+    });
   }
 
   void _goTo(int delta) {
     final next = (_currentIndex + delta).clamp(0, curriculums.length - 1);
     if (next == _currentIndex) return;
+    _goToIndex(next);
+  }
+
+  void _goToIndex(int index) {
+    if (!mounted) return;
     _carouselController.animateToPage(
-      next,
-      duration: const Duration(milliseconds: 350),
-      curve: Curves.easeInOut,
+      index,
+      duration: const Duration(milliseconds: 480),
+      curve: Curves.easeOutCubic,
     );
   }
 
@@ -224,84 +246,150 @@ class _AcademicPageState extends State<AcademicPage> {
           ),
           SizedBox(height: isMobile ? 20 : 30),
           
-          // Carousel
+          // Carousel with side navigation buttons
           Container(
             height: isMobile ? 500 : isTablet ? 450 : 450,
-            child: PageView.builder(
-              controller: _carouselController,
-              itemCount: curriculums.length,
-              onPageChanged: (i) => setState(() => _currentIndex = i),
-              itemBuilder: (context, index) {
-                final item = curriculums[index];
-                final List<String> highlights =
-                    (item['highlights'] as List<dynamic>).cast<String>();
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Carousel
+                PageView.builder(
+                  controller: _carouselController,
+                  itemCount: curriculums.length,
+                  onPageChanged: (i) {
+                    setState(() => _currentIndex = i);
+                    // Reset auto-scroll timer when page changes
+                    _startAutoScroll();
+                  },
+                  itemBuilder: (context, index) {
+                    final item = curriculums[index];
+                    final List<String> highlights =
+                        (item['highlights'] as List<dynamic>).cast<String>();
 
-                return Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isMobile ? 2.0 : 32.0, 
-                    vertical: 8
+                    return Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 2.0 : 32.0, 
+                        vertical: 8
+                      ),
+                      child: _CurriculumCard(
+                        name: item['name'] as String,
+                        desc: item['desc'] as String,
+                        image: item['image'] as String,
+                        bgColor: item['bgColor'] as Color,
+                        highlights: highlights,
+                      ),
+                    );
+                  },
+                ),
+                
+                // Left navigation button
+                if (!isMobile)
+                  Positioned(
+                    left: 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.15),
+                            blurRadius: 10,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: IconButton(
+                        onPressed: () => _goTo(-1),
+                        icon: Icon(
+                          Icons.chevron_left, 
+                          size: 32,
+                          color: Color(0xFF002B5B),
+                        ),
+                      ),
+                    ),
                   ),
-                  child: _CurriculumCard(
-                    name: item['name'] as String,
-                    desc: item['desc'] as String,
-                    image: item['image'] as String,
-                    bgColor: item['bgColor'] as Color,
-                    highlights: highlights,
+                
+                // Right navigation button
+                if (!isMobile)
+                  Positioned(
+                    right: 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.15),
+                            blurRadius: 10,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: IconButton(
+                        onPressed: () => _goTo(1),
+                        icon: Icon(
+                          Icons.chevron_right, 
+                          size: 32,
+                          color: Color(0xFF002B5B),
+                        ),
+                      ),
+                    ),
                   ),
-                );
-              },
+              ],
             ),
           ),
           
-          // Navigation buttons
-          SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      blurRadius: 10,
-                      offset: Offset(0, 3),
+          // Mobile navigation buttons (below on mobile)
+          if (isMobile) ...[
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.15),
+                        blurRadius: 10,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: IconButton(
+                    onPressed: () => _goTo(-1),
+                    icon: Icon(
+                      Icons.chevron_left, 
+                      size: 28,
+                      color: Color(0xFF002B5B),
                     ),
-                  ],
-                ),
-                child: IconButton(
-                  onPressed: () => _goTo(-1),
-                  icon: Icon(
-                    Icons.chevron_left, 
-                    size: isMobile ? 28 : 32,
-                    color: Color(0xFF002B5B),
                   ),
                 ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
-                      blurRadius: 10,
-                      offset: Offset(0, 3),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.15),
+                        blurRadius: 10,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: IconButton(
+                    onPressed: () => _goTo(1),
+                    icon: Icon(
+                      Icons.chevron_right, 
+                      size: 28,
+                      color: Color(0xFF002B5B),
                     ),
-                  ],
-                ),
-                child: IconButton(
-                  onPressed: () => _goTo(1),
-                  icon: Icon(
-                    Icons.chevron_right, 
-                    size: isMobile ? 28 : 32,
-                    color: Color(0xFF002B5B),
                   ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ],
       ),
     );
