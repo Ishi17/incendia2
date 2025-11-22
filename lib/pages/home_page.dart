@@ -224,6 +224,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   slideAnimation: _slideAnimation,
                   navigateTo: _navigateTo,
                   onConsultationPressed: _showConsultationDialog,
+                  shouldStartCounting: !_showUrgencyPopup,
                 ),
                 TestimonialsSection(isMobile: isMobile),
                 CtaSection(

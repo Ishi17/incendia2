@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:incendia_webpage/pages/home/widgets/combined_services_offerings.dart';
 import 'package:incendia_webpage/components/custom_navbar.dart';
+import 'package:incendia_webpage/components/custom_drawer.dart';
 
 class ServicesProgramsPage extends StatelessWidget {
   const ServicesProgramsPage({super.key});
@@ -11,6 +12,7 @@ class ServicesProgramsPage extends StatelessWidget {
     
     return Scaffold(
       appBar: CustomNavbar(isScrolled: false),
+      drawer: const CustomDrawer(),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,

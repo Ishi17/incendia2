@@ -6,6 +6,7 @@ class HeroSection extends StatelessWidget {
   final Animation<Offset> slideAnimation;
   final void Function(String route) navigateTo;
   final VoidCallback? onConsultationPressed;
+  final bool shouldStartCounting;
 
   const HeroSection({
     super.key,
@@ -14,6 +15,7 @@ class HeroSection extends StatelessWidget {
     required this.slideAnimation,
     required this.navigateTo,
     this.onConsultationPressed,
+    this.shouldStartCounting = true,
   });
 
   @override
@@ -188,7 +190,7 @@ class HeroSection extends StatelessWidget {
                           SizedBox(height: isMobile ? 24 : 30),
 
                           // Stats only (no student avatars)
-                          _buildStatsOnly(isMobile: isMobile),
+                          _buildStatsOnly(isMobile: isMobile, shouldStartCounting: shouldStartCounting),
                           
                           SizedBox(height: isMobile ? 30 : 36),
                           
@@ -208,54 +210,42 @@ class HeroSection extends StatelessWidget {
     );
   }
   
-  Widget _buildStatsOnly({bool isMobile = false}) {
-    return TweenAnimationBuilder<double>(
-      duration: const Duration(milliseconds: 1500),
-      tween: Tween(begin: 0.0, end: 1.0),
-      builder: (context, value, child) {
-        return Transform.translate(
-          offset: Offset(0, 30 * (1 - value)),
-          child: Opacity(
-            opacity: value,
-            child: Container(
-              padding: EdgeInsets.all(isMobile ? 12 : 16),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.12),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.25),
-                  width: 1.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 20,
-                    spreadRadius: 3,
-                  ),
-                ],
-              ),
-              child: isMobile
-                  ? Column(
-                      children: [
-                        _buildAnimatedStatItem(10000, '+', 'Students', 0, isMobile),
-                        const SizedBox(height: 10),
-                        _buildAnimatedStatItem(95, '%', 'Success Rate', 300, isMobile),
-                        const SizedBox(height: 10),
-                        _buildAnimatedStatItem(50, '+', 'Expert Teachers', 600, isMobile),
-                      ],
-                    )
-                  : Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildAnimatedStatItem(10000, '+', 'Students', 0, isMobile),
-                        _buildAnimatedStatItem(95, '%', 'Success Rate', 300, isMobile),
-                        _buildAnimatedStatItem(50, '+', 'Expert Teachers', 600, isMobile),
-                      ],
-                    ),
-            ),
+  Widget _buildStatsOnly({bool isMobile = false, bool shouldStartCounting = true}) {
+    return Container(
+      padding: EdgeInsets.all(isMobile ? 12 : 16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.25),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 20,
+            spreadRadius: 3,
           ),
-        );
-      },
+        ],
+      ),
+      child: isMobile
+          ? Column(
+              children: [
+                _buildAnimatedStatItem(10000, '+', 'Students', 0, isMobile, shouldStartCounting),
+                const SizedBox(height: 10),
+                _buildAnimatedStatItem(95, '%', 'Success Rate', 300, isMobile, shouldStartCounting),
+                const SizedBox(height: 10),
+                _buildAnimatedStatItem(50, '+', 'Expert Teachers', 600, isMobile, shouldStartCounting),
+              ],
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildAnimatedStatItem(10000, '+', 'Students', 0, isMobile, shouldStartCounting),
+                _buildAnimatedStatItem(95, '%', 'Success Rate', 300, isMobile, shouldStartCounting),
+                _buildAnimatedStatItem(50, '+', 'Expert Teachers', 600, isMobile, shouldStartCounting),
+              ],
+            ),
     );
   }
   
@@ -390,7 +380,7 @@ class HeroSection extends StatelessWidget {
     );
   }
 
-  Widget _buildStudentShowcase({bool isMobile = false}) {
+  Widget _buildStudentShowcase({bool isMobile = false, bool shouldStartCounting = true}) {
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 1500),
       tween: Tween(begin: 0.0, end: 1.0),
@@ -441,19 +431,19 @@ class HeroSection extends StatelessWidget {
                   isMobile
                       ? Column(
                           children: [
-                            _buildAnimatedStatItem(10, 'K+', 'Students', 0, isMobile),
+                            _buildAnimatedStatItem(10, 'K+', 'Students', 0, isMobile, shouldStartCounting),
                             const SizedBox(height: 12),
-                            _buildAnimatedStatItem(95, '%', 'Success Rate', 300, isMobile),
+                            _buildAnimatedStatItem(95, '%', 'Success Rate', 300, isMobile, shouldStartCounting),
                             const SizedBox(height: 12),
-                            _buildAnimatedStatItem(50, '+', 'Expert Teachers', 600, isMobile),
+                            _buildAnimatedStatItem(50, '+', 'Expert Teachers', 600, isMobile, shouldStartCounting),
                           ],
                         )
                       : Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            _buildAnimatedStatItem(10, 'K+', 'Students', 0, isMobile),
-                            _buildAnimatedStatItem(95, '%', 'Success Rate', 300, isMobile),
-                            _buildAnimatedStatItem(50, '+', 'Expert Teachers', 600, isMobile),
+                            _buildAnimatedStatItem(10, 'K+', 'Students', 0, isMobile, shouldStartCounting),
+                            _buildAnimatedStatItem(95, '%', 'Success Rate', 300, isMobile, shouldStartCounting),
+                            _buildAnimatedStatItem(50, '+', 'Expert Teachers', 600, isMobile, shouldStartCounting),
                           ],
                         ),
                 ],
@@ -522,10 +512,15 @@ class HeroSection extends StatelessWidget {
     String label,
     int delay,
     bool isMobile,
+    bool shouldStartCounting,
   ) {
     return TweenAnimationBuilder<double>(
+      key: ValueKey('${label}_$shouldStartCounting'), // Unique key per stat item that restarts when shouldStartCounting changes
       duration: Duration(milliseconds: 5500 + delay),
-      tween: Tween(begin: 0.0, end: targetValue.toDouble()),
+      tween: Tween(
+        begin: 0.0,
+        end: shouldStartCounting ? targetValue.toDouble() : 0.0,
+      ),
       builder: (context, value, child) {
         final currentValue = value.clamp(0, targetValue.toDouble()).round();
         final progress = targetValue == 0
