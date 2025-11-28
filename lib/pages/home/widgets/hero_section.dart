@@ -146,7 +146,7 @@ class HeroSection extends StatelessWidget {
                         children: [
                           // Main heading
                           Text(
-                            'Empowering Students\nfor Academic Excellence',
+                            'Inspiring Potential. Inspiring Progress.',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontWeight: FontWeight.w900,
