@@ -158,14 +158,30 @@ class HeroSection extends StatelessWidget {
                           SizedBox(height: isMobile ? 16 : 20),
 
                           // Subtitle
-                          Text(
-                            'Comprehensive education programs combining academic mastery with essential life skills.',
-                            style: TextStyle(
-                              fontSize: isMobile ? 14 : 18,
-                              color: Colors.white.withOpacity(0.9),
-                              height: 1.6,
-                            ),
-                            textAlign: TextAlign.center,
+                          Column(
+                            children: [
+                              Text(
+                                'Academics + Life Skills + Entrepreneurial Thinking = Incendia',
+                                style: TextStyle(
+                                  fontSize: isMobile ? 15 : 19,
+                                  color: Colors.white.withOpacity(0.9),
+                                  height: 1.4,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: isMobile ? 6 : 8),
+                              Text(
+                                'Grades 9-12 | CBSE, ICSE, IB | Banglore',
+                                style: TextStyle(
+                                  fontSize: isMobile ? 13 : 16,
+                                  color: Colors.white.withOpacity(0.85),
+                                  height: 1.4,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
                           SizedBox(height: isMobile ? 30 : 40),
 
