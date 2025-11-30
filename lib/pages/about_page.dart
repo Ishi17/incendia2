@@ -42,8 +42,8 @@ class _AboutUsPageState extends State<AboutUsPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomNavbar(
-        title: 'About Us',
+      appBar: CustomNavbar.withAnnouncement(
+        title: 'Our Stories',
         showBackButton: true,
       ),
       drawer: CustomDrawer(),
@@ -74,7 +74,7 @@ class _AboutUsPageState extends State<AboutUsPage>
                       ),
                       SizedBox(height: 20),
                       Text(
-                        'About Incendia',
+                        'Our Stories',
                         style: TextStyle(
                           fontSize: 36,
                           fontWeight: FontWeight.bold,
@@ -106,20 +106,11 @@ class _AboutUsPageState extends State<AboutUsPage>
                   opacity: _fadeAnimation,
                   child: Column(
                     children: [
-                      // Story Section
                       _buildStoryCard(),
                       SizedBox(height: 30),
-                      
-                      // Mission Cards
                       _buildMissionCards(),
                       SizedBox(height: 30),
-                      
-                      // Stats Section
                       _buildStatsSection(),
-                      SizedBox(height: 30),
-                      
-                      // Values Section
-                      _buildValuesSection(),
                     ],
                   ),
                 ),

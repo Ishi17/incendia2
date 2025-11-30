@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Educational Academy',
+      title: 'Incendia',
       theme: ThemeData(
         primaryColor: Color(0xFF002B5B),
         scaffoldBackgroundColor: Color(0xFFF5F5F5),

@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
 import '../pages/about_page.dart';
+import '../pages/about_values_page.dart';
+import '../pages/about_team_page.dart';
 import '../pages/academic.dart';
 import '../pages/life_skills_page.dart';
 import '../pages/schedule_page.dart';
 import '../pages/admissions_page.dart';
+import '../pages/admissions_fees_page.dart';
+import '../pages/admissions_faqs_page.dart';
 import '../pages/gallery_page.dart';
 import '../pages/careers_page.dart';
 import '../pages/contact_us_page.dart';
-import '../pages/services_programs_page.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final menuItems = [
+    final otherItems = [
       {'name': 'Home', 'icon': Icons.home, 'route': '/'},
-      {'name': 'About', 'icon': Icons.info_outline, 'page': const AboutUsPage()},
-      {'name': 'Services', 'icon': Icons.business_center, 'page': const ServicesProgramsPage()},
       {'name': 'Academic', 'icon': Icons.school, 'page': const AcademicPage()},
       {'name': 'Life Skills', 'icon': Icons.psychology, 'page': const LifeSkillsPage()},
       {'name': 'Schedule', 'icon': Icons.schedule, 'page': const SchedulePage()},
-      {'name': 'Admissions', 'icon': Icons.how_to_reg, 'page': const AdmissionsPage()},
       {'name': 'Gallery', 'icon': Icons.photo_library, 'page': const GalleryPage()},
-      {'name': 'Careers', 'icon': Icons.work, 'page': const CareersPage()},
+      {'name': 'Join our Team', 'icon': Icons.work, 'page': const CareersPage()},
       {'name': 'Contact', 'icon': Icons.contact_phone, 'page': const ContactUsPage()},
     ];
 
@@ -88,54 +88,74 @@ class CustomDrawer extends StatelessWidget {
                   ),
                   child: ListView(
                     padding: const EdgeInsets.all(16),
-                    children: menuItems
-                        .map(
-                          (item) => Container(
-                            margin: const EdgeInsets.only(bottom: 8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: Colors.grey.shade50,
-                            ),
-                            child: ListTile(
-                              leading: Icon(
-                                item['icon'] as IconData,
-                                color: const Color(0xFFFF6B00),
-                                size: 24,
-                              ),
-                              title: Text(
-                                item['name'] as String,
-                                style: const TextStyle(
-                                  color: Color(0xFF002B5B),
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              trailing: const Icon(
-                                Icons.arrow_forward_ios,
-                                size: 16,
-                                color: Color(0xFFFF6B00),
-                              ),
-                              onTap: () {
-                                Navigator.pop(context);
-                                if (item['route'] != null) {
-                                  Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    item['route'] as String,
-                                    (route) => false,
-                                  );
-                                } else if (item['page'] != null) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => item['page'] as Widget,
-                                    ),
-                                  );
-                                }
-                              },
-                            ),
+                    children: [
+                      _buildExpansionTile(
+                        context,
+                        title: 'About',
+                        icon: Icons.info_outline,
+                        children: const [
+                          {'name': 'Our Stories', 'page': AboutUsPage()},
+                          {'name': 'Our Values', 'page': OurValuesPage()},
+                          {'name': 'Our Team', 'page': OurTeamPage()},
+                        ],
+                      ),
+                      _buildExpansionTile(
+                        context,
+                        title: 'Admissions',
+                        icon: Icons.how_to_reg,
+                        children: const [
+                          {'name': 'How to Apply', 'page': AdmissionsPage()},
+                          {'name': 'Fees Structure', 'page': AdmissionsFeesPage()},
+                          {'name': 'Admissions FAQs', 'page': AdmissionsFaqsPage()},
+                        ],
+                      ),
+                      ...otherItems.map(
+                        (item) => Container(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: Colors.grey.shade50,
                           ),
-                        )
-                        .toList(),
+                          child: ListTile(
+                            leading: Icon(
+                              item['icon'] as IconData,
+                              color: const Color(0xFFFF6B00),
+                              size: 24,
+                            ),
+                            title: Text(
+                              item['name'] as String,
+                              style: const TextStyle(
+                                color: Color(0xFF002B5B),
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
+                            ),
+                            trailing: const Icon(
+                              Icons.arrow_forward_ios,
+                              size: 16,
+                              color: Color(0xFFFF6B00),
+                            ),
+                            onTap: () {
+                              Navigator.pop(context);
+                              if (item['route'] != null) {
+                                Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  item['route'] as String,
+                                  (route) => false,
+                                );
+                              } else if (item['page'] != null) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => item['page'] as Widget,
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -145,13 +165,64 @@ class CustomDrawer extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildExpansionTile(
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    required List<Map<String, Object>> children,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.grey.shade50,
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          leading: Icon(
+            icon,
+            color: const Color(0xFFFF6B00),
+            size: 24,
+          ),
+          title: Text(
+            title,
+            style: const TextStyle(
+              color: Color(0xFF002B5B),
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+          ),
+          tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+          children: children.map(
+            (item) {
+              return ListTile(
+                title: Text(
+                  item['name'] as String,
+                  style: const TextStyle(
+                    color: Color(0xFF002B5B),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  final page = item['page'];
+                  if (page != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => page as Widget,
+                      ),
+                    );
+                  }
+                },
+              );
+            },
+          ).toList(),
+        ),
+      ),
+    );
+  }
 }
-
-
-
-
-
-
-
-
-

@@ -9,11 +9,11 @@ import 'package:incendia_webpage/pages/contact_us_page.dart';
 import 'package:incendia_webpage/pages/gallery_page.dart';
 import 'package:incendia_webpage/pages/life_skills_page.dart';
 import 'package:incendia_webpage/pages/schedule_page.dart';
-import 'package:incendia_webpage/pages/services_programs_page.dart';
-import 'package:incendia_webpage/pages/home/widgets/hero_section.dart';
-import 'package:incendia_webpage/pages/home/widgets/testimonials_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/cta_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/footer_section.dart';
+import 'package:incendia_webpage/pages/home/widgets/hero_section.dart';
+import 'package:incendia_webpage/pages/home/widgets/testimonials_section.dart';
+import 'package:incendia_webpage/pages/home/widgets/three_pillars_section.dart';
 import 'package:incendia_webpage/components/custom_navbar.dart';
 import 'package:incendia_webpage/components/custom_drawer.dart';
 
@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
   Timer? _popupTimer;
-  bool _showUrgencyPopup = true;
+  bool _showUrgencyPopup = false;
 
   @override
   void initState() {
@@ -72,8 +72,14 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       }
     });
 
-    // Popup will stay visible until user closes it
-    // Removed auto-dismiss timer
+    // Show the popup after the user has been on the page for a bit (desktop/tablet only)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || isMobile) return;
+      _popupTimer = Timer(const Duration(seconds: 15), () {
+        if (!mounted) return;
+        setState(() => _showUrgencyPopup = true);
+      });
+    });
   }
 
   @override
@@ -121,8 +127,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       case 'services':
       case 'services and programs':
       case 'our services and programs':
-        page = const ServicesProgramsPage();
-        break;
+        return;
       default:
         return;
     }
@@ -210,7 +215,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomNavbar(isScrolled: _isScrolled),
+      appBar: CustomNavbar(
+        isScrolled: _isScrolled,
+        onConsultationPressed: _showConsultationDialog,
+      ),
       drawer: CustomDrawer(),
       body: Stack(
         children: [
@@ -224,7 +232,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   slideAnimation: _slideAnimation,
                   navigateTo: _navigateTo,
                   onConsultationPressed: _showConsultationDialog,
+                  shouldStartCounting: true,
                 ),
+                ThreePillarsSection(isMobile: isMobile),
+                _IncendiaDifferenceSection(isMobile: isMobile),
                 TestimonialsSection(isMobile: isMobile),
                 CtaSection(
                   isMobile: isMobile,
@@ -235,7 +246,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               ],
             ),
           ),
-          if (_showUrgencyPopup)
+          if (_showUrgencyPopup && !isMobile)
             Positioned.fill(
               child: _UrgencyPopup(
                 isMobile: isMobile,
@@ -251,13 +262,225 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   // Extracted to ServicesSection widget (widgets/services_section.dart)
 
-  // Extracted to OfferingsSection widget (widgets/offerings_section.dart)
+// Extracted to OfferingsSection widget (widgets/offerings_section.dart)
 
-  // Extracted to StatsSection widget (widgets/stats_section.dart)
+// Extracted to StatsSection widget (widgets/stats_section.dart)
 
-  // Extracted to TestimonialsSection widget (widgets/testimonials_section.dart)
+// Extracted to TestimonialsSection widget (widgets/testimonials_section.dart)
 
 // Extracted to CtaSection widget (widgets/cta_section.dart)
+}
+
+class _IncendiaDifferenceSection extends StatelessWidget {
+  final bool isMobile;
+
+  const _IncendiaDifferenceSection({required this.isMobile});
+
+  @override
+  Widget build(BuildContext context) {
+    final cardWidth = isMobile ? double.infinity : 380.0;
+    final qualitiesTraditional = [
+      'Focuses solely on academics',
+      'Rigid, one-size-fits-all approach',
+      'Limited preparation for life beyond school',
+    ];
+    final qualitiesIncendia = [
+      'Balanced development of academics and life skills',
+      'Engaging, personalized learning experience',
+      'Holistic preparation for future success',
+    ];
+
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF102A45), Color(0xFF14365C)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      padding: EdgeInsets.symmetric(
+        vertical: isMobile ? 40 : 56,
+        horizontal: isMobile ? 16 : 24,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: const Color(0xFF5DA2F2).withOpacity(0.5)),
+            ),
+            child: const Text(
+              'Why families choose us',
+              style: TextStyle(
+                color: Colors.white70,
+                fontWeight: FontWeight.w800,
+                fontSize: 13,
+                letterSpacing: 0.6,
+              ),
+            ),
+          ),
+          SizedBox(height: isMobile ? 14 : 18),
+          Text(
+            'The Incendia Difference',
+            style: TextStyle(
+              fontSize: isMobile ? 28 : 32,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: isMobile ? 12 : 16),
+          Text(
+            'See how we go beyond traditional tuition.',
+            style: TextStyle(
+              fontSize: isMobile ? 14 : 16,
+              color: Colors.white.withOpacity(0.8),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: isMobile ? 22 : 30),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: isMobile ? 12 : 18,
+            runSpacing: isMobile ? 14 : 18,
+            children: [
+              _ComparisonCard(
+                title: 'Traditional Tuition',
+                subtitle: 'What most centers offer',
+                gradientColors: const [Color(0xFF1A365D), Color(0xFF23497A)],
+                textColor: Colors.white,
+                items: qualitiesTraditional,
+                width: cardWidth,
+              ),
+              _ComparisonCard(
+                title: 'Incendia',
+                subtitle: 'Where future-ready learners grow',
+                gradientColors: const [Color(0xFF1A365D), Color(0xFF23497A)],
+                textColor: Colors.white,
+                items: qualitiesIncendia,
+                width: cardWidth,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ComparisonCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final List<Color> gradientColors;
+  final Color textColor;
+  final List<String> items;
+  final double width;
+
+  const _ComparisonCard({
+    required this.title,
+    required this.subtitle,
+    required this.gradientColors,
+    required this.textColor,
+    required this.items,
+    required this.width,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      constraints: const BoxConstraints(minHeight: 220),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: gradientColors,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.08),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.18),
+            blurRadius: 18,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.check_circle_outline,
+                color: textColor.withOpacity(0.9),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 18,
+                    color: textColor,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            subtitle,
+            style: TextStyle(
+              fontSize: 13.5,
+              color: textColor.withOpacity(0.9),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ...items.map(
+            (item) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 4),
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: textColor.withOpacity(0.9),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      item,
+                      style: TextStyle(
+                        color: textColor,
+                        fontSize: 14,
+                        height: 1.4,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _UrgencyPopup extends StatelessWidget {

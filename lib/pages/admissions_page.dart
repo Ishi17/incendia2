@@ -102,8 +102,8 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomNavbar(
-        title: 'Admissions',
+      appBar: CustomNavbar.withAnnouncement(
+        title: 'How to Apply',
         showBackButton: true,
       ),
       drawer: CustomDrawer(),
@@ -117,7 +117,6 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
               _buildWhoCanApplyCards(),
               _buildAdmissionFlowchart(),
               _buildRegistrationForm(),
-              _buildFAQs(),
               _buildFooter(),
             ],
           ),
@@ -793,6 +792,14 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
   }
        
   Widget _buildRegistrationForm() {
+    final timingOptions = [
+      'Weekdays: Morning (8am-11am)',
+      'Weekdays: Afternoon (12pm-4pm)',
+      'Weekdays: Evening (5pm-8pm)',
+      'Weekends: Morning (9am-12pm)',
+      'Weekends: Afternoon (1pm-4pm)',
+    ];
+
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -808,7 +815,7 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
           _requiredField('Board'),
           _requiredField('Parent’s Name'),
           _requiredField('Contact'),
-          _requiredField('Preferred Timing to call (Weekday/Weekend)'),
+          _TimingMultiSelect(options: timingOptions),
           _requiredField('Subjects'),
           _requiredField('Message or Comments', maxLines: 3),
           SizedBox(height: 16),
@@ -866,6 +873,88 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
         ],
       ),
     );
+  }
+}
+
+class _TimingMultiSelect extends StatefulWidget {
+  final List<String> options;
+
+  const _TimingMultiSelect({required this.options});
+
+  @override
+  State<_TimingMultiSelect> createState() => _TimingMultiSelectState();
+}
+
+class _TimingMultiSelectState extends State<_TimingMultiSelect> {
+  final List<String> _selected = [];
+
+  @override
+  Widget build(BuildContext context) {
+    final baseBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: Colors.grey.shade300),
+    );
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: 'Preferred Timing (multi-select)',
+          border: baseBorder,
+          enabledBorder: baseBorder,
+          focusedBorder: baseBorder.copyWith(
+            borderSide: const BorderSide(color: Color(0xFF002B5B), width: 2),
+          ),
+          filled: true,
+          fillColor: Colors.white,
+        ),
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton<String>(
+            isExpanded: true,
+            hint: Text(
+              _selected.isEmpty ? 'Select one or more' : _selected.join(', '),
+              style: const TextStyle(color: Color(0xFF002B5B)),
+            ),
+            icon: const Icon(Icons.expand_more, color: Color(0xFF002B5B)),
+            items: widget.options
+                .map(
+                  (opt) => DropdownMenuItem<String>(
+                    value: opt,
+                    child: Row(
+                      children: [
+                        Checkbox(
+                          value: _selected.contains(opt),
+                          activeColor: const Color(0xFF002B5B),
+                          onChanged: (_) => _toggleSelection(opt),
+                        ),
+                        Flexible(
+                          child: Text(
+                            opt,
+                            style: const TextStyle(color: Color(0xFF1A202C)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+                .toList(),
+            onChanged: (value) {
+              if (value != null) _toggleSelection(value);
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _toggleSelection(String option) {
+    setState(() {
+      if (_selected.contains(option)) {
+        _selected.remove(option);
+      } else {
+        _selected.add(option);
+      }
+    });
   }
 }
 

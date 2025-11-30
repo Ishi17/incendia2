@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:incendia_webpage/components/custom_drawer.dart';
 import '../components/custom_navbar.dart';
+import 'home/widgets/combined_services_offerings.dart';
  
 
 class AcademicPage extends StatefulWidget {
@@ -94,11 +95,10 @@ class _AcademicPageState extends State<AcademicPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 768;
     return Scaffold(
-      appBar: CustomNavbar(
-        title: 'Academics',
-        showBackButton: true,
-      ),
+      appBar: CustomNavbar.withAnnouncement(
+          title: 'Academics', showBackButton: true),
       drawer: CustomDrawer(),
       body: SingleChildScrollView(
         child: Column(
@@ -106,6 +106,7 @@ class _AcademicPageState extends State<AcademicPage> {
             _buildHeaderSection(),
             _buildGradesCaptionBox(),
             _buildCurriculumCarousel(),
+            CombinedServicesOfferings(isMobile: isMobile),
             _buildFooter(context),
           ],
         ),
