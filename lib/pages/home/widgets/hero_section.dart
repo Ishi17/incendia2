@@ -21,7 +21,7 @@ class HeroSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: isMobile ? 820 : 780,
+      height: isMobile ? 860 : 780,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [Color(0xFF001A3A), Color(0xFF002B5B), Color(0xFF003366)],
@@ -146,7 +146,7 @@ class HeroSection extends StatelessWidget {
                         children: [
                           // Main heading
                           Text(
-                            'Inspiring Potential. Inspiring Progress.',
+                            'Igniting Potential. Inspiring Progress.',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontWeight: FontWeight.w900,
@@ -171,6 +171,17 @@ class HeroSection extends StatelessWidget {
                                 textAlign: TextAlign.center,
                               ),
                               SizedBox(height: isMobile ? 6 : 8),
+                              Text(
+                                'Trusted by parents. Loved by students.',
+                                style: TextStyle(
+                                  fontSize: isMobile ? 14 : 16,
+                                  color: Colors.white.withOpacity(0.85),
+                                  height: 1.35,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: isMobile ? 4 : 6),
                               Text(
                                 'Grades 9-12 | CBSE, ICSE, IB | Banglore',
                                 style: TextStyle(
@@ -207,12 +218,11 @@ class HeroSection extends StatelessWidget {
 
                           // Stats only (no student avatars)
                           _buildStatsOnly(isMobile: isMobile, shouldStartCounting: shouldStartCounting),
-                          
-                          SizedBox(height: isMobile ? 30 : 36),
-                          
+                          SizedBox(height: isMobile ? 26 : 32),
+
                           // Service cards below stats
                           _buildServiceCards(isMobile: isMobile),
-                          SizedBox(height: isMobile ? 5 : 8),
+                          SizedBox(height: isMobile ? 16 : 20),
                         ],
                       ),
                     ),
@@ -264,7 +274,7 @@ class HeroSection extends StatelessWidget {
             ),
     );
   }
-  
+
   Widget _buildServiceCards({bool isMobile = false}) {
     final serviceItems = [
       {

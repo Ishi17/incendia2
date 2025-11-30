@@ -9,10 +9,11 @@ import 'package:incendia_webpage/pages/contact_us_page.dart';
 import 'package:incendia_webpage/pages/gallery_page.dart';
 import 'package:incendia_webpage/pages/life_skills_page.dart';
 import 'package:incendia_webpage/pages/schedule_page.dart';
-import 'package:incendia_webpage/pages/home/widgets/hero_section.dart';
-import 'package:incendia_webpage/pages/home/widgets/testimonials_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/cta_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/footer_section.dart';
+import 'package:incendia_webpage/pages/home/widgets/hero_section.dart';
+import 'package:incendia_webpage/pages/home/widgets/testimonials_section.dart';
+import 'package:incendia_webpage/pages/home/widgets/three_pillars_section.dart';
 import 'package:incendia_webpage/components/custom_navbar.dart';
 import 'package:incendia_webpage/components/custom_drawer.dart';
 
@@ -233,6 +234,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   onConsultationPressed: _showConsultationDialog,
                   shouldStartCounting: true,
                 ),
+                ThreePillarsSection(isMobile: isMobile),
                 _IncendiaDifferenceSection(isMobile: isMobile),
                 TestimonialsSection(isMobile: isMobile),
                 CtaSection(
