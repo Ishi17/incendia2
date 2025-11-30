@@ -165,13 +165,64 @@ class CustomDrawer extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildExpansionTile(
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    required List<Map<String, Object>> children,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: Colors.grey.shade50,
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          leading: Icon(
+            icon,
+            color: const Color(0xFFFF6B00),
+            size: 24,
+          ),
+          title: Text(
+            title,
+            style: const TextStyle(
+              color: Color(0xFF002B5B),
+              fontWeight: FontWeight.w600,
+              fontSize: 16,
+            ),
+          ),
+          tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+          children: children.map(
+            (item) {
+              return ListTile(
+                title: Text(
+                  item['name'] as String,
+                  style: const TextStyle(
+                    color: Color(0xFF002B5B),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  final page = item['page'];
+                  if (page != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => page as Widget,
+                      ),
+                    );
+                  }
+                },
+              );
+            },
+          ).toList(),
+        ),
+      ),
+    );
+  }
 }
-
-
-
-
-
-
-
-
-
