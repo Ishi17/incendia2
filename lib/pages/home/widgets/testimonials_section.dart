@@ -24,10 +24,12 @@ class TestimonialsSection extends StatefulWidget {
 
 class _TestimonialsSectionState extends State<TestimonialsSection>
     with SingleTickerProviderStateMixin {
-  late final PageController _pageController;
+  late PageController _pageController;
   int _currentIndex = 0;
   late final AnimationController _animController;
   Timer? _autoScrollTimer;
+
+  double get _viewportFraction => widget.isMobile ? 0.92 : 0.32;
 
   final List<Testimonial> testimonials = const [
     Testimonial(
@@ -45,17 +47,50 @@ class _TestimonialsSectionState extends State<TestimonialsSection>
           'The innovative teaching methods and supportive environment have made learning enjoyable for my daughter. She looks forward to school every day!',
       author: 'Emily Rodriguez, Parent',
     ),
+    Testimonial(
+      text:
+          'What stood out for us was the consistent feedback loop. We always know where our son is excelling and where he needs support, without any surprises.',
+      author: 'Anita Sharma, Parent',
+    ),
+    Testimonial(
+      text:
+          'Incendia blends academics with life skills in a way that feels practical. My daughter has become more confident in presentations and teamwork.',
+      author: 'Ravi Mehta, Parent',
+    ),
+    Testimonial(
+      text:
+          'The mentors genuinely care. They check in regularly, adapt lessons, and keep my child motivated—it feels like a true partnership.',
+      author: 'Lena Matthews, Parent',
+    ),
   ];
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(viewportFraction: 0.92);
+    _pageController = PageController(viewportFraction: _viewportFraction);
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 420),
     );
     _startAutoScroll();
+  }
+
+  @override
+  void didUpdateWidget(covariant TestimonialsSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isMobile != oldWidget.isMobile) {
+      final oldController = _pageController;
+      _pageController = PageController(
+        viewportFraction: _viewportFraction,
+        initialPage: _currentIndex,
+      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _pageController.jumpToPage(_currentIndex);
+        }
+      });
+      oldController.dispose();
+    }
   }
 
   @override
@@ -121,12 +156,14 @@ class _TestimonialsSectionState extends State<TestimonialsSection>
 
           // Carousel area
           SizedBox(
-            height: 280,
+            height: widget.isMobile ? 280 : 300,
             child: Stack(
               alignment: Alignment.center,
               children: [
                 PageView.builder(
                   controller: _pageController,
+                  padEnds: !widget.isMobile,
+                  clipBehavior: Clip.none,
                   itemCount: testimonials.length,
                   onPageChanged: (i) {
                     setState(() => _currentIndex = i);
@@ -135,91 +172,103 @@ class _TestimonialsSectionState extends State<TestimonialsSection>
                   },
                   itemBuilder: (context, index) {
                     final t = testimonials[index];
+                    final isFocused = index == _currentIndex;
+                    final scale = widget.isMobile ? 1.0 : (isFocused ? 1.0 : 0.9);
+                    final sideOpacity = widget.isMobile ? 1.0 : (isFocused ? 1.0 : 0.8);
+                    final sidePadding = isFocused ? 28.0 : 22.0;
                     return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: TweenAnimationBuilder<double>(
-                        tween: Tween(begin: 0.96, end: 1.0),
-                        duration: const Duration(milliseconds: 420),
+                      padding: EdgeInsets.symmetric(horizontal: widget.isMobile ? 8 : 12),
+                      child: AnimatedScale(
+                        scale: scale,
+                        duration: const Duration(milliseconds: 220),
                         curve: Curves.easeOutCubic,
-                        builder: (context, scale, child) {
-                          return Transform.scale(scale: scale, child: child);
-                        },
-                        child: Container(
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 220),
+                          curve: Curves.easeOutCubic,
                           constraints: const BoxConstraints(maxWidth: 900),
-                          padding: const EdgeInsets.all(28),
+                          padding: EdgeInsets.all(sidePadding),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: isFocused
+                                  ? const Color(0xFFFF6B00).withOpacity(0.25)
+                                  : const Color(0xFF002B5B).withOpacity(0.06),
+                              width: isFocused ? 1.6 : 1,
+                            ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(
-                                  0xFF002B5B,
-                                ).withOpacity(0.06),
-                                blurRadius: 30,
+                                color: const Color(0xFF002B5B).withOpacity(
+                                  isFocused ? 0.08 : 0.04,
+                                ),
+                                blurRadius: isFocused ? 28 : 18,
                                 offset: const Offset(0, 10),
                               ),
                             ],
                           ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: List.generate(
-                                  t.rating,
-                                  (_) => const Icon(
-                                    Icons.star,
-                                    color: Color(0xFFFF6B00),
-                                    size: 22,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 16),
-                              AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 360),
-                                transitionBuilder: (child, anim) {
-                                  return FadeTransition(
-                                    opacity: anim,
-                                    child: SlideTransition(
-                                      position:
-                                          Tween<Offset>(
-                                            begin: const Offset(0, 0.03),
-                                            end: Offset.zero,
-                                          ).animate(
-                                            CurvedAnimation(
-                                              parent: anim,
-                                              curve: Curves.easeOutCubic,
-                                            ),
-                                          ),
-                                      child: child,
+                          child: Opacity(
+                            opacity: sideOpacity,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: List.generate(
+                                    t.rating,
+                                    (_) => const Icon(
+                                      Icons.star,
+                                      color: Color(0xFFFF6B00),
+                                      size: 22,
                                     ),
-                                  );
-                                },
-                                child: Text(
-                                  t.text,
-                                  key: ValueKey(t.text),
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    color: Color(0xFF002B5B),
-                                    fontSize: 16.5,
-                                    height: 1.6,
-                                    fontStyle: FontStyle.italic,
                                   ),
                                 ),
-                              ),
-                              const SizedBox(height: 16),
-                              AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 360),
-                                child: Text(
-                                  '— ${t.author}',
-                                  key: ValueKey(t.author),
-                                  style: const TextStyle(
-                                    color: Color(0xFFFF6B00),
-                                    fontWeight: FontWeight.w600,
+                                const SizedBox(height: 16),
+                                AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 360),
+                                  transitionBuilder: (child, anim) {
+                                    return FadeTransition(
+                                      opacity: anim,
+                                      child: SlideTransition(
+                                        position:
+                                            Tween<Offset>(
+                                              begin: const Offset(0, 0.03),
+                                              end: Offset.zero,
+                                            ).animate(
+                                              CurvedAnimation(
+                                                parent: anim,
+                                                curve: Curves.easeOutCubic,
+                                              ),
+                                            ),
+                                        child: child,
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    t.text,
+                                    key: ValueKey(t.text),
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Color(0xFF002B5B),
+                                      fontSize: 16.5,
+                                      height: 1.6,
+                                      fontStyle: FontStyle.italic,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 16),
+                                AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 360),
+                                  child: Text(
+                                    '— ${t.author}',
+                                    key: ValueKey(t.author),
+                                    style: const TextStyle(
+                                      color: Color(0xFFFF6B00),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
