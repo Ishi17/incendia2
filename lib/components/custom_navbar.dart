@@ -179,7 +179,6 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
     }
 
     final menuItems = [
-      'Home',
       'Academic',
       'Join our Team',
       'Life Skills',
@@ -193,6 +192,27 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
         margin: EdgeInsets.only(right: isDesktop ? 32 : 24),
         child: Row(
           children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: isDesktop ? 4 : 2),
+              child: TextButton(
+                onPressed: () => _navigateTo(context, 'Home'),
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isDesktop ? 20 : 16,
+                    vertical: isDesktop ? 10 : 8,
+                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                child: Text(
+                  'Home',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: isDesktop ? 16 : isTablet ? 15 : 14,
+                  ),
+                ),
+              ),
+            ),
             _buildAboutDropdown(context, isDesktop, isTablet),
             _buildAdmissionsDropdown(context, isDesktop, isTablet),
             ...menuItems.map(

@@ -13,7 +13,6 @@ import 'package:incendia_webpage/pages/home/widgets/cta_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/footer_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/hero_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/testimonials_section.dart';
-import 'package:incendia_webpage/pages/home/widgets/three_pillars_section.dart';
 import 'package:incendia_webpage/components/custom_navbar.dart';
 import 'package:incendia_webpage/components/custom_drawer.dart';
 
@@ -234,7 +233,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   onConsultationPressed: _showConsultationDialog,
                   shouldStartCounting: true,
                 ),
-                ThreePillarsSection(isMobile: isMobile),
                 _IncendiaDifferenceSection(isMobile: isMobile),
                 TestimonialsSection(isMobile: isMobile),
                 CtaSection(
@@ -278,7 +276,7 @@ class _IncendiaDifferenceSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cardWidth = isMobile ? double.infinity : 380.0;
+    final cardWidth = isMobile ? double.infinity : 600.0;
     final qualitiesTraditional = [
       'Focuses solely on academics',
       'Rigid, one-size-fits-all approach',
@@ -306,24 +304,6 @@ class _IncendiaDifferenceSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: const Color(0xFF5DA2F2).withOpacity(0.5)),
-            ),
-            child: const Text(
-              'Why families choose us',
-              style: TextStyle(
-                color: Colors.white70,
-                fontWeight: FontWeight.w800,
-                fontSize: 13,
-                letterSpacing: 0.6,
-              ),
-            ),
-          ),
-          SizedBox(height: isMobile ? 14 : 18),
           Text(
             'The Incendia Difference',
             style: TextStyle(
@@ -333,20 +313,11 @@ class _IncendiaDifferenceSection extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: isMobile ? 12 : 16),
-          Text(
-            'See how we go beyond traditional tuition.',
-            style: TextStyle(
-              fontSize: isMobile ? 14 : 16,
-              color: Colors.white.withOpacity(0.8),
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: isMobile ? 22 : 30),
+          SizedBox(height: isMobile ? 18 : 26),
           Wrap(
             alignment: WrapAlignment.center,
-            spacing: isMobile ? 12 : 18,
-            runSpacing: isMobile ? 14 : 18,
+            spacing: isMobile ? 14 : 100,
+            runSpacing: isMobile ? 16 : 24,
             children: [
               _ComparisonCard(
                 title: 'Traditional Tuition',
