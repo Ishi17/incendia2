@@ -18,8 +18,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const appTitle = 'Incendia | Premium Tuition Centre in Bangalore for Grades 9-12 | CBSE, ICSE, IB + Life Skills';
+
     return MaterialApp(
-      title: 'Incendia',
+      title: appTitle,
+      onGenerateTitle: (_) => appTitle,
       theme: ThemeData(
         primaryColor: Color(0xFF002B5B),
         scaffoldBackgroundColor: Color(0xFFF5F5F5),

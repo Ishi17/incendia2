@@ -152,7 +152,7 @@ class HeroSection extends StatelessWidget {
                               fontWeight: FontWeight.w900,
                               color: Colors.white,
                               height: 1.2,
-                              fontSize: isMobile ? 24 : 28,
+                              fontSize: isMobile ? 30 : 42,
                             ),
                           ),
                           SizedBox(height: isMobile ? 16 : 20),
@@ -163,7 +163,7 @@ class HeroSection extends StatelessWidget {
                               Text(
                                 'Academics + Life Skills + Entrepreneurial Thinking = Incendia',
                                 style: TextStyle(
-                                  fontSize: isMobile ? 15 : 19,
+                                  fontSize: isMobile ? 18 : 26,
                                   color: Colors.white.withOpacity(0.9),
                                   height: 1.4,
                                   fontWeight: FontWeight.w700,
@@ -171,17 +171,6 @@ class HeroSection extends StatelessWidget {
                                 textAlign: TextAlign.center,
                               ),
                               SizedBox(height: isMobile ? 6 : 8),
-                              Text(
-                                'Trusted by parents. Loved by students.',
-                                style: TextStyle(
-                                  fontSize: isMobile ? 14 : 16,
-                                  color: Colors.white.withOpacity(0.85),
-                                  height: 1.35,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              SizedBox(height: isMobile ? 4 : 6),
                               Text(
                                 'Grades 9-12 | CBSE, ICSE, IB | Banglore',
                                 style: TextStyle(
@@ -257,9 +246,9 @@ class HeroSection extends StatelessWidget {
       child: isMobile
           ? Column(
               children: [
-                _buildAnimatedStatItem(10000, '+', 'Students', 0, isMobile, shouldStartCounting),
+                _buildAnimatedStatItem(500, '+', 'Students', 0, isMobile, shouldStartCounting),
                 const SizedBox(height: 10),
-                _buildAnimatedStatItem(95, '%', 'Success Rate', 300, isMobile, shouldStartCounting),
+                _buildAnimatedStatItem(97, '%', 'Success Rate', 300, isMobile, shouldStartCounting),
                 const SizedBox(height: 10),
                 _buildAnimatedStatItem(50, '+', 'Expert Teachers', 600, isMobile, shouldStartCounting),
               ],
@@ -267,8 +256,8 @@ class HeroSection extends StatelessWidget {
           : Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildAnimatedStatItem(10000, '+', 'Students', 0, isMobile, shouldStartCounting),
-                _buildAnimatedStatItem(95, '%', 'Success Rate', 300, isMobile, shouldStartCounting),
+                _buildAnimatedStatItem(500, '+', 'Students', 0, isMobile, shouldStartCounting),
+                _buildAnimatedStatItem(97, '%', 'Success Rate', 300, isMobile, shouldStartCounting),
                 _buildAnimatedStatItem(50, '+', 'Expert Teachers', 600, isMobile, shouldStartCounting),
               ],
             ),
@@ -278,31 +267,24 @@ class HeroSection extends StatelessWidget {
   Widget _buildServiceCards({bool isMobile = false}) {
     final serviceItems = [
       {
-        'icon': Icons.book,
+        'icon': Icons.menu_book_outlined,
         'title': 'Academic Mastery',
-        'desc': 'Board-wise curriculum',
-        'category': 'Program',
+        'desc': 'Board-specific coaching for exceptional performance.',
+        'category': 'Pillar',
         'color': const Color(0xFFFF6B00),
       },
       {
-        'icon': Icons.psychology,
-        'title': 'Life Skills',
-        'desc': 'Critical thinking & communication',
-        'category': 'Program',
+        'icon': Icons.settings_suggest_outlined,
+        'title': '12 Essential Life Skills',
+        'desc': 'Practical real-world skills schools don\'t teach.',
+        'category': 'Pillar',
         'color': const Color(0xFFFF6B00),
       },
       {
-        'icon': Icons.assignment,
-        'title': 'Exam Prep',
-        'desc': 'Comprehensive exam preparation',
-        'category': 'Service',
-        'color': const Color(0xFFFF6B00),
-      },
-      {
-        'icon': Icons.work,
-        'title': 'Career Guidance',
-        'desc': 'Career exploration and guidance',
-        'category': 'Service',
+        'icon': Icons.emoji_objects_outlined,
+        'title': 'Entrepreneurial Thinking',
+        'desc': 'Balanced development of academics and life skills.',
+        'category': 'Pillar',
         'color': const Color(0xFFFF6B00),
       },
     ];
@@ -665,6 +647,8 @@ class _HeroServiceCardState extends State<_HeroServiceCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
+  bool _isDialogOpen = false;
+  bool _isHovering = false;
 
   @override
   void initState() {
@@ -685,6 +669,8 @@ class _HeroServiceCardState extends State<_HeroServiceCard>
   }
 
   void _showItemDialog() {
+    if (_isDialogOpen) return;
+    _isDialogOpen = true;
     _animationController.forward().then((_) {
       _animationController.reverse();
     });
@@ -723,7 +709,12 @@ class _HeroServiceCardState extends State<_HeroServiceCard>
           ),
         );
       },
-    );
+    ).then((_) {
+      if (!mounted) return;
+      setState(() {
+        _isDialogOpen = false;
+      });
+    });
   }
 
   @override
@@ -731,64 +722,95 @@ class _HeroServiceCardState extends State<_HeroServiceCard>
     final color = widget.item['color'] as Color;
     final icon = widget.item['icon'] as IconData;
     final title = widget.item['title'] as String;
+    final desc = widget.item['desc'] as String;
+    final isHovering = _isHovering && !widget.isMobile;
 
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
         return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: InkWell(
-            onTap: _showItemDialog,
-            borderRadius: BorderRadius.circular(16),
-            child: Container(
-              width: widget.isMobile ? 150 : null, // null allows Expanded to work on desktop
-              height: widget.isMobile ? 140 : 150,
-              padding: EdgeInsets.all(widget.isMobile ? 18 : 20),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.80),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
-                  width: 1.5,
+          scale: _scaleAnimation.value * (isHovering ? 1.05 : 1.0),
+          child: MouseRegion(
+            onEnter: (_) {
+              if (!widget.isMobile) {
+                setState(() => _isHovering = true);
+              }
+            },
+            onExit: (_) {
+              if (!widget.isMobile) {
+                setState(() => _isHovering = false);
+              }
+            },
+            child: InkWell(
+              onTap: widget.isMobile ? _showItemDialog : null,
+              borderRadius: BorderRadius.circular(16),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                curve: Curves.easeInOut,
+                width: widget.isMobile ? 130 : 160,
+                height: widget.isMobile ? 120 : 160,
+                padding: EdgeInsets.all(widget.isMobile ? 16 : (isHovering ? 20 : 18)),
+                decoration: BoxDecoration(
+                  color: isHovering ? Colors.white : Colors.transparent,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: isHovering ? color.withOpacity(0.2) : Colors.white.withOpacity(0.65),
+                    width: isHovering ? 1.2 : 1,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(isHovering ? 0.18 : 0.12),
+                      blurRadius: isHovering ? 18 : 12,
+                      spreadRadius: 1,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.25),
-                    blurRadius: 20,
-                    spreadRadius: 1,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: widget.isMobile ? 48 : 52,
-                    height: widget.isMobile ? 48 : 52,
-                    decoration: BoxDecoration(
-                      color: (widget.item['color'] as Color).withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: widget.isMobile ? 48 : 52,
+                      height: widget.isMobile ? 48 : 52,
+                      decoration: BoxDecoration(
+                        color: isHovering ? color.withOpacity(0.12) : Colors.white.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        icon,
+                        color: isHovering ? color : Colors.white,
+                        size: widget.isMobile ? 22 : 26,
+                      ),
                     ),
-                    child: Icon(
-                      icon,
-                      color: widget.item['color'] as Color,
-                      size: widget.isMobile ? 22 : 26,
+                    SizedBox(height: widget.isMobile ? 10 : 12),
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: widget.isMobile ? 12 : 14,
+                        fontWeight: FontWeight.w800,
+                        color: isHovering ? const Color(0xFF002B5B) : Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                  SizedBox(height: widget.isMobile ? 10 : 12),
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: widget.isMobile ? 12 : 14,
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF002B5B),
-                    ),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+                    if (isHovering) ...[
+                      const SizedBox(height: 10),
+                      Text(
+                        desc,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF4F5A6B),
+                          height: 1.35,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -809,13 +831,11 @@ class _HeroItemDialog extends StatelessWidget {
     String getDetailedContent(String title) {
       switch (title) {
         case 'Academic Mastery':
-          return 'Comprehensive programs covering CBSE, ICSE, and State boards with structured learning paths and regular assessments.';
-        case 'Life Skills':
-          return 'Development of essential life skills including critical thinking, communication, leadership, and emotional intelligence.';
-        case 'Exam Prep':
-          return 'Focused preparation for board exams, competitive tests, and entrance examinations with mock tests and personalized strategies.';
-        case 'Career Guidance':
-          return 'Expert career counseling, exploration of career paths, resume building, and guidance for future readiness.';
+          return 'Board-specific coaching designed for exceptional performance with structured learning paths and assessments.';
+        case '12 Essential Life Skills':
+          return 'Practical, real-world skills schools don\'t teach—communication, decision-making, emotional intelligence, and more.';
+        case 'Entrepreneurial Thinking':
+          return 'A mindset that blends creativity, problem-solving, and ownership so learners can turn ideas into action.';
         default:
           return item['desc'] as String;
       }

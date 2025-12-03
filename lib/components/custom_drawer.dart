@@ -17,8 +17,8 @@ class CustomDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final homeItem = {'name': 'Home', 'icon': Icons.home, 'route': '/'};
     final otherItems = [
-      {'name': 'Home', 'icon': Icons.home, 'route': '/'},
       {'name': 'Academic', 'icon': Icons.school, 'page': const AcademicPage()},
       {'name': 'Life Skills', 'icon': Icons.psychology, 'page': const LifeSkillsPage()},
       {'name': 'Schedule', 'icon': Icons.schedule, 'page': const SchedulePage()},
@@ -89,6 +89,8 @@ class CustomDrawer extends StatelessWidget {
                   child: ListView(
                     padding: const EdgeInsets.all(16),
                     children: [
+                      _buildNavTile(context, homeItem),
+                      const SizedBox(height: 8),
                       _buildExpansionTile(
                         context,
                         title: 'About',
@@ -109,52 +111,7 @@ class CustomDrawer extends StatelessWidget {
                           {'name': 'Admissions FAQs', 'page': AdmissionsFaqsPage()},
                         ],
                       ),
-                      ...otherItems.map(
-                        (item) => Container(
-                          margin: const EdgeInsets.only(bottom: 8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            color: Colors.grey.shade50,
-                          ),
-                          child: ListTile(
-                            leading: Icon(
-                              item['icon'] as IconData,
-                              color: const Color(0xFFFF6B00),
-                              size: 24,
-                            ),
-                            title: Text(
-                              item['name'] as String,
-                              style: const TextStyle(
-                                color: Color(0xFF002B5B),
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                              ),
-                            ),
-                            trailing: const Icon(
-                              Icons.arrow_forward_ios,
-                              size: 16,
-                              color: Color(0xFFFF6B00),
-                            ),
-                            onTap: () {
-                              Navigator.pop(context);
-                              if (item['route'] != null) {
-                                Navigator.pushNamedAndRemoveUntil(
-                                  context,
-                                  item['route'] as String,
-                                  (route) => false,
-                                );
-                              } else if (item['page'] != null) {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => item['page'] as Widget,
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                      ),
+                      ...otherItems.map((item) => _buildNavTile(context, item)),
                     ],
                   ),
                 ),
@@ -227,3 +184,49 @@ class CustomDrawer extends StatelessWidget {
   }
 }
 
+Widget _buildNavTile(BuildContext context, Map<String, Object?> item) {
+  return Container(
+    margin: const EdgeInsets.only(bottom: 8),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12),
+      color: Colors.grey.shade50,
+    ),
+    child: ListTile(
+      leading: Icon(
+        item['icon'] as IconData,
+        color: const Color(0xFFFF6B00),
+        size: 24,
+      ),
+      title: Text(
+        item['name'] as String,
+        style: const TextStyle(
+          color: Color(0xFF002B5B),
+          fontWeight: FontWeight.w600,
+          fontSize: 16,
+        ),
+      ),
+      trailing: const Icon(
+        Icons.arrow_forward_ios,
+        size: 16,
+        color: Color(0xFFFF6B00),
+      ),
+      onTap: () {
+        Navigator.pop(context);
+        if (item['route'] != null) {
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            item['route'] as String,
+            (route) => false,
+          );
+        } else if (item['page'] != null) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => item['page'] as Widget,
+            ),
+          );
+        }
+      },
+    ),
+  );
+}
