@@ -162,7 +162,7 @@ class _TestimonialsSectionState extends State<TestimonialsSection>
               children: [
                 PageView.builder(
                   controller: _pageController,
-                  padEnds: !widget.isMobile,
+                  padEnds: false,
                   clipBehavior: Clip.none,
                   itemCount: testimonials.length,
                   onPageChanged: (i) {
@@ -192,7 +192,7 @@ class _TestimonialsSectionState extends State<TestimonialsSection>
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: isFocused
-                                  ? const Color(0xFFFF6B00).withOpacity(0.25)
+                                  ? const Color(0xFFFFB300).withOpacity(0.25)
                                   : const Color(0xFF002B5B).withOpacity(0.06),
                               width: isFocused ? 1.6 : 1,
                             ),
@@ -217,7 +217,7 @@ class _TestimonialsSectionState extends State<TestimonialsSection>
                                     t.rating,
                                     (_) => const Icon(
                                       Icons.star,
-                                      color: Color(0xFFFF6B00),
+                                      color: Color(0xFFFFB300),
                                       size: 22,
                                     ),
                                   ),
@@ -262,7 +262,7 @@ class _TestimonialsSectionState extends State<TestimonialsSection>
                                     '— ${t.author}',
                                     key: ValueKey(t.author),
                                     style: const TextStyle(
-                                      color: Color(0xFFFF6B00),
+                                      color: Color(0xFFFFB300),
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -351,7 +351,7 @@ class _TestimonialsSectionState extends State<TestimonialsSection>
                   height: 8,
                   decoration: BoxDecoration(
                     color: _currentIndex == i
-                        ? const Color(0xFFFF6B00)
+                        ? const Color(0xFFFFB300)
                         : const Color(0xFFCCCCCC),
                     borderRadius: BorderRadius.circular(12),
                   ),

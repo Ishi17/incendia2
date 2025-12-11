@@ -44,7 +44,7 @@ class GalleryPage extends StatelessWidget {
                   Icon(
                     Icons.photo_library, 
                     size: isMobile ? 50 : isTablet ? 60 : 70, 
-                    color: Color(0xFFFF6B00)
+                    color: Color(0xFFFFB300)
                   ),
                   SizedBox(height: isMobile ? 15 : 20),
                   Text(
@@ -116,7 +116,7 @@ class GalleryPage extends StatelessWidget {
             offset: Offset(0, isMobile ? 2 : isTablet ? 3 : 4),
           ),
           BoxShadow(
-            color: Color(0xFFFF6B00).withOpacity(0.1),
+            color: Color(0xFFFFB300).withOpacity(0.1),
             blurRadius: isMobile ? 10 : isTablet ? 15 : 20,
             offset: Offset(0, isMobile ? 3 : isTablet ? 5 : 7),
           ),
@@ -130,14 +130,14 @@ class GalleryPage extends StatelessWidget {
             height: isMobile ? 40 : isTablet ? 45 : 50,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
+                colors: [Color(0xFFFFB300), Color(0xFFFFD54F)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(isMobile ? 10 : isTablet ? 11 : 12),
               boxShadow: [
                 BoxShadow(
-                  color: Color(0xFFFF6B00).withOpacity(0.3),
+                  color: Color(0xFFFFB300).withOpacity(0.3),
                   blurRadius: 6,
                   offset: Offset(0, 3),
                 ),

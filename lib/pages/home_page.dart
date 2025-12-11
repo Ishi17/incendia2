@@ -172,7 +172,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               'title': 'Personalized Learning',
               'desc': 'Tailored curriculum for individual needs',
               'category': 'Service',
-              'color': const Color(0xFFFF6B00),
+              'color': const Color(0xFFFFB300),
             },
             isMobile: isMobile,
           ),
@@ -202,7 +202,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               'title': 'Modern Technology',
               'desc': 'Cutting-edge learning tools',
               'category': 'Service',
-              'color': const Color(0xFFFF6B00),
+              'color': const Color(0xFFFFB300),
             },
             isMobile: isMobile,
           ),
@@ -513,7 +513,7 @@ class _UrgencyPopup extends StatelessWidget {
                                 ),
                                 child: const Icon(
                                   Icons.local_fire_department,
-                                  color: Color(0xFFFF6B00),
+                                  color: Color(0xFFFFB300),
                                 ),
                               ),
                               const Spacer(),
@@ -548,7 +548,7 @@ class _UrgencyPopup extends StatelessWidget {
                                 child: ElevatedButton(
                                   onPressed: onAction,
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFFFF6B00),
+                                    backgroundColor: const Color(0xFFFFB300),
                                     padding: EdgeInsets.symmetric(
                                       vertical: isMobile ? 14 : 16,
                                     ),
@@ -937,7 +937,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
                       ),
                       child: const Icon(
                         Icons.calendar_today,
-                        color: Color(0xFFFF6B00),
+                        color: Color(0xFFFFB300),
                         size: 24,
                       ),
                     ),
@@ -1002,7 +1002,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(
-                        color: Color(0xFFFF6B00),
+                        color: Color(0xFFFFB300),
                         width: 2,
                       ),
                     ),
@@ -1062,7 +1062,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(
-                        color: Color(0xFFFF6B00),
+                        color: Color(0xFFFFB300),
                         width: 2,
                       ),
                     ),
@@ -1125,7 +1125,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(
-                        color: Color(0xFFFF6B00),
+                        color: Color(0xFFFFB300),
                         width: 2,
                       ),
                     ),
@@ -1159,14 +1159,14 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
                   child: ElevatedButton(
                     onPressed: _isSubmitting ? null : _handleSubmit,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFFF6B00),
+                      backgroundColor: const Color(0xFFFFB300),
                       padding: EdgeInsets.symmetric(
                         vertical: widget.isMobile ? 14 : 16,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      disabledBackgroundColor: const Color(0xFFFF6B00).withOpacity(0.6),
+                      disabledBackgroundColor: const Color(0xFFFFB300).withOpacity(0.6),
                     ),
                     child: _isSubmitting
                         ? const SizedBox(
@@ -1233,7 +1233,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //               ),
 //               child: Column(
 //                 children: [
-//                   Icon(Icons.school, size: 60, color: Color(0xFFFF6B00)),
+//                   Icon(Icons.school, size: 60, color: Color(0xFFFFB300)),
 //                   SizedBox(height: 20),
 //                   Text(
 //                     'About Incendia',
@@ -1268,7 +1268,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //               decoration: BoxDecoration(
 //                 color: Color(0xFFF8F9FA),
 //                 borderRadius: BorderRadius.circular(15),
-//                 border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
+//                 border: Border.all(color: Color(0xFFFFB300).withOpacity(0.2)),
 //               ),
 //               child: Column(
 //                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1335,7 +1335,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //               ),
 //               child: Column(
 //                 children: [
-//                   Icon(Icons.book, size: 60, color: Color(0xFFFF6B00)),
+//                   Icon(Icons.book, size: 60, color: Color(0xFFFFB300)),
 //                   SizedBox(height: 20),
 //                   Text(
 //                     'Academic Excellence',
@@ -1367,7 +1367,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //       decoration: BoxDecoration(
 //         color: Colors.white,
 //         borderRadius: BorderRadius.circular(15),
-//         border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
+//         border: Border.all(color: Color(0xFFFFB300).withOpacity(0.2)),
 //         boxShadow: [
 //           BoxShadow(
 //             color: Colors.black.withOpacity(0.05),
@@ -1385,10 +1385,10 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //                 width: 50,
 //                 height: 50,
 //                 decoration: BoxDecoration(
-//                   color: Color(0xFFFF6B00).withOpacity(0.1),
+//                   color: Color(0xFFFFB300).withOpacity(0.1),
 //                   borderRadius: BorderRadius.circular(12),
 //                 ),
-//                 child: Icon(Icons.school, color: Color(0xFFFF6B00), size: 28),
+//                 child: Icon(Icons.school, color: Color(0xFFFFB300), size: 28),
 //               ),
 //               SizedBox(width: 15),
 //               Expanded(
@@ -1401,7 +1401,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //                     ),
 //                     Text(
 //                       subtitle,
-//                       style: TextStyle(fontSize: 16, color: Color(0xFFFF6B00), fontWeight: FontWeight.w500),
+//                       style: TextStyle(fontSize: 16, color: Color(0xFFFFB300), fontWeight: FontWeight.w500),
 //                     ),
 //                   ],
 //                 ),
@@ -1442,7 +1442,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //               ),
 //               child: Column(
 //                 children: [
-//                   Icon(Icons.psychology, size: 60, color: Color(0xFFFF6B00)),
+//                   Icon(Icons.psychology, size: 60, color: Color(0xFFFFB300)),
 //                   SizedBox(height: 20),
 //                   Text(
 //                     'Life Skills Development',
@@ -1478,7 +1478,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //       decoration: BoxDecoration(
 //         color: Colors.white,
 //         borderRadius: BorderRadius.circular(15),
-//         border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
+//         border: Border.all(color: Color(0xFFFFB300).withOpacity(0.2)),
 //         boxShadow: [
 //           BoxShadow(
 //             color: Colors.black.withOpacity(0.05),
@@ -1493,7 +1493,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //             width: 60,
 //             height: 60,
 //             decoration: BoxDecoration(
-//               gradient: LinearGradient(colors: [Color(0xFFFF6B00), Color(0xFFFF8533)]),
+//               gradient: LinearGradient(colors: [Color(0xFFFFB300), Color(0xFFFFD54F)]),
 //               borderRadius: BorderRadius.circular(15),
 //             ),
 //             child: Icon(icon, color: Colors.white, size: 30),
@@ -1544,7 +1544,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //               ),
 //               child: Column(
 //                 children: [
-//                   Icon(Icons.schedule, size: 60, color: Color(0xFFFF6B00)),
+//                   Icon(Icons.schedule, size: 60, color: Color(0xFFFFB300)),
 //                   SizedBox(height: 20),
 //                   Text(
 //                     'Class Schedule',
@@ -1569,7 +1569,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //               decoration: BoxDecoration(
 //                 color: Color(0xFFF8F9FA),
 //                 borderRadius: BorderRadius.circular(15),
-//                 border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
+//                 border: Border.all(color: Color(0xFFFFB300).withOpacity(0.2)),
 //               ),
 //               child: Column(
 //                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1599,7 +1599,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //       decoration: BoxDecoration(
 //         color: Colors.white,
 //         borderRadius: BorderRadius.circular(15),
-//         border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
+//         border: Border.all(color: Color(0xFFFFB300).withOpacity(0.2)),
 //         boxShadow: [
 //           BoxShadow(
 //             color: Colors.black.withOpacity(0.05),
@@ -1617,7 +1617,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //                 width: 50,
 //                 height: 50,
 //                 decoration: BoxDecoration(
-//                   gradient: LinearGradient(colors: [Color(0xFFFF6B00), Color(0xFFFF8533)]),
+//                   gradient: LinearGradient(colors: [Color(0xFFFFB300), Color(0xFFFFD54F)]),
 //                   borderRadius: BorderRadius.circular(12),
 //                 ),
 //                 child: Icon(Icons.access_time, color: Colors.white, size: 28),
@@ -1633,7 +1633,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //                     ),
 //                     Text(
 //                       time,
-//                       style: TextStyle(fontSize: 16, color: Color(0xFFFF6B00), fontWeight: FontWeight.w500),
+//                       style: TextStyle(fontSize: 16, color: Color(0xFFFFB300), fontWeight: FontWeight.w500),
 //                     ),
 //                   ],
 //                 ),
@@ -1674,7 +1674,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //               ),
 //               child: Column(
 //                 children: [
-//                   Icon(Icons.how_to_reg, size: 60, color: Color(0xFFFF6B00)),
+//                   Icon(Icons.how_to_reg, size: 60, color: Color(0xFFFFB300)),
 //                   SizedBox(height: 20),
 //                   Text(
 //                     'Admissions Open',
@@ -1705,7 +1705,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //               margin: EdgeInsets.only(top: 20),
 //               padding: EdgeInsets.all(25),
 //               decoration: BoxDecoration(
-//                 gradient: LinearGradient(colors: [Color(0xFFFF6B00), Color(0xFFFF8533)]),
+//                 gradient: LinearGradient(colors: [Color(0xFFFFB300), Color(0xFFFFD54F)]),
 //                 borderRadius: BorderRadius.circular(15),
 //               ),
 //               child: Column(
@@ -1752,7 +1752,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //       decoration: BoxDecoration(
 //         color: Colors.white,
 //         borderRadius: BorderRadius.circular(15),
-//         border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
+//         border: Border.all(color: Color(0xFFFFB300).withOpacity(0.2)),
 //         boxShadow: [
 //           BoxShadow(
 //             color: Colors.black.withOpacity(0.05),
@@ -1767,7 +1767,7 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //             width: 60,
 //             height: 60,
 //             decoration: BoxDecoration(
-//               gradient: LinearGradient(colors: [Color(0xFFFF6B00), Color(0xFFFF8533)]),
+//               gradient: LinearGradient(colors: [Color(0xFFFFB300), Color(0xFFFFD54F)]),
 //               borderRadius: BorderRadius.circular(15),
 //             ),
 //             child: Center(

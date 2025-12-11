@@ -139,7 +139,7 @@ class _AcademicPageState extends State<AcademicPage> {
           Icon(
             Icons.school,
             size: isMobile ? 50 : isTablet ? 60 : 70,
-            color: Color(0xFFFF6B00),
+            color: Color(0xFFFFB300),
           ),
           SizedBox(height: isMobile ? 15 : 20),
           Text(
@@ -186,7 +186,7 @@ class _AcademicPageState extends State<AcademicPage> {
             children: [
               Icon(
                 Icons.grade,
-                color: Color(0xFFFF6B00),
+                color: Color(0xFFFFB300),
                 size: isMobile ? 20 : 24,
               ),
               SizedBox(width: 8),
@@ -239,8 +239,8 @@ class _AcademicPageState extends State<AcademicPage> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: _currentIndex == index 
-                      ? Color(0xFFFF6B00) 
-                      : Color(0xFFFF6B00).withOpacity(0.3),
+                      ? Color(0xFFFFB300) 
+                      : Color(0xFFFFB300).withOpacity(0.3),
                 ),
               ),
             ),
@@ -414,7 +414,7 @@ class _AcademicPageState extends State<AcademicPage> {
         children: [
           Icon(
             Icons.rocket_launch,
-            color: Color(0xFFFF6B00),
+            color: Color(0xFFFFB300),
             size: isMobile ? 40 : 50,
           ),
           SizedBox(height: isMobile ? 15 : 20),
@@ -447,7 +447,7 @@ class _AcademicPageState extends State<AcademicPage> {
                       child: ElevatedButton(
                         onPressed: () => Navigator.pushNamed(context, '/admissions'),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFFFF6B00),
+                          backgroundColor: Color(0xFFFFB300),
                           padding: EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
@@ -495,7 +495,7 @@ class _AcademicPageState extends State<AcademicPage> {
                     ElevatedButton(
                       onPressed: () => Navigator.pushNamed(context, '/admissions'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFFF6B00),
+                        backgroundColor: Color(0xFFFFB300),
                         padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),

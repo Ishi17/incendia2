@@ -244,12 +244,12 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
                                 width: 60,
                                 height: 60,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFFF6B00).withOpacity(0.1),
+                                  color: const Color(0xFFFFB300).withOpacity(0.1),
                                   shape: BoxShape.circle,
                                 ),
                                 child: const Icon(
                                   Icons.check_circle,
-                                  color: Color(0xFFFF6B00),
+                                  color: Color(0xFFFFB300),
                                   size: 30,
                                 ),
                               ),
@@ -382,7 +382,7 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
                   height: 8,
                   decoration: BoxDecoration(
                     color: _currentPage == i
-                        ? const Color(0xFFFF6B00)
+                        ? const Color(0xFFFFB300)
                         : const Color(0xFFCCCCCC),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -445,12 +445,12 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
                       width: isMobile ? 50 : 60,
                       height: isMobile ? 50 : 60,
                       decoration: BoxDecoration(
-                        color: Color(0xFFFF6B00).withOpacity(0.1),
+                        color: Color(0xFFFFB300).withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         Icons.school,
-                        color: Color(0xFFFF6B00),
+                        color: Color(0xFFFFB300),
                         size: isMobile ? 26 : 30,
                       ),
                     ),
@@ -484,7 +484,7 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
                               text: 'personalized attention',
                               style: TextStyle(
                                 fontWeight: FontWeight.w700,
-                                color: Color(0xFFFF6B00),
+                                color: Color(0xFFFFB300),
                               ),
                             ),
                             TextSpan(
@@ -529,7 +529,7 @@ class _AdmissionsPageState extends State<AdmissionsPage> {
         'step': '4',
         'title': 'Enrollment',
         'desc': 'Receive your acceptance and begin your personalized learning journey.',
-        'color': Color(0xFFFF6B00), // Orange
+        'color': Color(0xFFFFB300), // Orange
       },
     ];
 

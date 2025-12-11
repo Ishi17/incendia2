@@ -61,7 +61,7 @@ class _FeesHero extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: const [
-          Icon(Icons.receipt_long, color: Color(0xFFFF6B00), size: 26),
+          Icon(Icons.receipt_long, color: Color(0xFFFFB300), size: 26),
           SizedBox(height: 10),
           Text(
             'Fees Structure',

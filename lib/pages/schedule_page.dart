@@ -97,7 +97,7 @@ class _SchedulePageState extends State<SchedulePage> with TickerProviderStateMix
               Icon(
                 Icons.schedule,
                 size: 80,
-                color: Color(0xFFFF6B00),
+                color: Color(0xFFFFB300),
               ),
               SizedBox(height: 20),
               Text(
@@ -197,7 +197,7 @@ class _SchedulePageState extends State<SchedulePage> with TickerProviderStateMix
         children: [
           Icon(
             icon, 
-            color: Color(0xFFFF6B00), 
+            color: Color(0xFFFFB300), 
             size: isMobile ? 24 : 30
           ),
           SizedBox(height: isMobile ? 8 : 10),
@@ -236,7 +236,7 @@ class _SchedulePageState extends State<SchedulePage> with TickerProviderStateMix
         'time': '8:00 AM - 12:00 PM',
         'description': 'Perfect for early risers with fresh minds ready to learn',
         'icon': Icons.wb_sunny,
-        'color': Color(0xFFFF6B00),
+        'color': Color(0xFFFFB300),
         'subjects': ['Maths', 'Physics', 'Chemistry'],
       },
       {
@@ -523,7 +523,7 @@ class _SchedulePageState extends State<SchedulePage> with TickerProviderStateMix
         children: [
           Icon(
             icon, 
-            color: Color(0xFFFF6B00), 
+            color: Color(0xFFFFB300), 
             size: isMobile ? 32 : 40
           ),
           SizedBox(height: isMobile ? 12 : 15),
@@ -614,7 +614,7 @@ class _SchedulePageState extends State<SchedulePage> with TickerProviderStateMix
             width: isMobile ? 6 : 8,
             height: isMobile ? 6 : 8,
             decoration: BoxDecoration(
-              color: Color(0xFFFF6B00),
+              color: Color(0xFFFFB300),
               borderRadius: BorderRadius.circular(isMobile ? 3 : 4),
             ),
           ),
@@ -680,7 +680,7 @@ class _SchedulePageState extends State<SchedulePage> with TickerProviderStateMix
                           Navigator.pushNamed(context, '/contact');
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFFFF6B00),
+                          backgroundColor: Color(0xFFFFB300),
                           padding: EdgeInsets.symmetric(horizontal: 30, vertical: 16),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
@@ -730,7 +730,7 @@ class _SchedulePageState extends State<SchedulePage> with TickerProviderStateMix
                         Navigator.pushNamed(context, '/contact');
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFFFF6B00),
+                        backgroundColor: Color(0xFFFFB300),
                         padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(25),

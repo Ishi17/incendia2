@@ -70,7 +70,7 @@ class _AboutUsPageState extends State<AboutUsPage>
                       Icon(
                         Icons.local_fire_department,
                         size: 60,
-                        color: Color(0xFFFF6B00),
+                        color: Color(0xFFFFB300),
                       ),
                       SizedBox(height: 20),
                       Text(
@@ -148,12 +148,12 @@ class _AboutUsPageState extends State<AboutUsPage>
                     Container(
                       padding: EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Color(0xFFFF6B00).withOpacity(0.1),
+                        color: Color(0xFFFFB300).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
                         Icons.auto_stories,
-                        color: Color(0xFFFF6B00),
+                        color: Color(0xFFFFB300),
                         size: 24,
                       ),
                     ),
@@ -174,12 +174,12 @@ class _AboutUsPageState extends State<AboutUsPage>
                     Container(
                       padding: EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Color(0xFFFF6B00).withOpacity(0.1),
+                        color: Color(0xFFFFB300).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
                         Icons.auto_stories,
-                        color: Color(0xFFFF6B00),
+                        color: Color(0xFFFFB300),
                         size: 24,
                       ),
                     ),
@@ -242,10 +242,10 @@ class _AboutUsPageState extends State<AboutUsPage>
           Container(
             padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Color(0xFFFF6B00).withOpacity(0.05),
+              color: Color(0xFFFFB300).withOpacity(0.05),
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
-                color: Color(0xFFFF6B00).withOpacity(0.2),
+                color: Color(0xFFFFB300).withOpacity(0.2),
                 width: 1,
               ),
             ),
@@ -308,7 +308,7 @@ class _AboutUsPageState extends State<AboutUsPage>
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFFFF6B00),
+                    color: Color(0xFFFFB300),
                     fontFamily: 'Poppins',
                   ),
                 ),
@@ -331,7 +331,7 @@ class _AboutUsPageState extends State<AboutUsPage>
             width: 6,
             height: 6,
             decoration: BoxDecoration(
-              color: Color(0xFFFF6B00),
+              color: Color(0xFFFFB300),
               borderRadius: BorderRadius.circular(3),
             ),
           ),
@@ -361,7 +361,7 @@ class _AboutUsPageState extends State<AboutUsPage>
                 Icons.school,
                 'Academic Excellence',
                 'Mastering fundamentals with confidence',
-                Color(0xFFFF6B00),
+                Color(0xFFFFB300),
               ),
               SizedBox(height: 20),
               _buildMissionCard(
@@ -379,7 +379,7 @@ class _AboutUsPageState extends State<AboutUsPage>
                   Icons.school,
                   'Academic Excellence',
                   'Mastering fundamentals with confidence',
-                  Color(0xFFFF6B00),
+                  Color(0xFFFFB300),
                 ),
               ),
               SizedBox(width: 20),
@@ -496,7 +496,7 @@ class _AboutUsPageState extends State<AboutUsPage>
       children: [
         Icon(
           icon,
-          color: Color(0xFFFF6B00),
+          color: Color(0xFFFFB300),
           size: isMobile ? 25 : 30,
         ),
         SizedBox(height: 10),
@@ -564,10 +564,10 @@ class _AboutUsPageState extends State<AboutUsPage>
         Container(
           padding: EdgeInsets.all(isMobile ? 20 : 25),
           decoration: BoxDecoration(
-            color: Color(0xFFFF6B00).withOpacity(0.1),
+            color: Color(0xFFFFB300).withOpacity(0.1),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: Color(0xFFFF6B00).withOpacity(0.3),
+              color: Color(0xFFFFB300).withOpacity(0.3),
               width: 2,
             ),
           ),
@@ -609,7 +609,7 @@ class _AboutUsPageState extends State<AboutUsPage>
         children: [
           Icon(
             icon,
-            color: Color(0xFFFF6B00),
+            color: Color(0xFFFFB300),
             size: isMobile ? 20 : 24,
           ),
           SizedBox(width: 15),

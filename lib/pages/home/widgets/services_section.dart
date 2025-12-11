@@ -140,7 +140,7 @@ class _ServiceCardState extends State<_ServiceCard>
                     height: 60,
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
+                        colors: [Color(0xFFFFB300), Color(0xFFFFD54F)],
                       ),
                       borderRadius: BorderRadius.circular(16),
                     ),
@@ -222,7 +222,7 @@ class _ServiceDialog extends StatelessWidget {
               height: 80,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
+                  colors: [Color(0xFFFFB300), Color(0xFFFFD54F)],
                 ),
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -256,7 +256,7 @@ class _ServiceDialog extends StatelessWidget {
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF6B00),
+                backgroundColor: const Color(0xFFFFB300),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,

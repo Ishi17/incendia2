@@ -68,10 +68,12 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
     return ValueListenableBuilder<bool>(
       valueListenable: _showAnnouncement,
       builder: (context, showAnnouncement, _) {
+        final navBarBackground = isTransparent
+            ? (isScrolled ? Colors.white : Colors.transparent)
+            : const Color(0xFF002B5B);
+
         final navBar = AppBar(
-          backgroundColor: isTransparent
-              ? (isScrolled ? Colors.white : Colors.transparent)
-              : const Color(0xFF002B5B),
+          backgroundColor: navBarBackground,
           foregroundColor: Colors.white,
           elevation: isTransparent ? (isScrolled ? 4 : 0) : 0,
           centerTitle: false,
@@ -98,7 +100,12 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
           actions: actions ?? _buildDefaultActions(context, isMobile, isTablet, isDesktop),
         );
 
-        if (!showAnnouncement) return navBar;
+        final navBarWithBackground = ColoredBox(
+          color: navBarBackground,
+          child: navBar,
+        );
+
+        if (!showAnnouncement) return navBarWithBackground;
 
         return Column(
           mainAxisSize: MainAxisSize.min,
@@ -109,7 +116,7 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
                   () => _navigateTo(context, 'home'),
               onClose: () => _showAnnouncement.value = false,
             ),
-            navBar,
+            navBarWithBackground,
           ],
         );
       },
@@ -132,12 +139,12 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
             height: isMobile ? 32 : isTablet ? 36 : 40,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
+                colors: [Color(0xFFFFB300), Color(0xFFFFD54F)],
               ),
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFFF6B00).withOpacity(0.3),
+                  color: const Color(0xFFFFB300).withOpacity(0.3),
                   blurRadius: 6,
                   offset: const Offset(0, 3),
                 ),
@@ -431,7 +438,7 @@ class _AnnouncementBar extends StatelessWidget {
                       ElevatedButton(
                         onPressed: onAction,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFF6B00),
+                          backgroundColor: const Color(0xFFFFB300),
                           foregroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(
                             horizontal: isMobile ? 16 : 22,

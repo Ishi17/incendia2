@@ -77,7 +77,7 @@ class _FaqHero extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: const [
-          Icon(Icons.question_answer_rounded, color: Color(0xFFFF6B00), size: 26),
+          Icon(Icons.question_answer_rounded, color: Color(0xFFFFB300), size: 26),
           SizedBox(height: 10),
           Text(
             'Admissions FAQs',
