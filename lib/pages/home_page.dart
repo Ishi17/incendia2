@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:incendia_webpage/pages/about_page.dart';
 import 'package:incendia_webpage/pages/academic.dart';
@@ -7,6 +9,12 @@ import 'package:incendia_webpage/pages/contact_us_page.dart';
 import 'package:incendia_webpage/pages/gallery_page.dart';
 import 'package:incendia_webpage/pages/life_skills_page.dart';
 import 'package:incendia_webpage/pages/schedule_page.dart';
+import 'package:incendia_webpage/pages/home/widgets/cta_section.dart';
+import 'package:incendia_webpage/pages/home/widgets/footer_section.dart';
+import 'package:incendia_webpage/pages/home/widgets/hero_section.dart';
+import 'package:incendia_webpage/pages/home/widgets/testimonials_section.dart';
+import 'package:incendia_webpage/components/custom_navbar.dart';
+import 'package:incendia_webpage/components/custom_drawer.dart';
 
 // Main HomePage
 class HomePage extends StatefulWidget {
@@ -23,6 +31,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late AnimationController _cardAnimationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
+  Timer? _popupTimer;
+  bool _showUrgencyPopup = false;
 
   @override
   void initState() {
@@ -60,6 +70,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         _cardAnimationController.forward();
       }
     });
+
+    // Show the popup after the user has been on the page for a bit (desktop/tablet only)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || isMobile) return;
+      _popupTimer = Timer(const Duration(seconds: 15), () {
+        if (!mounted) return;
+        setState(() => _showUrgencyPopup = true);
+      });
+    });
   }
 
   @override
@@ -67,10 +86,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     _scrollController.dispose();
     _heroAnimationController.dispose();
     _cardAnimationController.dispose();
+    _popupTimer?.cancel();
     super.dispose();
   }
 
   bool get isMobile => MediaQuery.of(context).size.width < 768;
+  bool get isTablet => MediaQuery.of(context).size.width >= 768 && MediaQuery.of(context).size.width < 1024;
+  bool get isDesktop => MediaQuery.of(context).size.width >= 1024;
 
   void _navigateTo(String pageName) {
     Widget page;
@@ -78,29 +100,33 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       case 'home':
         return; // Already on home page
       case 'about':
-        page = AboutUsPage();
+        page = const AboutUsPage();
         break;
       case 'academic':
-        page = AcademicPage();
+        page = const AcademicPage();
         break;
       case 'life skills':
-        page = LifeSkillsPage();
+        page = const LifeSkillsPage();
         break;
       case 'schedule':
-        page = SchedulePage();
+        page = const SchedulePage();
         break;
       case 'admissions':
-        page = AdmissionsPage();
+        page = const AdmissionsPage();
         break;
       case 'gallery':
-        page = GalleryPage();
+        page = const GalleryPage();
         break;
       case 'careers':
-        page = CareersPage();
+        page = const CareersPage();
         break;
       case 'contact':
-        page = ContactUsPage();
+        page = const ContactUsPage();
         break;
+      case 'services':
+      case 'services and programs':
+      case 'our services and programs':
+        return;
       default:
         return;
     }
@@ -108,951 +134,1076 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: isMobile ? _buildDrawer() : null,
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          _buildAppBar(),
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                _buildHeroSection(),
-                _buildServicesSection(),
-                _buildOfferingsSection(),
-                _buildStatsSection(),
-                _buildTestimonialsSection(),
-                _buildCtaSection(),
-                _buildFooter(),
-              ],
-            ),
+  void _dismissUrgencyPopup() {
+    if (!_showUrgencyPopup) return;
+    _popupTimer?.cancel();
+    setState(() => _showUrgencyPopup = false);
+  }
+
+  void _handlePopupCta() {
+    _dismissUrgencyPopup();
+    _navigateTo('Admissions');
+  }
+
+  void _showConsultationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return _ConsultationDialog(isMobile: isMobile);
+      },
+    );
+  }
+
+  Widget _buildServicesPreview({required bool isMobile}) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        vertical: 60,
+        horizontal: isMobile ? 20 : 40,
+      ),
+      color: const Color(0xFFF8F9FA),
+      child: Wrap(
+        spacing: 20,
+        runSpacing: 20,
+        alignment: WrapAlignment.center,
+        children: [
+          _ServicePreviewCard(
+            item: {
+              'icon': Icons.person,
+              'title': 'Personalized Learning',
+              'desc': 'Tailored curriculum for individual needs',
+              'category': 'Service',
+              'color': const Color(0xFFFFB300),
+            },
+            isMobile: isMobile,
+          ),
+          _ServicePreviewCard(
+            item: {
+              'icon': Icons.book,
+              'title': 'Academic Mastery',
+              'desc': 'Board-wise curriculum',
+              'category': 'Program',
+              'color': const Color(0xFF4CAF50),
+            },
+            isMobile: isMobile,
+          ),
+          _ServicePreviewCard(
+            item: {
+              'icon': Icons.psychology,
+              'title': 'Life Skills',
+              'desc': 'Critical thinking & communication',
+              'category': 'Program',
+              'color': const Color(0xFF2196F3),
+            },
+            isMobile: isMobile,
+          ),
+          _ServicePreviewCard(
+            item: {
+              'icon': Icons.computer,
+              'title': 'Modern Technology',
+              'desc': 'Cutting-edge learning tools',
+              'category': 'Service',
+              'color': const Color(0xFFFFB300),
+            },
+            isMobile: isMobile,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDrawer() {
-    final menuItems = [
-      {'name': 'Home', 'icon': Icons.home},
-      {'name': 'About', 'icon': Icons.info_outline},
-      {'name': 'Academic', 'icon': Icons.school},
-      {'name': 'Life Skills', 'icon': Icons.psychology},
-      {'name': 'Schedule', 'icon': Icons.schedule},
-      {'name': 'Admissions', 'icon': Icons.how_to_reg},
-      {'name': 'Gallery', 'icon': Icons.photo_library},
-      {'name': 'Careers', 'icon': Icons.work},
-      {'name': 'Contact', 'icon': Icons.contact_phone},
-    ];
-
-    return Drawer(
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF002B5B), Color(0xFF004080)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.all(24),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0xFFFF6B00).withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: Icon(
-                        Icons.menu_book,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                    SizedBox(width: 16),
-                    Text(
-                      'Incendia',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(24),
-                      topRight: Radius.circular(24),
-                    ),
-                  ),
-                  child: ListView(
-                    padding: EdgeInsets.all(16),
-                    children: menuItems
-                        .map(
-                          (item) => Container(
-                            margin: EdgeInsets.only(bottom: 8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: Colors.grey.shade50,
-                            ),
-                            child: ListTile(
-                              leading: Icon(
-                                item['icon'] as IconData,
-                                color: Color(0xFFFF6B00),
-                                size: 24,
-                              ),
-                              title: Text(
-                                item['name'] as String,
-                                style: TextStyle(
-                                  color: Color(0xFF002B5B),
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                              ),
-                              trailing: Icon(
-                                Icons.arrow_forward_ios,
-                                size: 16,
-                                color: Color(0xFFFF6B00),
-                              ),
-                              onTap: () {
-                                Navigator.pop(context);
-                                _navigateTo(item['name'] as String);
-                              },
-                            ),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: CustomNavbar(
+        isScrolled: _isScrolled,
+        onConsultationPressed: _showConsultationDialog,
       ),
-    );
-  }
-
-  Widget _buildAppBar() {
-    final menuItems = ['About','Academic','Admissions','Careers','Life Skills','Schedule','Gallery','Contact'];
-
-    return SliverAppBar(
-      expandedHeight: 70,
-      floating: true,
-      pinned: true,
-      backgroundColor: _isScrolled ? Colors.white : Colors.transparent,
-      elevation: _isScrolled ? 4 : 0,
-
-      // keep the hamburger on mobile, remove auto back arrows elsewhere
-      automaticallyImplyLeading: false,
-      leading: isMobile
-          ? Builder(
-              builder: (ctx) => IconButton(
-                icon: const Icon(Icons.menu, color: Color(0xFF002B5B)),
-                onPressed: () => Scaffold.of(ctx).openDrawer(),
-              ),
-            )
-          : null,
-
-      // ensure the title stays on the left when collapsed (not centered)
-      centerTitle: false,
-
-      flexibleSpace: Container(
-        decoration: _isScrolled
-            ? BoxDecoration(
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              )
-            : null,
-        child: FlexibleSpaceBar(
-          // <<< left padding so it’s not glued to the edge
-          titlePadding: const EdgeInsetsDirectional.only(start: 20, bottom: 16),
-
-          // <<< clickable brand → Home
-          title: InkWell(
-            onTap: () => _navigateTo('Home'),
-            borderRadius: BorderRadius.circular(8),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
+      drawer: CustomDrawer(),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            controller: _scrollController,
+            child: Column(
               children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
-                    ),
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFFFF6B00).withOpacity(0.3),
-                        blurRadius: 6,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: const Icon(Icons.menu_book, color: Colors.white, size: 20),
+                HeroSection(
+                  isMobile: isMobile,
+                  fadeAnimation: _fadeAnimation,
+                  slideAnimation: _slideAnimation,
+                  navigateTo: _navigateTo,
+                  onConsultationPressed: _showConsultationDialog,
+                  shouldStartCounting: true,
                 ),
-                const SizedBox(width: 12),
-                const Text(
-                  'Incendia',
-                  style: TextStyle(
-                    color: Color(0xFF002B5B),
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
+                _IncendiaDifferenceSection(isMobile: isMobile),
+                TestimonialsSection(isMobile: isMobile),
+                CtaSection(
+                  isMobile: isMobile,
+                  navigateTo: _navigateTo,
+                  onConsultationPressed: _showConsultationDialog,
                 ),
+                FooterSection(isMobile: isMobile),
               ],
             ),
           ),
-        ),
-      ),
-
-      actions: isMobile
-          ? null
-          : [
-              Container(
-                margin: const EdgeInsets.only(right: 24),
-                child: Row(
-                  children: menuItems.map(
-                    (item) => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      child: TextButton(
-                        onPressed: () => _navigateTo(item),
-                        style: TextButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                        ),
-                        child: Text(
-                          item,
-                          style: const TextStyle(
-                            color: Color(0xFF002B5B),
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ).toList(),
-                ),
+          if (_showUrgencyPopup && !isMobile)
+            Positioned.fill(
+              child: _UrgencyPopup(
+                isMobile: isMobile,
+                onClose: _dismissUrgencyPopup,
+                onAction: _handlePopupCta,
               ),
-            ],
+            ),
+        ],
+      ),
     );
   }
 
-  Widget _buildHeroSection() {
+
+  // Extracted to ServicesSection widget (widgets/services_section.dart)
+
+// Extracted to OfferingsSection widget (widgets/offerings_section.dart)
+
+// Extracted to StatsSection widget (widgets/stats_section.dart)
+
+// Extracted to TestimonialsSection widget (widgets/testimonials_section.dart)
+
+// Extracted to CtaSection widget (widgets/cta_section.dart)
+}
+
+class _IncendiaDifferenceSection extends StatelessWidget {
+  final bool isMobile;
+
+  const _IncendiaDifferenceSection({required this.isMobile});
+
+  @override
+  Widget build(BuildContext context) {
+    final cardWidth = isMobile ? double.infinity : 600.0;
+    final qualitiesTraditional = [
+      'Focuses solely on academics',
+      'Rigid, one-size-fits-all approach',
+      'Limited preparation for life beyond school',
+    ];
+    final qualitiesIncendia = [
+      'Balanced development of academics and life skills',
+      'Engaging, personalized learning experience',
+      'Holistic preparation for future success',
+    ];
+
     return Container(
-      height: isMobile ? 550 : 650,
-      decoration: BoxDecoration(
+      width: double.infinity,
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF002B5B), Color(0xFF004080), Color(0xFF0056B3)],
+          colors: [Color(0xFF102A45), Color(0xFF14365C)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
       ),
-      child: Stack(
+      padding: EdgeInsets.symmetric(
+        vertical: isMobile ? 40 : 56,
+        horizontal: isMobile ? 16 : 24,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Positioned(
-            top: -80,
-            right: -80,
-            child: Container(
-              width: 200,
-              height: 200,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [Colors.white.withOpacity(0.1), Colors.transparent],
+          Text(
+            'The Incendia Difference',
+            style: TextStyle(
+              fontSize: isMobile ? 28 : 32,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: isMobile ? 18 : 26),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: isMobile ? 14 : 100,
+            runSpacing: isMobile ? 16 : 24,
+            children: [
+              _ComparisonCard(
+                title: 'Traditional Tuition',
+                subtitle: 'What most centers offer',
+                gradientColors: const [Color(0xFF1A365D), Color(0xFF23497A)],
+                textColor: Colors.white,
+                items: qualitiesTraditional,
+                width: cardWidth,
+              ),
+              _ComparisonCard(
+                title: 'Incendia',
+                subtitle: 'Where future-ready learners grow',
+                gradientColors: const [Color(0xFF1A365D), Color(0xFF23497A)],
+                textColor: Colors.white,
+                items: qualitiesIncendia,
+                width: cardWidth,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ComparisonCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final List<Color> gradientColors;
+  final Color textColor;
+  final List<String> items;
+  final double width;
+
+  const _ComparisonCard({
+    required this.title,
+    required this.subtitle,
+    required this.gradientColors,
+    required this.textColor,
+    required this.items,
+    required this.width,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      constraints: const BoxConstraints(minHeight: 220),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: gradientColors,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.08),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.18),
+            blurRadius: 18,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.check_circle_outline,
+                color: textColor.withOpacity(0.9),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w800,
+                    fontSize: 18,
+                    color: textColor,
+                  ),
                 ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          Text(
+            subtitle,
+            style: TextStyle(
+              fontSize: 13.5,
+              color: textColor.withOpacity(0.9),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ...items.map(
+            (item) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    margin: const EdgeInsets.only(top: 4),
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: textColor.withOpacity(0.9),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      item,
+                      style: TextStyle(
+                        color: textColor,
+                        fontSize: 14,
+                        height: 1.4,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-          Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: isMobile ? 20 : 40),
-              child: AnimatedBuilder(
-                animation: _fadeAnimation,
-                builder: (context, child) {
-                  return FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: SlideTransition(
-                      position: _slideAnimation,
+        ],
+      ),
+    );
+  }
+}
+
+class _UrgencyPopup extends StatelessWidget {
+  final bool isMobile;
+  final VoidCallback onClose;
+  final VoidCallback onAction;
+
+  const _UrgencyPopup({
+    required this.isMobile,
+    required this.onClose,
+    required this.onAction,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedOpacity(
+      duration: const Duration(milliseconds: 250),
+      opacity: 1,
+      child: GestureDetector(
+        onTap: onClose,
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          color: Colors.black.withOpacity(0.55),
+          child: Center(
+            child: GestureDetector(
+              onTap: () {},
+              behavior: HitTestBehavior.translucent,
+              child: SafeArea(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: isMobile ? 340 : 420,
+                  ),
+                  child: Material(
+                    borderRadius: BorderRadius.circular(24),
+                    clipBehavior: Clip.antiAlias,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 20 : 28,
+                        vertical: isMobile ? 20 : 24,
+                      ),
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Color(0xFF002B5B), Color(0xFF001735)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Empowering Students\nfor Academic Excellence',
-                            style: TextStyle(
-                              fontSize: isMobile ? 28 : 48,
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                              height: 1.2,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(height: 20),
-                          Text(
-                            'Comprehensive education programs combining academic mastery with essential life skills.',
-                            style: TextStyle(
-                              fontSize: isMobile ? 16 : 18,
-                              color: Colors.white.withOpacity(0.9),
-                              height: 1.6,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                          SizedBox(height: 32),
-                          Wrap(
-                            spacing: 16,
-                            runSpacing: 12,
+                          Row(
                             children: [
-                              _buildGradientButton(
-                                'Start Your Journey',
-                                () => _navigateTo('Admissions'),
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.12),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Icon(
+                                  Icons.local_fire_department,
+                                  color: Color(0xFFFFB300),
+                                ),
                               ),
-                              _buildOutlineButton(
-                                'Learn More',
-                                () => _navigateTo('About'),
+                              const Spacer(),
+                              IconButton(
+                                onPressed: onClose,
+                                icon: const Icon(Icons.close, color: Colors.white),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            'Only 2 seats left!',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: isMobile ? 22 : 24,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Secure your child’s seat in the upcoming batch before enrollment closes.',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: isMobile ? 14 : 16,
+                              height: 1.4,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: onAction,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFFFB300),
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: isMobile ? 14 : 16,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Secure Seat',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              TextButton(
+                                onPressed: onClose,
+                                child: Text(
+                                  'Maybe Later',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.85),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
                         ],
                       ),
                     ),
-                  );
-                },
+                  ),
+                ),
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGradientButton(String text, VoidCallback onPressed) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
-        ),
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [
-          BoxShadow(
-            color: Color(0xFFFF6B00).withOpacity(0.4),
-            blurRadius: 12,
-            offset: Offset(0, 6),
-          ),
-        ],
-      ),
-      child: ElevatedButton(
-        onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.transparent,
-          shadowColor: Colors.transparent,
-          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-            fontSize: 16,
-          ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildOutlineButton(String text, VoidCallback onPressed) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        border: Border.all(color: Colors.white, width: 2),
-      ),
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          side: BorderSide.none,
-          padding: EdgeInsets.symmetric(vertical: 16, horizontal: 32),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-            fontSize: 16,
-          ),
-        ),
-      ),
+class _ServicePreviewCard extends StatefulWidget {
+  final Map<String, dynamic> item;
+  final bool isMobile;
+
+  const _ServicePreviewCard({
+    required this.item,
+    required this.isMobile,
+  });
+
+  @override
+  State<_ServicePreviewCard> createState() => _ServicePreviewCardState();
+}
+
+class _ServicePreviewCardState extends State<_ServicePreviewCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
     );
   }
 
-  Widget _buildServicesSection() {
-    final services = [
-      {
-        'icon': Icons.person,
-        'title': 'Personalized Learning',
-        'desc': 'Tailored curriculum for individual needs',
-      },
-      {
-        'icon': Icons.people,
-        'title': 'Expert Mentorship',
-        'desc': 'Guidance from experienced educators',
-      },
-      {
-        'icon': Icons.computer,
-        'title': 'Modern Technology',
-        'desc': 'Cutting-edge learning tools',
-      },
-    ];
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 50,
-        horizontal: isMobile ? 20 : 40,
-      ),
-      color: Color(0xFFF8F9FA),
-      child: Column(
-        children: [
-          Text(
-            'Our Educational Services',
-            style: TextStyle(
-              fontSize: isMobile ? 28 : 36,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFF002B5B),
+  void _showItemDialog() {
+    _animationController.forward().then((_) {
+      _animationController.reverse();
+    });
+
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Service detail',
+      barrierColor: Colors.black.withOpacity(0.6),
+      transitionDuration: const Duration(milliseconds: 450),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 520),
+            child: _ServiceItemDialog(item: widget.item),
+          ),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curvedAnimation = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeOutCubic,
+          reverseCurve: Curves.easeInCubic,
+        );
+        return FadeTransition(
+          opacity: curvedAnimation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 0.08),
+              end: Offset.zero,
+            ).animate(curvedAnimation),
+            child: ScaleTransition(
+              scale: Tween<double>(begin: 0.9, end: 1.0).animate(curvedAnimation),
+              child: child,
             ),
           ),
-          SizedBox(height: 40),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              return Wrap(
-                spacing: 24,
-                runSpacing: 24,
-                children: services
-                    .map(
-                      (service) => SizedBox(
-                        width: isMobile
-                            ? constraints.maxWidth
-                            : (constraints.maxWidth - 48) / 3,
-                        child: _buildServiceCard(service),
-                      ),
-                    )
-                    .toList(),
-              );
-            },
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildServiceCard(Map<String, dynamic> service) {
-    return Container(
-      padding: EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 15,
-            offset: Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
+  @override
+  Widget build(BuildContext context) {
+    final color = widget.item['color'] as Color;
+    final icon = widget.item['icon'] as IconData;
+    final title = widget.item['title'] as String;
+
+    return AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: InkWell(
+            onTap: _showItemDialog,
+            borderRadius: BorderRadius.circular(16),
+            child: Container(
+              width: widget.isMobile ? 150 : 180,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: color.withOpacity(0.2),
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Icon(service['icon'], color: Colors.white, size: 30),
-          ),
-          SizedBox(height: 16),
-          Text(
-            service['title'],
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF002B5B),
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 8),
-          Text(
-            service['desc'],
-            style: TextStyle(
-              color: Color(0xFF666666),
-              height: 1.5,
-              fontSize: 14,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildOfferingsSection() {
-    final offerings = [
-      {
-        'icon': Icons.book,
-        'title': 'Academic Mastery',
-        'desc': 'Board-wise curriculum',
-        'color': Color(0xFF4CAF50),
-      },
-      {
-        'icon': Icons.psychology,
-        'title': 'Life Skills',
-        'desc': 'Critical thinking & communication',
-        'color': Color(0xFF2196F3),
-      },
-      {
-        'icon': Icons.schedule,
-        'title': 'Flexible Schedule',
-        'desc': 'Convenient timings',
-        'color': Color(0xFF9C27B0),
-      },
-      {
-        'icon': Icons.groups,
-        'title': 'Small Classes',
-        'desc': 'Personalized attention',
-        'color': Color(0xFFFF6B00),
-      },
-    ];
-
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 60,
-        horizontal: isMobile ? 20 : 40,
-      ),
-      child: Column(
-        children: [
-          Text(
-            'Our Programs',
-            style: TextStyle(
-              fontSize: isMobile ? 28 : 36,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFF002B5B),
-            ),
-          ),
-          SizedBox(height: 40),
-          GridView.count(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            crossAxisCount: isMobile ? 1 : 2,
-            crossAxisSpacing: 24,
-            mainAxisSpacing: 24,
-            childAspectRatio: 1.3,
-            children: offerings
-                .map(
-                  (item) => Container(
-                    padding: EdgeInsets.all(32),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 50,
+                    height: 50,
                     decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: (item['color'] as Color).withOpacity(0.1),
-                        width: 2,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: (item['color'] as Color).withOpacity(0.1),
-                          blurRadius: 20,
-                          offset: Offset(0, 8),
-                        ),
-                      ],
+                      color: color.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 70,
-                          height: 70,
-                          decoration: BoxDecoration(
-                            color: (item['color'] as Color).withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Icon(
-                            item['icon'] as IconData,
-                            size: 36,
-                            color: item['color'] as Color,
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Text(
-                          item['title'] as String,
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF002B5B),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: 12),
-                        Text(
-                          item['desc'] as String,
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Color(0xFF666666),
-                            height: 1.5,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+                    child: Icon(
+                      icon,
+                      color: color,
+                      size: 24,
                     ),
                   ),
-                )
-                .toList(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatsSection() {
-    final stats = [
-      {'number': '10K+', 'label': 'Students Enrolled'},
-      {'number': '95%', 'label': 'Success Rate'},
-      {'number': '50+', 'label': 'Expert Teachers'},
-      {'number': '15+', 'label': 'Years Experience'},
-    ];
-
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 60,
-        horizontal: isMobile ? 20 : 40,
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF002B5B), Color(0xFF004080)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Column(
-        children: [
-          Text(
-            'Our Achievement',
-            style: TextStyle(
-              fontSize: isMobile ? 28 : 36,
-              fontWeight: FontWeight.w800,
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(height: 40),
-          GridView.count(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            crossAxisCount: isMobile ? 2 : 4,
-            children: stats
-                .map(
-                  (stat) => Column(
-                    children: [
-                      Text(
-                        stat['number']!,
-                        style: TextStyle(
-                          fontSize: isMobile ? 36 : 44,
-                          fontWeight: FontWeight.w900,
-                          color: Color(0xFFFF6B00),
-                        ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        stat['label']!,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white.withOpacity(0.9),
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
+                  const SizedBox(height: 12),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF002B5B),
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                )
-                .toList(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTestimonialsSection() {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 60,
-        horizontal: isMobile ? 20 : 40,
-      ),
-      color: Color(0xFFF8F9FA),
-      child: Column(
-        children: [
-          Text(
-            'What Parents Say',
-            style: TextStyle(
-              fontSize: isMobile ? 28 : 36,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFF002B5B),
-            ),
-          ),
-          SizedBox(height: 40),
-          Container(
-            constraints: BoxConstraints(maxWidth: 800),
-            padding: EdgeInsets.all(40),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: Color(0xFFFF6B00).withOpacity(0.1),
-                  blurRadius: 20,
-                  offset: Offset(0, 10),
-                ),
-              ],
-            ),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    5,
-                    (index) =>
-                        Icon(Icons.star, color: Color(0xFFFF6B00), size: 28),
-                  ),
-                ),
-                SizedBox(height: 24),
-                Text(
-                  '"Incendia has transformed my child\'s learning experience. The personalized approach and dedicated teachers have helped unlock her true potential."',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Color(0xFF002B5B),
-                    height: 1.6,
-                    fontStyle: FontStyle.italic,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 24),
-                Text(
-                  '— Sarah Johnson, Parent',
-                  style: TextStyle(
-                    color: Color(0xFFFF6B00),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCtaSection() {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 60,
-        horizontal: isMobile ? 20 : 40,
-      ),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF002B5B), Color(0xFF004080)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Column(
-        children: [
-          Text(
-            'Ready to Begin Your Journey?',
-            style: TextStyle(
-              fontSize: isMobile ? 28 : 40,
-              fontWeight: FontWeight.w800,
-              color: Colors.white,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 16),
-          Text(
-            'Join thousands of students who have transformed their academic performance.',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.white.withOpacity(0.9),
-              height: 1.6,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: 40),
-          Wrap(
-            spacing: 16,
-            runSpacing: 12,
-            children: [
-              _buildGradientButton(
-                'Apply Now',
-                () => _navigateTo('Admissions'),
+                ],
               ),
-              _buildOutlineButton('Contact Us', () => _navigateTo('Contact')),
-            ],
+            ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
+}
 
-  Widget _buildFooter() {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: 40,
-        horizontal: isMobile ? 20 : 40,
-      ),
-      color: Color(0xFF1A1A1A),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(Icons.menu_book, color: Colors.white),
+class _ServiceItemDialog extends StatelessWidget {
+  final Map<String, dynamic> item;
+
+  const _ServiceItemDialog({required this.item});
+
+  @override
+  Widget build(BuildContext context) {
+    // Get detailed content for each item
+    String getDetailedContent(String title) {
+      switch (title) {
+        case 'Academic Mastery':
+          return 'Our comprehensive academic programs cover all major educational boards including CBSE, ICSE, and State boards. We provide structured learning paths with regular assessments, mock tests, and personalized feedback to ensure academic excellence and board exam success.';
+        case 'Life Skills':
+          return 'Beyond academics, we focus on developing essential life skills including critical thinking, communication, leadership, and emotional intelligence. These skills prepare students for real-world challenges and help them become well-rounded individuals ready for future success.';
+        case 'Exam Prep':
+          return 'Focused preparation for board exams, competitive tests, and entrance examinations. Our exam prep program includes mock tests, time management strategies, and personalized study plans to help students achieve their best results.';
+        case 'Career Guidance':
+          return 'Expert career counseling and guidance to help students explore career paths, understand industry requirements, and make informed decisions about their future. We provide resume building, interview preparation, and career readiness support.';
+        default:
+          return item['desc'] as String;
+      }
+    }
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      elevation: 20,
+      child: Container(
+        padding: const EdgeInsets.all(30),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.white, Color(0xFFF8F9FA)],
+          ),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 70,
+              height: 70,
+              decoration: BoxDecoration(
+                color: (item['color'] as Color).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(16),
               ),
-              SizedBox(width: 16),
-              Text(
-                'Incendia',
+              child: Icon(
+                item['icon'] as IconData,
+                color: item['color'] as Color,
+                size: 35,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              item['title'] as String,
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w800,
+                color: Color(0xFF002B5B),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                color: (item['color'] as Color).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                item['category'] as String,
                 style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                  color: item['color'] as Color,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-            ],
-          ),
-          SizedBox(height: 20),
-          Text(
-            'Empowering students with comprehensive education programs.',
-            style: TextStyle(color: Colors.grey[400], height: 1.6),
-          ),
-          SizedBox(height: 30),
-          Divider(color: Colors.grey[800]),
-          SizedBox(height: 20),
-          Text(
-            '© 2024 Incendia. All rights reserved.',
-            style: TextStyle(color: Colors.grey[600], fontSize: 14),
-          ),
-        ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              getDetailedContent(item['title'] as String),
+              style: const TextStyle(
+                fontSize: 15,
+                color: Color(0xFF666666),
+                height: 1.6,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: item['color'] as Color,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 32,
+                  vertical: 12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25),
+                ),
+              ),
+              child: const Text(
+                'Got it!',
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
+}
 
-  Widget _buildContactCard(
-    IconData icon,
-    String title,
-    String info,
-    String subtitle,
-  ) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 20),
-      padding: EdgeInsets.all(25),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: Offset(0, 5),
+class _ConsultationDialog extends StatefulWidget {
+  final bool isMobile;
+
+  const _ConsultationDialog({
+    required this.isMobile,
+  });
+
+  @override
+  State<_ConsultationDialog> createState() => _ConsultationDialogState();
+}
+
+class _ConsultationDialogState extends State<_ConsultationDialog> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
+  bool _isSubmitting = false;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  void _handleSubmit() {
+    if (_formKey.currentState!.validate()) {
+      setState(() => _isSubmitting = true);
+      
+      // Simulate API call
+      Future.delayed(const Duration(seconds: 1), () {
+        if (!mounted) return;
+        setState(() => _isSubmitting = false);
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Thank you! We will contact you soon.'),
+            backgroundColor: Color(0xFF002B5B),
+            behavior: SnackBarBehavior.floating,
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
-              ),
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Icon(icon, color: Colors.white, size: 30),
+        );
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        constraints: BoxConstraints(
+          maxWidth: widget.isMobile ? 340 : 420,
+        ),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFF002B5B), Color(0xFF001735)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          SizedBox(width: 20),
-          Expanded(
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: widget.isMobile ? 20 : 28,
+            vertical: widget.isMobile ? 20 : 24,
+          ),
+          child: Form(
+            key: _formKey,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.12),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.calendar_today,
+                        color: Color(0xFFFFB300),
+                        size: 24,
+                      ),
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
                 Text(
-                  title,
+                  'Book your free consultation',
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF002B5B),
+                    color: Colors.white,
+                    fontSize: widget.isMobile ? 22 : 24,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 8),
                 Text(
-                  info,
+                  'Fill in your details and we\'ll get back to you shortly.',
                   style: TextStyle(
-                    fontSize: 16,
-                    color: Color(0xFF666666),
+                    color: Colors.white.withOpacity(0.9),
+                    fontSize: widget.isMobile ? 14 : 16,
                     height: 1.4,
                   ),
                 ),
-                SizedBox(height: 5),
-                Text(
-                  subtitle,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFFFF6B00),
-                    fontWeight: FontWeight.w500,
+                const SizedBox(height: 24),
+                TextFormField(
+                  controller: _nameController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                    labelStyle: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                    ),
+                    hintText: 'Enter your name',
+                    hintStyle: TextStyle(
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                    prefixIcon: Icon(
+                      Icons.person_outline,
+                      color: Colors.white.withOpacity(0.7),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.1),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Color(0xFFFFB300),
+                        width: 2,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                      ),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter your name';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _phoneController,
+                  keyboardType: TextInputType.phone,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Phone Number',
+                    labelStyle: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                    ),
+                    hintText: 'Enter your phone number',
+                    hintStyle: TextStyle(
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                    prefixIcon: Icon(
+                      Icons.phone_outlined,
+                      color: Colors.white.withOpacity(0.7),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.1),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Color(0xFFFFB300),
+                        width: 2,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                      ),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter your phone number';
+                    }
+                    if (value.trim().length < 10) {
+                      return 'Please enter a valid phone number';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    labelStyle: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                    ),
+                    hintText: 'Enter your email',
+                    hintStyle: TextStyle(
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                    prefixIcon: Icon(
+                      Icons.email_outlined,
+                      color: Colors.white.withOpacity(0.7),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white.withOpacity(0.1),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: Colors.white.withOpacity(0.3),
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Color(0xFFFFB300),
+                        width: 2,
+                      ),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                      ),
+                    ),
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: Colors.red,
+                        width: 2,
+                      ),
+                    ),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    if (!value.contains('@') || !value.contains('.')) {
+                      return 'Please enter a valid email address';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _isSubmitting ? null : _handleSubmit,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFFB300),
+                      padding: EdgeInsets.symmetric(
+                        vertical: widget.isMobile ? 14 : 16,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      disabledBackgroundColor: const Color(0xFFFFB300).withOpacity(0.6),
+                    ),
+                    child: _isSubmitting
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : const Text(
+                            'Submit',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                            ),
+                          ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Center(
+                  child: TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.85),
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -1082,7 +1233,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //               ),
 //               child: Column(
 //                 children: [
-//                   Icon(Icons.school, size: 60, color: Color(0xFFFF6B00)),
+//                   Icon(Icons.school, size: 60, color: Color(0xFFFFB300)),
 //                   SizedBox(height: 20),
 //                   Text(
 //                     'About Incendia',
@@ -1117,7 +1268,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //               decoration: BoxDecoration(
 //                 color: Color(0xFFF8F9FA),
 //                 borderRadius: BorderRadius.circular(15),
-//                 border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
+//                 border: Border.all(color: Color(0xFFFFB300).withOpacity(0.2)),
 //               ),
 //               child: Column(
 //                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1184,7 +1335,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //               ),
 //               child: Column(
 //                 children: [
-//                   Icon(Icons.book, size: 60, color: Color(0xFFFF6B00)),
+//                   Icon(Icons.book, size: 60, color: Color(0xFFFFB300)),
 //                   SizedBox(height: 20),
 //                   Text(
 //                     'Academic Excellence',
@@ -1216,7 +1367,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //       decoration: BoxDecoration(
 //         color: Colors.white,
 //         borderRadius: BorderRadius.circular(15),
-//         border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
+//         border: Border.all(color: Color(0xFFFFB300).withOpacity(0.2)),
 //         boxShadow: [
 //           BoxShadow(
 //             color: Colors.black.withOpacity(0.05),
@@ -1234,10 +1385,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //                 width: 50,
 //                 height: 50,
 //                 decoration: BoxDecoration(
-//                   color: Color(0xFFFF6B00).withOpacity(0.1),
+//                   color: Color(0xFFFFB300).withOpacity(0.1),
 //                   borderRadius: BorderRadius.circular(12),
 //                 ),
-//                 child: Icon(Icons.school, color: Color(0xFFFF6B00), size: 28),
+//                 child: Icon(Icons.school, color: Color(0xFFFFB300), size: 28),
 //               ),
 //               SizedBox(width: 15),
 //               Expanded(
@@ -1250,7 +1401,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //                     ),
 //                     Text(
 //                       subtitle,
-//                       style: TextStyle(fontSize: 16, color: Color(0xFFFF6B00), fontWeight: FontWeight.w500),
+//                       style: TextStyle(fontSize: 16, color: Color(0xFFFFB300), fontWeight: FontWeight.w500),
 //                     ),
 //                   ],
 //                 ),
@@ -1291,7 +1442,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //               ),
 //               child: Column(
 //                 children: [
-//                   Icon(Icons.psychology, size: 60, color: Color(0xFFFF6B00)),
+//                   Icon(Icons.psychology, size: 60, color: Color(0xFFFFB300)),
 //                   SizedBox(height: 20),
 //                   Text(
 //                     'Life Skills Development',
@@ -1327,7 +1478,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //       decoration: BoxDecoration(
 //         color: Colors.white,
 //         borderRadius: BorderRadius.circular(15),
-//         border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
+//         border: Border.all(color: Color(0xFFFFB300).withOpacity(0.2)),
 //         boxShadow: [
 //           BoxShadow(
 //             color: Colors.black.withOpacity(0.05),
@@ -1342,7 +1493,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //             width: 60,
 //             height: 60,
 //             decoration: BoxDecoration(
-//               gradient: LinearGradient(colors: [Color(0xFFFF6B00), Color(0xFFFF8533)]),
+//               gradient: LinearGradient(colors: [Color(0xFFFFB300), Color(0xFFFFD54F)]),
 //               borderRadius: BorderRadius.circular(15),
 //             ),
 //             child: Icon(icon, color: Colors.white, size: 30),
@@ -1393,7 +1544,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //               ),
 //               child: Column(
 //                 children: [
-//                   Icon(Icons.schedule, size: 60, color: Color(0xFFFF6B00)),
+//                   Icon(Icons.schedule, size: 60, color: Color(0xFFFFB300)),
 //                   SizedBox(height: 20),
 //                   Text(
 //                     'Class Schedule',
@@ -1418,7 +1569,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //               decoration: BoxDecoration(
 //                 color: Color(0xFFF8F9FA),
 //                 borderRadius: BorderRadius.circular(15),
-//                 border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
+//                 border: Border.all(color: Color(0xFFFFB300).withOpacity(0.2)),
 //               ),
 //               child: Column(
 //                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1448,7 +1599,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //       decoration: BoxDecoration(
 //         color: Colors.white,
 //         borderRadius: BorderRadius.circular(15),
-//         border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
+//         border: Border.all(color: Color(0xFFFFB300).withOpacity(0.2)),
 //         boxShadow: [
 //           BoxShadow(
 //             color: Colors.black.withOpacity(0.05),
@@ -1466,7 +1617,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //                 width: 50,
 //                 height: 50,
 //                 decoration: BoxDecoration(
-//                   gradient: LinearGradient(colors: [Color(0xFFFF6B00), Color(0xFFFF8533)]),
+//                   gradient: LinearGradient(colors: [Color(0xFFFFB300), Color(0xFFFFD54F)]),
 //                   borderRadius: BorderRadius.circular(12),
 //                 ),
 //                 child: Icon(Icons.access_time, color: Colors.white, size: 28),
@@ -1482,7 +1633,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //                     ),
 //                     Text(
 //                       time,
-//                       style: TextStyle(fontSize: 16, color: Color(0xFFFF6B00), fontWeight: FontWeight.w500),
+//                       style: TextStyle(fontSize: 16, color: Color(0xFFFFB300), fontWeight: FontWeight.w500),
 //                     ),
 //                   ],
 //                 ),
@@ -1523,7 +1674,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //               ),
 //               child: Column(
 //                 children: [
-//                   Icon(Icons.how_to_reg, size: 60, color: Color(0xFFFF6B00)),
+//                   Icon(Icons.how_to_reg, size: 60, color: Color(0xFFFFB300)),
 //                   SizedBox(height: 20),
 //                   Text(
 //                     'Admissions Open',
@@ -1554,7 +1705,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //               margin: EdgeInsets.only(top: 20),
 //               padding: EdgeInsets.all(25),
 //               decoration: BoxDecoration(
-//                 gradient: LinearGradient(colors: [Color(0xFFFF6B00), Color(0xFFFF8533)]),
+//                 gradient: LinearGradient(colors: [Color(0xFFFFB300), Color(0xFFFFD54F)]),
 //                 borderRadius: BorderRadius.circular(15),
 //               ),
 //               child: Column(
@@ -1601,7 +1752,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //       decoration: BoxDecoration(
 //         color: Colors.white,
 //         borderRadius: BorderRadius.circular(15),
-//         border: Border.all(color: Color(0xFFFF6B00).withOpacity(0.2)),
+//         border: Border.all(color: Color(0xFFFFB300).withOpacity(0.2)),
 //         boxShadow: [
 //           BoxShadow(
 //             color: Colors.black.withOpacity(0.05),
@@ -1616,7 +1767,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //             width: 60,
 //             height: 60,
 //             decoration: BoxDecoration(
-//               gradient: LinearGradient(colors: [Color(0xFFFF6B00), Color(0xFFFF8533)]),
+//               gradient: LinearGradient(colors: [Color(0xFFFFB300), Color(0xFFFFD54F)]),
 //               borderRadius: BorderRadius.circular(15),
 //             ),
 //             child: Center(
@@ -1648,5 +1799,3 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 //     );
 //   }
 // }
-
-
