@@ -168,11 +168,15 @@ class LifeSkillsPage extends StatelessWidget {
             spacing: isMobile ? 12 : isTablet ? 16 : 20,
             runSpacing: isMobile ? 12 : isTablet ? 16 : 20,
             alignment: WrapAlignment.center,
-            children: skills.map<Widget>((skillData) {
+            children: skills.asMap().entries.map<Widget>((entry) {
+              final index = entry.key;
+              final skillData = entry.value;
+              final rank = index + 1;
+
               return SizedBox(
-                width: isMobile 
+                width: isMobile
                     ? (constraints.maxWidth - 32) / 2
-                    : isTablet 
+                    : isTablet
                         ? (constraints.maxWidth - 48) / 3
                         : 320,
                 child: SkillCard(
@@ -180,6 +184,7 @@ class LifeSkillsPage extends StatelessWidget {
                   description: skillData['description']!,
                   icon: skillData['icon'],
                   color: skillData['color'],
+                  rank: rank,
                 ),
               );
             }).toList(),
@@ -339,8 +344,9 @@ class SkillCard extends StatefulWidget {
   final String description;
   final IconData icon;
   final Color color;
+  final int? rank;
 
-  const SkillCard({required this.title, required this.description, required this.icon, required this.color, super.key});
+  const SkillCard({required this.title, required this.description, required this.icon, required this.color, this.rank, super.key});
 
   @override
   _SkillCardState createState() => _SkillCardState();
@@ -439,6 +445,7 @@ class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 768;
     final isTablet = MediaQuery.of(context).size.width >= 768 && MediaQuery.of(context).size.width < 1024;
+    final rankText = widget.rank != null ? widget.rank!.toString().padLeft(2, '0') : null;
     
     Widget content = AnimatedBuilder(
         animation: _animation,
@@ -447,6 +454,8 @@ class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMix
           final lift = 6.0 * _animation.value;
           final shadowOpacity = 0.05 + (0.15 * _animation.value);
           final shadowBlur = 10.0 + (12.0 * _animation.value);
+          final rankOpacity = isHovered ? 0.11 : (isMobile ? 0.06 : 0.08);
+          final rankScale = isHovered ? 1.05 : 1.0;
 
           return Transform.translate(
             offset: Offset(0, -lift),
@@ -456,6 +465,7 @@ class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMix
               child: Container(
                 width: double.infinity,
                 height: isMobile ? 180 : isTablet ? 200 : 220,
+                clipBehavior: Clip.hardEdge,
                 decoration: BoxDecoration(
                   color: widget.color,
                   borderRadius: BorderRadius.circular(isMobile ? 12 : 16),
@@ -467,16 +477,55 @@ class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMix
                     ),
                   ],
                 ),
-                child: AnimatedSwitcher(
-                  duration: Duration(milliseconds: 200),
-                  switchInCurve: Curves.easeIn,
-                  switchOutCurve: Curves.easeOut,
-                  transitionBuilder: (child, animation) {
-                    return FadeTransition(opacity: animation, child: child);
-                  },
-                  child: isHovered
-                      ? Container(key: ValueKey('back'), child: _buildBack())
-                      : Container(key: ValueKey('front'), child: _buildFront()),
+                child: Stack(
+                  children: [
+                    if (rankText != null)
+                      Positioned.fill(
+                        child: IgnorePointer(
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Transform.translate(
+                              offset: Offset(isMobile ? -10 : -14, 0),
+                              child: AnimatedOpacity(
+                                duration: const Duration(milliseconds: 180),
+                                opacity: rankOpacity,
+                                child: AnimatedScale(
+                                  duration: const Duration(milliseconds: 180),
+                                  scale: rankScale,
+                                  child: Text(
+                                    rankText,
+                                    style: TextStyle(
+                                      fontSize: isMobile
+                                          ? 64
+                                          : isTablet
+                                              ? 90
+                                              : 120,
+                                      fontWeight: FontWeight.w900,
+                                      color: const Color(0xFF0A1F3F),
+                                      height: 0.95,
+                                      letterSpacing: -1.5,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    Positioned.fill(
+                      child: AnimatedSwitcher(
+                        duration: Duration(milliseconds: 200),
+                        switchInCurve: Curves.easeIn,
+                        switchOutCurve: Curves.easeOut,
+                        transitionBuilder: (child, animation) {
+                          return FadeTransition(opacity: animation, child: child);
+                        },
+                        child: isHovered
+                            ? Container(key: ValueKey('back'), child: _buildBack())
+                            : Container(key: ValueKey('front'), child: _buildFront()),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
