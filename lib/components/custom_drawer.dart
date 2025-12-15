@@ -48,12 +48,12 @@ class CustomDrawer extends StatelessWidget {
                       height: 48,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
+                          colors: [Color(0xFFFFB300), Color(0xFFFFD54F)],
                         ),
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFF6B00).withOpacity(0.3),
+                            color: const Color(0xFFFFB300).withOpacity(0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -140,7 +140,7 @@ class CustomDrawer extends StatelessWidget {
         child: ExpansionTile(
           leading: Icon(
             icon,
-            color: const Color(0xFFFF6B00),
+            color: const Color(0xFFFFB300),
             size: 24,
           ),
           title: Text(
@@ -194,7 +194,7 @@ Widget _buildNavTile(BuildContext context, Map<String, Object?> item) {
     child: ListTile(
       leading: Icon(
         item['icon'] as IconData,
-        color: const Color(0xFFFF6B00),
+        color: const Color(0xFFFFB300),
         size: 24,
       ),
       title: Text(
@@ -208,7 +208,7 @@ Widget _buildNavTile(BuildContext context, Map<String, Object?> item) {
       trailing: const Icon(
         Icons.arrow_forward_ios,
         size: 16,
-        color: Color(0xFFFF6B00),
+        color: Color(0xFFFFB300),
       ),
       onTap: () {
         Navigator.pop(context);

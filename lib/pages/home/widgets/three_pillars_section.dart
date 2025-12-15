@@ -118,7 +118,7 @@ class _PillarItem extends StatelessWidget {
             ),
             child: Icon(
               icon,
-              color: const Color(0xFFFF6B00),
+              color: const Color(0xFFFFB300),
               size: 32,
             ),
           ),

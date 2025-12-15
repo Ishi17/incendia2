@@ -71,7 +71,7 @@ class HeroSection extends StatelessWidget {
             right: isMobile ? 0 : 60,
             size: isMobile ? 46 : 85,
             icon: Icons.history_edu_outlined,
-            color: Colors.orangeAccent,
+            color: const Color(0xFFFFB300),
             delay: 3200,
           ),
           _buildFloatingElement(
@@ -271,21 +271,21 @@ class HeroSection extends StatelessWidget {
         'title': 'Academic Mastery',
         'desc': 'Board-specific coaching for exceptional performance.',
         'category': 'Pillar',
-        'color': const Color(0xFFFF6B00),
+        'color': const Color(0xFFFFB300),
       },
       {
         'icon': Icons.settings_suggest_outlined,
         'title': '12 Essential Life Skills',
         'desc': 'Practical real-world skills schools don\'t teach.',
         'category': 'Pillar',
-        'color': const Color(0xFFFF6B00),
+        'color': const Color(0xFFFFB300),
       },
       {
         'icon': Icons.emoji_objects_outlined,
         'title': 'Entrepreneurial Thinking',
         'desc': 'Balanced development of academics and life skills.',
         'category': 'Pillar',
-        'color': const Color(0xFFFF6B00),
+        'color': const Color(0xFFFFB300),
       },
     ];
     
@@ -547,7 +547,7 @@ class HeroSection extends StatelessWidget {
                   style: TextStyle(
                     fontSize: isMobile ? 18 : 22,
                     fontWeight: FontWeight.w900,
-                    color: Color(0xFFFF6B00),
+                    color: Color(0xFFFFB300),
                   ),
                 ),
                 SizedBox(height: isMobile ? 4 : 6),
@@ -584,12 +584,12 @@ class _GradientActionButton extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
+          colors: [Color(0xFFFFB300), Color(0xFFFFD54F)],
         ),
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFF6B00).withOpacity(0.4),
+            color: const Color(0xFFFFB300).withOpacity(0.4),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -723,97 +723,114 @@ class _HeroServiceCardState extends State<_HeroServiceCard>
     final icon = widget.item['icon'] as IconData;
     final title = widget.item['title'] as String;
     final desc = widget.item['desc'] as String;
+    final isFeatured =
+        title == 'Academic Mastery' || title == '12 Essential Life Skills';
     final isHovering = _isHovering && !widget.isMobile;
+    final hoverScaleFactor = isFeatured ? 1.25 : 1.05;
 
-    return AnimatedBuilder(
-      animation: _scaleAnimation,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value * (isHovering ? 1.05 : 1.0),
-          child: MouseRegion(
-            onEnter: (_) {
-              if (!widget.isMobile) {
-                setState(() => _isHovering = true);
-              }
-            },
-            onExit: (_) {
-              if (!widget.isMobile) {
-                setState(() => _isHovering = false);
-              }
-            },
-            child: InkWell(
-              onTap: widget.isMobile ? _showItemDialog : null,
-              borderRadius: BorderRadius.circular(16),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
-                curve: Curves.easeInOut,
-                width: widget.isMobile ? 130 : 160,
-                height: widget.isMobile ? 120 : 160,
-                padding: EdgeInsets.all(widget.isMobile ? 16 : (isHovering ? 20 : 18)),
-                decoration: BoxDecoration(
-                  color: isHovering ? Colors.white : Colors.transparent,
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 1.0, end: isHovering ? hoverScaleFactor : 1.0),
+      duration: const Duration(milliseconds: 260),
+      curve: Curves.easeOutCubic,
+      builder: (context, hoverScale, _) {
+        return AnimatedBuilder(
+          animation: _scaleAnimation,
+          builder: (context, _) {
+            return Transform.scale(
+              scale: _scaleAnimation.value * hoverScale,
+              child: MouseRegion(
+                onEnter: (_) {
+                  if (!widget.isMobile) {
+                    setState(() => _isHovering = true);
+                  }
+                },
+                onExit: (_) {
+                  if (!widget.isMobile) {
+                    setState(() => _isHovering = false);
+                  }
+                },
+                child: InkWell(
+                  onTap: widget.isMobile ? _showItemDialog : null,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: isHovering ? color.withOpacity(0.2) : Colors.white.withOpacity(0.65),
-                    width: isHovering ? 1.2 : 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(isHovering ? 0.18 : 0.12),
-                      blurRadius: isHovering ? 18 : 12,
-                      spreadRadius: 1,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: widget.isMobile ? 48 : 52,
-                      height: widget.isMobile ? 48 : 52,
-                      decoration: BoxDecoration(
-                        color: isHovering ? color.withOpacity(0.12) : Colors.white.withOpacity(0.12),
-                        borderRadius: BorderRadius.circular(12),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    curve: Curves.easeInOut,
+                    width: widget.isMobile ? 130 : 160,
+                    height: widget.isMobile ? 120 : 160,
+                    padding: EdgeInsets.all(
+                        widget.isMobile ? 16 : (isHovering ? 20 : 18)),
+                    decoration: BoxDecoration(
+                      color: isHovering ? Colors.white : Colors.transparent,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: isHovering
+                            ? color.withOpacity(0.2)
+                            : Colors.white.withOpacity(0.65),
+                        width: isHovering ? 1.2 : 1,
                       ),
-                      child: Icon(
-                        icon,
-                        color: isHovering ? color : Colors.white,
-                        size: widget.isMobile ? 22 : 26,
-                      ),
-                    ),
-                    SizedBox(height: widget.isMobile ? 10 : 12),
-                    Text(
-                      title,
-                      style: TextStyle(
-                        fontSize: widget.isMobile ? 12 : 14,
-                        fontWeight: FontWeight.w800,
-                        color: isHovering ? const Color(0xFF002B5B) : Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    if (isHovering) ...[
-                      const SizedBox(height: 10),
-                      Text(
-                        desc,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF4F5A6B),
-                          height: 1.35,
+                      boxShadow: [
+                        BoxShadow(
+                          color:
+                              Colors.black.withOpacity(isHovering ? 0.18 : 0.12),
+                          blurRadius: isHovering ? 18 : 12,
+                          spreadRadius: 1,
+                          offset: const Offset(0, 4),
                         ),
-                        textAlign: TextAlign.center,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ],
+                      ],
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: widget.isMobile ? 48 : 52,
+                          height: widget.isMobile ? 48 : 52,
+                          decoration: BoxDecoration(
+                            color: isHovering
+                                ? color.withOpacity(0.12)
+                                : Colors.white.withOpacity(0.12),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            icon,
+                            color: isHovering ? color : Colors.white,
+                            size: widget.isMobile ? 22 : 26,
+                          ),
+                        ),
+                        SizedBox(height: widget.isMobile ? 10 : 12),
+                        Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: widget.isMobile ? 12 : 14,
+                            fontWeight: FontWeight.w800,
+                            color:
+                                isHovering ? const Color(0xFF002B5B) : Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (isHovering) ...[
+                          const SizedBox(height: 10),
+                          Text(
+                            desc,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF4F5A6B),
+                              height: 1.35,
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
+            );
+          },
         );
       },
     );

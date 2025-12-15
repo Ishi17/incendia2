@@ -34,7 +34,7 @@ class OurValuesPage extends StatelessWidget {
                     Icon(
                       Icons.star_rounded,
                       size: 56,
-                      color: Color(0xFFFF6B00),
+                      color: Color(0xFFFFB300),
                     ),
                     SizedBox(height: 16),
                     Text(
@@ -104,10 +104,10 @@ class _ValuesBody extends StatelessWidget {
         Container(
           padding: EdgeInsets.all(isMobile ? 20 : 25),
           decoration: BoxDecoration(
-            color: const Color(0xFFFF6B00).withOpacity(0.1),
+            color: const Color(0xFFFFB300).withOpacity(0.1),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: const Color(0xFFFF6B00).withOpacity(0.3),
+              color: const Color(0xFFFFB300).withOpacity(0.3),
               width: 2,
             ),
           ),
@@ -157,7 +157,7 @@ class _ValueItem extends StatelessWidget {
         children: [
           Icon(
             icon,
-            color: const Color(0xFFFF6B00),
+            color: const Color(0xFFFFB300),
             size: isMobile ? 22 : 24,
           ),
           const SizedBox(width: 12),

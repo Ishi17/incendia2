@@ -54,7 +54,7 @@ class LifeSkillsPage extends StatelessWidget {
           Icon(
             Icons.psychology,
             size: isMobile ? 50 : isTablet ? 60 : 70,
-            color: Color(0xFFFF6B00),
+            color: Color(0xFFFFB300),
           ),
           SizedBox(height: isMobile ? 15 : 20),
           Text(
@@ -207,7 +207,7 @@ class LifeSkillsPage extends StatelessWidget {
           Icon(
             Icons.format_quote,
             size: isMobile ? 40 : 50,
-            color: Color(0xFFFF6B00),
+            color: Color(0xFFFFB300),
           ),
           SizedBox(height: isMobile ? 15 : 20),
           Text(
@@ -263,7 +263,7 @@ class LifeSkillsPage extends StatelessWidget {
         children: [
           Icon(
             Icons.rocket_launch,
-            color: Color(0xFFFF6B00),
+            color: Color(0xFFFFB300),
             size: isMobile ? 40 : 50,
           ),
           SizedBox(height: isMobile ? 15 : 20),
@@ -294,7 +294,7 @@ class LifeSkillsPage extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: () => Navigator.pushNamed(context, '/admissions'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFFFF6B00),
+                      backgroundColor: Color(0xFFFFB300),
                       padding: EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25),
@@ -313,7 +313,7 @@ class LifeSkillsPage extends StatelessWidget {
               : ElevatedButton(
                   onPressed: () => Navigator.pushNamed(context, '/admissions'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFFF6B00),
+                    backgroundColor: Color(0xFFFFB300),
                     padding: EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25),
@@ -393,7 +393,7 @@ class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMix
         children: [
           Icon(
             widget.icon, 
-            color: Color(0xFFFF6B00), 
+            color: Color(0xFFFFB300), 
             size: isMobile ? 32 : isTablet ? 36 : 40
           ),
           SizedBox(height: isMobile ? 10 : 12),

@@ -209,12 +209,12 @@ class _ContactUsPageState extends State<ContactUsPage>
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFF6B00).withOpacity(0.1),
+                    color: const Color(0xFFFFB300).withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     icon,
-                    color: const Color(0xFFFF6B00),
+                    color: const Color(0xFFFFB300),
                     size: 24,
                   ),
                 ),
@@ -299,7 +299,7 @@ class _ContactUsPageState extends State<ContactUsPage>
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFFFF6B00), Color(0xFFFF8C42)],
+          colors: [Color(0xFFFFB300), Color(0xFFFFD54F)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -380,7 +380,7 @@ class _ContactUsPageState extends State<ContactUsPage>
             onPressed: () => Navigator.pop(context),
             child: const Text(
               'OK',
-              style: TextStyle(color: Color(0xFFFF6B00)),
+              style: TextStyle(color: Color(0xFFFFB300)),
             ),
           ),
         ],
@@ -412,7 +412,7 @@ class _ContactUsPageState extends State<ContactUsPage>
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: Color(0xFFFF6B00), size: 24),
+            Icon(icon, color: Color(0xFFFFB300), size: 24),
             SizedBox(width: 8),
             Text(
               '$label: ',

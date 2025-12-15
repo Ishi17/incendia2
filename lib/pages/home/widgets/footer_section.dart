@@ -22,7 +22,7 @@ class FooterSection extends StatelessWidget {
                 height: 40,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFFFF6B00), Color(0xFFFF8533)],
+                    colors: [Color(0xFFFFB300), Color(0xFFFFD54F)],
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),

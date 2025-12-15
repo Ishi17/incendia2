@@ -52,7 +52,7 @@ class OurTeamPage extends StatelessWidget {
                     Icon(
                       Icons.groups_rounded,
                       size: 52,
-                      color: Color(0xFFFF6B00),
+                      color: Color(0xFFFFB300),
                     ),
                     SizedBox(height: 14),
                     Text(
@@ -148,12 +148,12 @@ class _TeamCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xFFFF6B00).withOpacity(0.1),
+              color: const Color(0xFFFFB300).withOpacity(0.1),
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.person_rounded,
-              color: Color(0xFFFF6B00),
+              color: Color(0xFFFFB300),
               size: 24,
             ),
           ),

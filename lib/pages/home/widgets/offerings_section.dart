@@ -30,7 +30,7 @@ class OfferingsSection extends StatelessWidget {
         'icon': Icons.groups,
         'title': 'Small Classes',
         'desc': 'Personalized attention',
-        'color': const Color(0xFFFF6B00),
+        'color': const Color(0xFFFFB300),
       },
     ];
 

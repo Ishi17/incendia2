@@ -14,21 +14,21 @@ class CombinedServicesOfferings extends StatelessWidget {
         'title': 'Personalized Learning',
         'desc': 'Tailored curriculum for individual needs',
         'category': 'Service',
-        'color': const Color(0xFFFF6B00),
+        'color': const Color(0xFFFFB300),
       },
       {
         'icon': Icons.people,
         'title': 'Expert Mentorship',
         'desc': 'Guidance from experienced educators',
         'category': 'Service',
-        'color': const Color(0xFFFF6B00),
+        'color': const Color(0xFFFFB300),
       },
       {
         'icon': Icons.computer,
         'title': 'Modern Technology',
         'desc': 'Cutting-edge learning tools',
         'category': 'Service',
-        'color': const Color(0xFFFF6B00),
+        'color': const Color(0xFFFFB300),
       },
       // Offerings
       {
@@ -57,7 +57,7 @@ class CombinedServicesOfferings extends StatelessWidget {
         'title': 'Small Classes',
         'desc': 'Personalized attention',
         'category': 'Program',
-        'color': const Color(0xFFFF6B00),
+        'color': const Color(0xFFFFB300),
       },
       {
         'icon': Icons.assessment,

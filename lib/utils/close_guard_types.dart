@@ -1,0 +1,1 @@
+typedef CloseAttemptCallback = void Function();
