@@ -339,6 +339,122 @@ class LifeSkillsPage extends StatelessWidget {
   }
 }
 
+class RankedLifeSkillCard extends StatelessWidget {
+  const RankedLifeSkillCard({
+    required this.rank,
+    required this.width,
+    required this.isMobile,
+    required this.isTablet,
+    required this.child,
+    super.key,
+  });
+
+  final int rank;
+  final double width;
+  final bool isMobile;
+  final bool isTablet;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final double rankSize = isMobile
+        ? 120
+        : isTablet
+            ? 150
+            : 180;
+
+    return SizedBox(
+      width: width,
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+            width: rankSize * 0.5,
+            child: OverflowBox(
+              alignment: Alignment.centerLeft,
+              minWidth: rankSize,
+              maxWidth: rankSize,
+              minHeight: rankSize,
+              maxHeight: rankSize,
+              child: IgnorePointer(
+                child: Transform.translate(
+                  offset: Offset(-rankSize * 0.3, 0),
+                  child: _DecorativeRank(
+                    rank: rank,
+                    isMobile: isMobile,
+                    isTablet: isTablet,
+                    customSize: rankSize,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: isMobile ? 6 : 8),
+          Expanded(
+            child: Container(
+              key: const ValueKey('ranked-card'),
+              child: child,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _DecorativeRank extends StatelessWidget {
+  const _DecorativeRank({
+    required this.rank,
+    required this.isMobile,
+    required this.isTablet,
+    this.customSize,
+  });
+
+  final int rank;
+  final bool isMobile;
+  final bool isTablet;
+  final double? customSize;
+
+  @override
+  Widget build(BuildContext context) {
+    final double rankSize = customSize ??
+        (isMobile
+            ? 150
+            : isTablet
+                ? 190
+                : 230);
+    final Paint rankStrokePaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = isMobile ? 4.0 : isTablet ? 5.5 : 6.5
+      ..color = Colors.white.withOpacity(0.3);
+    final Matrix4 rankTransform = Matrix4.diagonal3Values(1.05, 1.0, 1.0);
+
+    return Transform(
+      alignment: Alignment.centerRight,
+      transform: rankTransform,
+      child: Text(
+        rank.toString().padLeft(2, '0'),
+        key: const ValueKey('ranked-rank'),
+        style: TextStyle(
+          fontSize: rankSize,
+          fontWeight: FontWeight.w900,
+          height: 0.9,
+          letterSpacing: -3,
+          foreground: rankStrokePaint,
+          shadows: [
+            Shadow(
+              offset: Offset(0, 2),
+              blurRadius: 8,
+              color: Colors.black.withOpacity(0.12),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class SkillCard extends StatefulWidget {
   final String title;
   final String description;
@@ -454,8 +570,20 @@ class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMix
           final lift = 6.0 * _animation.value;
           final shadowOpacity = 0.05 + (0.15 * _animation.value);
           final shadowBlur = 10.0 + (12.0 * _animation.value);
-          final rankOpacity = isHovered ? 0.11 : (isMobile ? 0.06 : 0.08);
-          final rankScale = isHovered ? 1.05 : 1.0;
+          final rankOpacity = isHovered ? 0.88 : (isMobile ? 0.7 : 0.78);
+          final rankScale = isHovered ? 1.02 : 1.0;
+          final double rankSize = isMobile
+              ? 150
+              : isTablet
+                  ? 190
+                  : 230;
+          final double rankOffsetX = -rankSize * (isMobile ? 0.12 : 0.16);
+          final Offset rankOffset = Offset(rankOffsetX, 0);
+          final Paint rankStrokePaint = Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = isMobile ? 4.0 : isTablet ? 5.5 : 6.5
+            ..color = Colors.white.withOpacity(isHovered ? 0.36 : 0.3);
+          final Matrix4 rankTransform = Matrix4.diagonal3Values(1.05, 1.0, 1.0);
 
           return Transform.translate(
             offset: Offset(0, -lift),
@@ -485,25 +613,32 @@ class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMix
                           child: Align(
                             alignment: Alignment.centerLeft,
                             child: Transform.translate(
-                              offset: Offset(isMobile ? -10 : -14, 0),
+                              offset: rankOffset,
                               child: AnimatedOpacity(
                                 duration: const Duration(milliseconds: 180),
                                 opacity: rankOpacity,
                                 child: AnimatedScale(
                                   duration: const Duration(milliseconds: 180),
                                   scale: rankScale,
-                                  child: Text(
-                                    rankText,
-                                    style: TextStyle(
-                                      fontSize: isMobile
-                                          ? 64
-                                          : isTablet
-                                              ? 90
-                                              : 120,
-                                      fontWeight: FontWeight.w900,
-                                      color: const Color(0xFF0A1F3F),
-                                      height: 0.95,
-                                      letterSpacing: -1.5,
+                                  child: Transform(
+                                    alignment: Alignment.centerLeft,
+                                    transform: rankTransform,
+                                    child: Text(
+                                      rankText,
+                                      style: TextStyle(
+                                        fontSize: rankSize,
+                                        fontWeight: FontWeight.w900,
+                                        height: 0.9,
+                                        letterSpacing: -3,
+                                        foreground: rankStrokePaint,
+                                        shadows: [
+                                          Shadow(
+                                            offset: Offset(0, 2),
+                                            blurRadius: 8,
+                                            color: Colors.black.withOpacity(0.12),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
