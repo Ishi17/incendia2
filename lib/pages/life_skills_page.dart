@@ -8,13 +8,12 @@ class LifeSkillsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 768;
-    final isTablet = MediaQuery.of(context).size.width >= 768 && MediaQuery.of(context).size.width < 1024;
-    
+    final isTablet =
+        MediaQuery.of(context).size.width >= 768 &&
+        MediaQuery.of(context).size.width < 1024;
+
     return Scaffold(
-      appBar: CustomNavbar(
-        title: 'Life Skills',
-        showBackButton: true,
-      ),
+      appBar: CustomNavbar(title: 'Life Skills', showBackButton: true),
       drawer: CustomDrawer(),
       body: SingleChildScrollView(
         child: SizedBox(
@@ -34,12 +33,15 @@ class LifeSkillsPage extends StatelessWidget {
   }
 
   Widget _buildHeaderSection(bool isMobile, bool isTablet) {
-    
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(
-        vertical: isMobile ? 40 : isTablet ? 50 : 60, 
-        horizontal: isMobile ? 16 : 24
+        vertical: isMobile
+            ? 40
+            : isTablet
+            ? 50
+            : 60,
+        horizontal: isMobile ? 16 : 24,
       ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -53,7 +55,11 @@ class LifeSkillsPage extends StatelessWidget {
         children: [
           Icon(
             Icons.psychology,
-            size: isMobile ? 50 : isTablet ? 60 : 70,
+            size: isMobile
+                ? 50
+                : isTablet
+                ? 60
+                : 70,
             color: Color(0xFFFFB300),
           ),
           SizedBox(height: isMobile ? 15 : 20),
@@ -61,7 +67,11 @@ class LifeSkillsPage extends StatelessWidget {
             'Life Skills for the Real World',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: isMobile ? 28 : isTablet ? 32 : 36,
+              fontSize: isMobile
+                  ? 28
+                  : isTablet
+                  ? 32
+                  : 36,
               fontWeight: FontWeight.bold,
               color: Colors.white,
               fontFamily: 'Poppins',
@@ -71,7 +81,11 @@ class LifeSkillsPage extends StatelessWidget {
           Text(
             'Empowering students with critical thinking, communication, and emotional intelligence.',
             style: TextStyle(
-              fontSize: isMobile ? 14 : isTablet ? 16 : 18,
+              fontSize: isMobile
+                  ? 14
+                  : isTablet
+                  ? 16
+                  : 18,
               color: Colors.white.withOpacity(0.9),
               fontFamily: 'Inter',
               height: 1.5,
@@ -87,86 +101,115 @@ class LifeSkillsPage extends StatelessWidget {
     final List<Map<String, dynamic>> skills = [
       {
         'title': 'Financial Literacy for Teens',
-        'description': 'Budgeting, saving, digital payments (UPI, wallets), understanding banks, avoiding scams.',
+        'description':
+            'Budgeting, saving, digital payments (UPI, wallets), understanding banks, avoiding scams.',
         'icon': Icons.account_balance,
         'color': Color(0xFFE8F4F8), // Soft Sky Blue
       },
       {
         'title': 'Digital Citizenship & Internet Safety',
-        'description': 'Cyberbullying, privacy settings, fake news, screen time balance, digital footprint.',
+        'description':
+            'Cyberbullying, privacy settings, fake news, screen time balance, digital footprint.',
         'icon': Icons.security,
         'color': Color(0xFFF5F7FA), // Warm Off-White
       },
       {
         'title': 'Communication & Public Speaking',
-        'description': 'Storytelling, debates, presentations, body language, active listening.',
+        'description':
+            'Storytelling, debates, presentations, body language, active listening.',
         'icon': Icons.record_voice_over,
         'color': Color(0xFFE8F4F8), // Soft Sky Blue
       },
       {
         'title': 'Time Management & Study Skills',
-        'description': 'Prioritizing tasks, planners, Pomodoro technique, overcoming distractions.',
+        'description':
+            'Prioritizing tasks, planners, Pomodoro technique, overcoming distractions.',
         'icon': Icons.schedule,
         'color': Color(0xFFF5F7FA), // Warm Off-White
       },
       {
         'title': 'Leadership & Teamwork',
-        'description': 'Group roles, collaboration, leading projects, resolving conflicts.',
+        'description':
+            'Group roles, collaboration, leading projects, resolving conflicts.',
         'icon': Icons.group,
         'color': Color(0xFFE8F4F8), // Soft Sky Blue
       },
       {
         'title': 'Emotional Intelligence (EQ)',
-        'description': 'Identifying feelings, managing emotions, self-awareness, empathy exercises.',
+        'description':
+            'Identifying feelings, managing emotions, self-awareness, empathy exercises.',
         'icon': Icons.sentiment_satisfied,
         'color': Color(0xFFF5F7FA), // Warm Off-White
       },
       {
         'title': 'Basic Legal & Civic Awareness',
-        'description': 'Student rights, voting basics, equality, safety laws, RTI & digital consent.',
+        'description':
+            'Student rights, voting basics, equality, safety laws, RTI & digital consent.',
         'icon': Icons.gavel,
         'color': Color(0xFFE8F4F8), // Soft Sky Blue
       },
       {
         'title': 'Goal Setting & Self-Motivation',
-        'description': 'SMART goals, vision boards, intrinsic vs extrinsic motivation, habit loops.',
+        'description':
+            'SMART goals, vision boards, intrinsic vs extrinsic motivation, habit loops.',
         'icon': Icons.flag,
         'color': Color(0xFFF5F7FA), // Warm Off-White
       },
       {
         'title': 'First Aid & Personal Safety',
-        'description': 'CPR basics, handling minor injuries, emergency contact awareness, street safety.',
+        'description':
+            'CPR basics, handling minor injuries, emergency contact awareness, street safety.',
         'icon': Icons.medical_services,
         'color': Color(0xFFE8F4F8), // Soft Sky Blue
       },
       {
         'title': 'Mindfulness & Mental Well-being',
-        'description': 'Meditation, stress management, gratitude journaling, self-reflection techniques.',
+        'description':
+            'Meditation, stress management, gratitude journaling, self-reflection techniques.',
         'icon': Icons.self_improvement,
         'color': Color(0xFFF5F7FA), // Warm Off-White
       },
       {
         'title': 'Nutrition & Fireless Cooking',
-        'description': 'Healthy eating habits, decoding food labels, making simple no-flame recipes.',
+        'description':
+            'Healthy eating habits, decoding food labels, making simple no-flame recipes.',
         'icon': Icons.restaurant,
         'color': Color(0xFFE8F4F8), // Soft Sky Blue
       },
       {
         'title': 'Career Awareness & Future Readiness',
-        'description': 'Career exploration, 21st-century jobs, freelancing basics, resume writing.',
+        'description':
+            'Career exploration, 21st-century jobs, freelancing basics, resume writing.',
         'icon': Icons.work,
         'color': Color(0xFFF5F7FA), // Warm Off-White
       },
     ];
 
     return Padding(
-      padding: EdgeInsets.all(isMobile ? 16.0 : 24.0),
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 12 : 20,
+        vertical: isMobile ? 14 : 20,
+      ),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          
+          final double spacing = isMobile
+              ? 12
+              : isTablet
+              ? 16
+              : 20;
+          final int columns = isMobile
+              ? 1
+              : isTablet
+              ? 2
+              : 3;
+          final double totalSpacing = spacing * (columns - 1);
+          final double cardBaseWidth =
+              (constraints.maxWidth - totalSpacing) / columns;
+          final double cardWidth = cardBaseWidth.clamp(240.0, 360.0);
+
           return Wrap(
-            spacing: isMobile ? 12 : isTablet ? 16 : 20,
-            runSpacing: isMobile ? 12 : isTablet ? 16 : 20,
+            spacing: spacing,
+            runSpacing: spacing,
             alignment: WrapAlignment.center,
             children: skills.asMap().entries.map<Widget>((entry) {
               final index = entry.key;
@@ -174,11 +217,7 @@ class LifeSkillsPage extends StatelessWidget {
               final rank = index + 1;
 
               return SizedBox(
-                width: isMobile
-                    ? (constraints.maxWidth - 32) / 2
-                    : isTablet
-                        ? (constraints.maxWidth - 48) / 3
-                        : 320,
+                width: columns == 1 ? constraints.maxWidth : cardWidth,
                 child: SkillCard(
                   title: skillData['title']!,
                   description: skillData['description']!,
@@ -194,12 +233,16 @@ class LifeSkillsPage extends StatelessWidget {
     );
   }
 
-
   Widget _buildTestimonialSection(bool isMobile, bool isTablet) {
-    
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(isMobile ? 20 : isTablet ? 24 : 32),
+      padding: EdgeInsets.all(
+        isMobile
+            ? 20
+            : isTablet
+            ? 24
+            : 32,
+      ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [Color(0xFFEEF2F7), Color(0xFFF8FAFC)],
@@ -218,7 +261,11 @@ class LifeSkillsPage extends StatelessWidget {
           Text(
             'What Our Students Say',
             style: TextStyle(
-              fontSize: isMobile ? 20 : isTablet ? 22 : 24,
+              fontSize: isMobile
+                  ? 20
+                  : isTablet
+                  ? 22
+                  : 24,
               fontWeight: FontWeight.bold,
               color: Color(0xFF002B5B),
               fontFamily: 'Poppins',
@@ -229,7 +276,11 @@ class LifeSkillsPage extends StatelessWidget {
           Text(
             '"Learning life skills here helped me become more confident and independent."',
             style: TextStyle(
-              fontSize: isMobile ? 14 : isTablet ? 15 : 16, 
+              fontSize: isMobile
+                  ? 14
+                  : isTablet
+                  ? 15
+                  : 16,
               color: Color(0xFF333333),
               fontFamily: 'Inter',
               height: 1.6,
@@ -253,10 +304,15 @@ class LifeSkillsPage extends StatelessWidget {
   }
 
   Widget _buildFooter(BuildContext context, bool isMobile, bool isTablet) {
-    
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(isMobile ? 20 : isTablet ? 24 : 32),
+      padding: EdgeInsets.all(
+        isMobile
+            ? 20
+            : isTablet
+            ? 24
+            : 32,
+      ),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [Color(0xFF002B5B), Color(0xFF001122)],
@@ -275,8 +331,12 @@ class LifeSkillsPage extends StatelessWidget {
           Text(
             'Interested in Life Skills Programs?',
             style: TextStyle(
-              color: Colors.white, 
-              fontSize: isMobile ? 16 : isTablet ? 18 : 20,
+              color: Colors.white,
+              fontSize: isMobile
+                  ? 16
+                  : isTablet
+                  ? 18
+                  : 20,
               fontWeight: FontWeight.w600,
               fontFamily: 'Poppins',
             ),
@@ -293,11 +353,12 @@ class LifeSkillsPage extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           SizedBox(height: isMobile ? 20 : 24),
-          isMobile 
+          isMobile
               ? SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () => Navigator.pushNamed(context, '/admissions'),
+                    onPressed: () =>
+                        Navigator.pushNamed(context, '/admissions'),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xFFFFB300),
                       padding: EdgeInsets.symmetric(vertical: 16),
@@ -360,8 +421,8 @@ class RankedLifeSkillCard extends StatelessWidget {
     final double rankSize = isMobile
         ? 120
         : isTablet
-            ? 150
-            : 180;
+        ? 150
+        : 180;
 
     return SizedBox(
       width: width,
@@ -392,10 +453,7 @@ class RankedLifeSkillCard extends StatelessWidget {
           ),
           SizedBox(width: isMobile ? 6 : 8),
           Expanded(
-            child: Container(
-              key: const ValueKey('ranked-card'),
-              child: child,
-            ),
+            child: Container(key: const ValueKey('ranked-card'), child: child),
           ),
         ],
       ),
@@ -418,15 +476,20 @@ class _DecorativeRank extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double rankSize = customSize ??
+    final double rankSize =
+        customSize ??
         (isMobile
             ? 150
             : isTablet
-                ? 190
-                : 230);
+            ? 190
+            : 230);
     final Paint rankStrokePaint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = isMobile ? 4.0 : isTablet ? 5.5 : 6.5
+      ..strokeWidth = isMobile
+          ? 4.0
+          : isTablet
+          ? 5.5
+          : 6.5
       ..color = Colors.white.withOpacity(0.3);
     final Matrix4 rankTransform = Matrix4.diagonal3Values(1.05, 1.0, 1.0);
 
@@ -462,13 +525,21 @@ class SkillCard extends StatefulWidget {
   final Color color;
   final int? rank;
 
-  const SkillCard({required this.title, required this.description, required this.icon, required this.color, this.rank, super.key});
+  const SkillCard({
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.color,
+    this.rank,
+    super.key,
+  });
 
   @override
   _SkillCardState createState() => _SkillCardState();
 }
 
-class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMixin {
+class _SkillCardState extends State<SkillCard>
+    with SingleTickerProviderStateMixin {
   bool isHovered = false;
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -482,9 +553,10 @@ class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMix
       vsync: this,
     );
 
-    _animation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -504,55 +576,251 @@ class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMix
     });
   }
 
-  Widget _buildFront() {
+  void _showSkillDetails() {
     final isMobile = MediaQuery.of(context).size.width < 768;
-    final isTablet = MediaQuery.of(context).size.width >= 768 && MediaQuery.of(context).size.width < 1024;
-    
-    return Padding(
-      padding: EdgeInsets.all(isMobile ? 16.0 : 20.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            widget.icon, 
-            color: Color(0xFFFFB300), 
-            size: isMobile ? 32 : isTablet ? 36 : 40
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          widget.title,
+          style: TextStyle(
+            fontSize: isMobile ? 16 : 18,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF0D1531),
           ),
-          SizedBox(height: isMobile ? 10 : 12),
-          Text(
-            widget.title,
-            style: TextStyle(
-              fontSize: isMobile ? 14 : isTablet ? 16 : 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF002B5B),
-              fontFamily: 'Poppins',
-            ),
-            textAlign: TextAlign.center,
+        ),
+        content: Text(
+          widget.description,
+          style: TextStyle(
+            fontSize: isMobile ? 13 : 14,
+            height: 1.5,
+            color: Color(0xFF1F2937),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Close', style: TextStyle(color: Color(0xFF002B5B))),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildBack() {
+  Widget _buildFront() {
     final isMobile = MediaQuery.of(context).size.width < 768;
-    final isTablet = MediaQuery.of(context).size.width >= 768 && MediaQuery.of(context).size.width < 1024;
-    
-    return Padding(
-      padding: EdgeInsets.all(isMobile ? 16.0 : 20.0),
-      child: Center(
-        child: SingleChildScrollView(
-          child: Text(
-            widget.description,
-            style: TextStyle(
-              fontSize: isMobile ? 12 : isTablet ? 13 : 14,
-              color: Colors.black87,
-              fontFamily: 'Inter',
-              height: 1.4,
-            ),
-            textAlign: TextAlign.center,
+    final isTablet =
+        MediaQuery.of(context).size.width >= 768 &&
+        MediaQuery.of(context).size.width < 1024;
+    final String summary = widget.description.length > 120
+        ? '${widget.description.substring(0, 120).trim()}…'
+        : widget.description;
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: Color(0xFFeef2ff),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 12,
+                offset: Offset(0, 6),
+              ),
+            ],
+          ),
+          padding: EdgeInsets.all(isMobile ? 8 : 10),
+          child: Icon(
+            widget.icon,
+            color: Color(0xFF0B1E33),
+            size: isMobile
+                ? 22
+                : isTablet
+                ? 26
+                : 28,
           ),
         ),
+        SizedBox(height: isMobile ? 10 : 12),
+        Text(
+          widget.title,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: isMobile
+                ? 14
+                : isTablet
+                ? 15
+                : 16,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF0D1531),
+            fontFamily: 'Poppins',
+          ),
+        ),
+        SizedBox(height: isMobile ? 6 : 8),
+        Text(
+          summary,
+          textAlign: TextAlign.center,
+          maxLines: 3,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontSize: isMobile
+                ? 12
+                : isTablet
+                ? 13
+                : 14,
+            color: Color(0xFF1F2937),
+            fontFamily: 'Inter',
+            height: 1.4,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBack() {
+    final isMobile = MediaQuery.of(context).size.width < 768;
+    final isTablet =
+        MediaQuery.of(context).size.width >= 768 &&
+        MediaQuery.of(context).size.width < 1024;
+    final List<String> highlights = widget.description
+        .split(RegExp(r'[.,]'))
+        .map((segment) => segment.trim())
+        .where((segment) => segment.isNotEmpty)
+        .take(4)
+        .toList();
+    final bool hideButtons = [
+      'Digital Citizenship & Internet Safety',
+      'Career Awareness & Future Readiness',
+    ].contains(widget.title);
+
+    return SingleChildScrollView(
+      physics: const NeverScrollableScrollPhysics(),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.title,
+            style: TextStyle(
+              fontSize: isMobile
+                  ? 15
+                  : isTablet
+                  ? 17
+                  : 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0D1531),
+              fontFamily: 'Poppins',
+            ),
+          ),
+          SizedBox(height: isMobile ? 10 : 12),
+          Text(
+            widget.description,
+            style: TextStyle(
+              fontSize: isMobile
+                  ? 11
+                  : isTablet
+                  ? 12
+                  : 13,
+              color: Color(0xFF1F2937),
+              fontFamily: 'Inter',
+              height: 1.5,
+            ),
+          ),
+          SizedBox(height: isMobile ? 12 : 14),
+          Wrap(
+            spacing: isMobile ? 6 : 8,
+            runSpacing: isMobile ? 4 : 6,
+            children: highlights
+                .map(
+                  (item) => Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isMobile ? 8 : 10,
+                      vertical: isMobile ? 4 : 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Color(0xFF002B5B), width: 1),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Text(
+                      item,
+                      style: TextStyle(
+                        fontSize: isMobile ? 11 : 12,
+                        color: Color(0xFF002B5B),
+                        fontFamily: 'Inter',
+                        height: 1.3,
+                      ),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+          if (!hideButtons) ...[
+            SizedBox(height: isMobile ? 12 : 14),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: _showSkillDetails,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFF002B5B),
+                      padding: EdgeInsets.symmetric(
+                        vertical: isMobile ? 12 : 14,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 4,
+                      shadowColor: Colors.black.withOpacity(0.25),
+                    ),
+                    child: Text(
+                      'Explore more',
+                      style: TextStyle(
+                        fontSize: isMobile ? 12 : 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: isMobile ? 8 : 12),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pushNamed(context, '/contact'),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: Color(0xFF002B5B), width: 1.2),
+                      padding: EdgeInsets.symmetric(
+                        vertical: isMobile ? 12 : 14,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      'Book a call',
+                      style: TextStyle(
+                        fontSize: isMobile ? 12 : 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF002B5B),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -560,114 +828,141 @@ class _SkillCardState extends State<SkillCard> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 768;
-    final isTablet = MediaQuery.of(context).size.width >= 768 && MediaQuery.of(context).size.width < 1024;
-    final rankText = widget.rank != null ? widget.rank!.toString().padLeft(2, '0') : null;
-    
-    Widget content = AnimatedBuilder(
-        animation: _animation,
-        builder: (context, child) {
-          final scale = 1.0 + (0.045 * _animation.value);
-          final lift = 6.0 * _animation.value;
-          final shadowOpacity = 0.05 + (0.15 * _animation.value);
-          final shadowBlur = 10.0 + (12.0 * _animation.value);
-          final rankOpacity = isHovered ? 0.88 : (isMobile ? 0.7 : 0.78);
-          final rankScale = isHovered ? 1.02 : 1.0;
-          final double rankSize = isMobile
-              ? 150
-              : isTablet
-                  ? 190
-                  : 230;
-          final double rankOffsetX = -rankSize * (isMobile ? 0.12 : 0.16);
-          final Offset rankOffset = Offset(rankOffsetX, 0);
-          final Paint rankStrokePaint = Paint()
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = isMobile ? 4.0 : isTablet ? 5.5 : 6.5
-            ..color = Colors.white.withOpacity(isHovered ? 0.36 : 0.3);
-          final Matrix4 rankTransform = Matrix4.diagonal3Values(1.05, 1.0, 1.0);
+    final isTablet =
+        MediaQuery.of(context).size.width >= 768 &&
+        MediaQuery.of(context).size.width < 1024;
+    final rankText = widget.rank?.toString();
 
-          return Transform.translate(
-            offset: Offset(0, -lift),
-            child: Transform.scale(
-              scale: scale,
-              alignment: Alignment.center,
-              child: Container(
-                width: double.infinity,
-                height: isMobile ? 180 : isTablet ? 200 : 220,
-                clipBehavior: Clip.hardEdge,
-                decoration: BoxDecoration(
-                  color: widget.color,
-                  borderRadius: BorderRadius.circular(isMobile ? 12 : 16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(shadowOpacity),
-                      blurRadius: shadowBlur,
-                      offset: Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: Stack(
-                  children: [
-                    if (rankText != null)
-                      Positioned.fill(
-                        child: IgnorePointer(
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Transform.translate(
-                              offset: rankOffset,
-                              child: AnimatedOpacity(
-                                duration: const Duration(milliseconds: 180),
-                                opacity: rankOpacity,
-                                child: AnimatedScale(
-                                  duration: const Duration(milliseconds: 180),
-                                  scale: rankScale,
-                                  child: Transform(
-                                    alignment: Alignment.centerLeft,
-                                    transform: rankTransform,
-                                    child: Text(
-                                      rankText,
-                                      style: TextStyle(
-                                        fontSize: rankSize,
-                                        fontWeight: FontWeight.w900,
-                                        height: 0.9,
-                                        letterSpacing: -3,
-                                        foreground: rankStrokePaint,
-                                        shadows: [
-                                          Shadow(
-                                            offset: Offset(0, 2),
-                                            blurRadius: 8,
-                                            color: Colors.black.withOpacity(0.12),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
+    Widget content = AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        final scale = 1.0 + (0.045 * _animation.value);
+        final lift = 6.0 * _animation.value;
+        final shadowOpacity = 0.05 + (0.15 * _animation.value);
+        final shadowBlur = 10.0 + (12.0 * _animation.value);
+        final double cardHeight = isMobile
+            ? 196
+            : isTablet
+            ? 216
+            : 246;
+        final bool hasRank = rankText != null;
+        final bool showRankColumn = hasRank && !isHovered;
+        final double rankColumnWidth = isMobile
+            ? 110
+            : isTablet
+            ? 130
+            : 150;
+        final double numberFontSize = isMobile
+            ? 70
+            : isTablet
+            ? 86
+            : 104;
+        final double strokeWidth = isMobile
+            ? 5
+            : isTablet
+            ? 6
+            : 7;
+        final Color rankBackground = Color(0xFF050F1C);
+
+        return Transform.translate(
+          offset: Offset(0, -lift),
+          child: Transform.scale(
+            scale: scale,
+            alignment: Alignment.center,
+            child: Container(
+              width: double.infinity,
+              height: cardHeight,
+              clipBehavior: Clip.hardEdge,
+              decoration: BoxDecoration(
+                color: widget.color,
+                borderRadius: BorderRadius.circular(isMobile ? 12 : 16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(shadowOpacity),
+                    blurRadius: shadowBlur,
+                    offset: Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (showRankColumn)
+                    Container(
+                      width: rankColumnWidth,
+                      decoration: BoxDecoration(
+                        color: rankBackground,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(isMobile ? 12 : 16),
+                          bottomLeft: Radius.circular(isMobile ? 12 : 16),
+                        ),
+                      ),
+                      child: Center(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Text(
+                                rankText!,
+                                style: TextStyle(
+                                  fontSize: numberFontSize,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: -1.5,
+                                  foreground: Paint()
+                                    ..style = PaintingStyle.stroke
+                                    ..strokeWidth = strokeWidth
+                                    ..color = Colors.black,
                                 ),
                               ),
-                            ),
+                              Text(
+                                rankText!,
+                                style: TextStyle(
+                                  fontSize: numberFontSize,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: -1.5,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    Positioned.fill(
+                    ),
+                  if (showRankColumn)
+                    Container(width: 2, color: Colors.white.withOpacity(0.15)),
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 16 : 18,
+                        vertical: isMobile ? 14 : 16,
+                      ),
                       child: AnimatedSwitcher(
-                        duration: Duration(milliseconds: 200),
+                        duration: Duration(milliseconds: 280),
                         switchInCurve: Curves.easeIn,
                         switchOutCurve: Curves.easeOut,
                         transitionBuilder: (child, animation) {
-                          return FadeTransition(opacity: animation, child: child);
+                          return FadeTransition(
+                            opacity: animation,
+                            child: child,
+                          );
                         },
-                        child: isHovered
-                            ? Container(key: ValueKey('back'), child: _buildBack())
-                            : Container(key: ValueKey('front'), child: _buildFront()),
+                        child: Container(
+                          key: ValueKey(isHovered ? 'back' : 'front'),
+                          alignment: Alignment.center,
+                          child: isHovered ? _buildBack() : _buildFront(),
+                        ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          );
-        },
+          ),
+        );
+      },
     );
-    
+
     return GestureDetector(
       onTap: () {
         // Toggle expanded state on mobile when tapped
