@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:incendia_webpage/components/custom_drawer.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import '../components/custom_navbar.dart';
 
 class LifeSkillsPage extends StatelessWidget {
@@ -564,23 +564,20 @@ class _SkillCardState extends State<SkillCard>
 
   @override
   void dispose() {
-    _youtubeController?.dispose();
+    _youtubeController?.close();
     _controller.dispose();
     super.dispose();
   }
 
   YoutubePlayerController _ensureYoutubeController() {
     if (_youtubeController == null) {
-      _youtubeController = YoutubePlayerController(
-        initialVideoId: 'DN5ZcGKwm7U',
-        flags: const YoutubePlayerFlags(
-          autoPlay: false,
+      _youtubeController = YoutubePlayerController.fromVideoId(
+        videoId: 'DN5ZcGKwm7U',
+        autoPlay: false,
+        params: const YoutubePlayerParams(
           mute: true,
-          disableDragSeek: true,
-          loop: true,
-          enableCaption: false,
-          forceHD: false,
-          useHybridComposition: true,
+          showControls: false,
+          showFullscreenButton: false,
         ),
       );
       _videoInitialized = true;
@@ -594,11 +591,11 @@ class _SkillCardState extends State<SkillCard>
       if (isHovered) {
         _controller.forward();
         _ensureYoutubeController()
-          ..seekTo(Duration.zero)
-          ..play();
+          ..seekTo(seconds: 0)
+          ..playVideo();
       } else {
         _controller.reverse();
-        _youtubeController?.pause();
+        _youtubeController?.pauseVideo();
       }
     });
   }
@@ -740,32 +737,17 @@ class _SkillCardState extends State<SkillCard>
           child: AspectRatio(
             aspectRatio: 16 / 9,
             child: hasController
-                ? YoutubePlayerBuilder(
-                    player: YoutubePlayer(
-                      controller: _youtubeController!,
-                      showVideoProgressIndicator: true,
-                      progressIndicatorColor: Color(0xFF002B5B),
-                      bottomActions: [
-                        const SizedBox(width: 12),
-                        CurrentPosition(),
-                        const SizedBox(width: 8),
-                        ProgressBar(isExpanded: true),
-                        const SizedBox(width: 8),
-                        RemainingDuration(),
-                      ],
-                    ),
-                    builder: (context, player) {
-                      return Stack(
-                        children: [
-                          player,
-                          Positioned(
-                            bottom: 8,
-                            right: 8,
-                            child: _PlaybackControls(controller: _youtubeController!),
-                          ),
-                        ],
-                      );
-                    },
+                ? Stack(
+                    children: [
+                      YoutubePlayer(
+                        controller: _youtubeController!,
+                      ),
+                      Positioned(
+                        bottom: 8,
+                        right: 8,
+                        child: _PlaybackControls(controller: _youtubeController!),
+                      ),
+                    ],
                   )
                 : Container(
                     color: const Color(0xFFE5E7EB),
@@ -968,10 +950,10 @@ class _PlaybackControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: controller,
-      builder: (context, _) {
-        final bool isPlaying = controller.value.isPlaying;
+    return YoutubeValueBuilder(
+      controller: controller,
+      builder: (context, value) {
+        final bool isPlaying = value.playerState == PlayerState.playing;
         return Container(
           decoration: BoxDecoration(
             color: Colors.black.withOpacity(0.6),
@@ -984,9 +966,9 @@ class _PlaybackControls extends StatelessWidget {
               IconButton(
                 onPressed: () {
                   if (isPlaying) {
-                    controller.pause();
+                    controller.pauseVideo();
                   } else {
-                    controller.play();
+                    controller.playVideo();
                   }
                 },
                 icon: Icon(
@@ -997,7 +979,7 @@ class _PlaybackControls extends StatelessWidget {
                 splashRadius: 18,
               ),
               IconButton(
-                onPressed: () => controller.seekTo(Duration.zero),
+                onPressed: () => controller.seekTo(seconds: 0),
                 icon: const Icon(Icons.restart_alt, color: Colors.white, size: 18),
                 splashRadius: 18,
               ),
