@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:incendia_webpage/components/custom_drawer.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../components/custom_navbar.dart';
 
 class LifeSkillsPage extends StatelessWidget {
@@ -543,6 +544,8 @@ class _SkillCardState extends State<SkillCard>
   bool isHovered = false;
   late AnimationController _controller;
   late Animation<double> _animation;
+  YoutubePlayerController? _youtubeController;
+  bool _videoInitialized = false;
 
   @override
   void initState() {
@@ -561,8 +564,28 @@ class _SkillCardState extends State<SkillCard>
 
   @override
   void dispose() {
+    _youtubeController?.dispose();
     _controller.dispose();
     super.dispose();
+  }
+
+  YoutubePlayerController _ensureYoutubeController() {
+    if (_youtubeController == null) {
+      _youtubeController = YoutubePlayerController(
+        initialVideoId: 'DN5ZcGKwm7U',
+        flags: const YoutubePlayerFlags(
+          autoPlay: false,
+          mute: true,
+          disableDragSeek: true,
+          loop: true,
+          enableCaption: false,
+          forceHD: false,
+          useHybridComposition: true,
+        ),
+      );
+      _videoInitialized = true;
+    }
+    return _youtubeController!;
   }
 
   void _onEnter(bool hovering) {
@@ -570,8 +593,12 @@ class _SkillCardState extends State<SkillCard>
       isHovered = hovering;
       if (isHovered) {
         _controller.forward();
+        _ensureYoutubeController()
+          ..seekTo(Duration.zero)
+          ..play();
       } else {
         _controller.reverse();
+        _youtubeController?.pause();
       }
     });
   }
@@ -686,142 +713,99 @@ class _SkillCardState extends State<SkillCard>
     final isTablet =
         MediaQuery.of(context).size.width >= 768 &&
         MediaQuery.of(context).size.width < 1024;
-    final List<String> highlights = widget.description
-        .split(RegExp(r'[.,]'))
-        .map((segment) => segment.trim())
-        .where((segment) => segment.isNotEmpty)
-        .take(4)
-        .toList();
-    final bool hideButtons = [
-      'Digital Citizenship & Internet Safety',
-      'Career Awareness & Future Readiness',
-    ].contains(widget.title);
+    final double titleSize = isMobile
+        ? 15
+        : isTablet
+        ? 17
+        : 18;
+    final bool hasController = _youtubeController != null;
 
-    return SingleChildScrollView(
-      physics: const NeverScrollableScrollPhysics(),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            widget.title,
-            style: TextStyle(
-              fontSize: isMobile
-                  ? 15
-                  : isTablet
-                  ? 17
-                  : 18,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF0D1531),
-              fontFamily: 'Poppins',
-            ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          'Watch a quick glimpse',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: titleSize,
+            fontWeight: FontWeight.w700,
+            color: Color(0xFF0D1531),
+            fontFamily: 'Poppins',
           ),
-          SizedBox(height: isMobile ? 10 : 12),
-          Text(
-            widget.description,
-            style: TextStyle(
-              fontSize: isMobile
-                  ? 11
-                  : isTablet
-                  ? 12
-                  : 13,
-              color: Color(0xFF1F2937),
-              fontFamily: 'Inter',
-              height: 1.5,
-            ),
-          ),
-          SizedBox(height: isMobile ? 12 : 14),
-          Wrap(
-            spacing: isMobile ? 6 : 8,
-            runSpacing: isMobile ? 4 : 6,
-            children: highlights
-                .map(
-                  (item) => Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isMobile ? 8 : 10,
-                      vertical: isMobile ? 4 : 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Color(0xFF002B5B), width: 1),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 4,
-                          offset: Offset(0, 2),
-                        ),
+        ),
+        SizedBox(height: isMobile ? 10 : 12),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(isMobile ? 12 : 14),
+          child: AspectRatio(
+            aspectRatio: 16 / 9,
+            child: hasController
+                ? YoutubePlayerBuilder(
+                    player: YoutubePlayer(
+                      controller: _youtubeController!,
+                      showVideoProgressIndicator: true,
+                      progressIndicatorColor: Color(0xFF002B5B),
+                      bottomActions: [
+                        const SizedBox(width: 12),
+                        CurrentPosition(),
+                        const SizedBox(width: 8),
+                        ProgressBar(isExpanded: true),
+                        const SizedBox(width: 8),
+                        RemainingDuration(),
                       ],
                     ),
-                    child: Text(
-                      item,
-                      style: TextStyle(
-                        fontSize: isMobile ? 11 : 12,
-                        color: Color(0xFF002B5B),
-                        fontFamily: 'Inter',
-                        height: 1.3,
+                    builder: (context, player) {
+                      return Stack(
+                        children: [
+                          player,
+                          Positioned(
+                            bottom: 8,
+                            right: 8,
+                            child: _PlaybackControls(controller: _youtubeController!),
+                          ),
+                        ],
+                      );
+                    },
+                  )
+                : Container(
+                    color: const Color(0xFFE5E7EB),
+                    child: Center(
+                      child: Text(
+                        'Hover to load video',
+                        style: TextStyle(
+                          color: Color(0xFF0D1531),
+                          fontSize: isMobile ? 12 : 13,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ),
-                )
-                .toList(),
           ),
-          if (!hideButtons) ...[
-            SizedBox(height: isMobile ? 12 : 14),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: _showSkillDetails,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF002B5B),
-                      padding: EdgeInsets.symmetric(
-                        vertical: isMobile ? 12 : 14,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 4,
-                      shadowColor: Colors.black.withOpacity(0.25),
-                    ),
-                    child: Text(
-                      'Explore more',
-                      style: TextStyle(
-                        fontSize: isMobile ? 12 : 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: isMobile ? 8 : 12),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.pushNamed(context, '/contact'),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: Color(0xFF002B5B), width: 1.2),
-                      padding: EdgeInsets.symmetric(
-                        vertical: isMobile ? 12 : 14,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      'Book a call',
-                      style: TextStyle(
-                        fontSize: isMobile ? 12 : 14,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF002B5B),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+        ),
+        SizedBox(height: isMobile ? 8 : 10),
+        TextButton.icon(
+          onPressed: _showSkillDetails,
+          icon: Icon(Icons.info_outline, color: Color(0xFF002B5B)),
+          label: Text(
+            'About ${widget.title}',
+            style: TextStyle(
+              color: Color(0xFF002B5B),
+              fontSize: isMobile ? 12 : 13,
+              fontWeight: FontWeight.w600,
             ),
-          ],
-        ],
-      ),
+          ),
+        ),
+        Text(
+          hasController && _videoInitialized
+              ? 'Placeholder video plays on hover'
+              : 'Loads only when you hover',
+          style: TextStyle(
+            fontSize: isMobile ? 11 : 12,
+            color: Color(0xFF1F2937),
+            fontFamily: 'Inter',
+          ),
+        ),
+      ],
     );
   }
 
@@ -840,11 +824,9 @@ class _SkillCardState extends State<SkillCard>
         final lift = 6.0 * _animation.value;
         final shadowOpacity = 0.05 + (0.15 * _animation.value);
         final shadowBlur = 10.0 + (12.0 * _animation.value);
-        final double cardHeight = isMobile
-            ? 196
-            : isTablet
-            ? 216
-            : 246;
+        final double cardHeight = isHovered
+            ? (isMobile ? 250 : isTablet ? 280 : 320)
+            : (isMobile ? 196 : isTablet ? 216 : 246);
         final bool hasRank = rankText != null;
         final bool showRankColumn = hasRank && !isHovered;
         final double rankColumnWidth = isMobile
@@ -975,6 +957,54 @@ class _SkillCardState extends State<SkillCard>
         onExit: isMobile ? null : (_) => _onEnter(false),
         child: content,
       ),
+    );
+  }
+}
+
+class _PlaybackControls extends StatelessWidget {
+  const _PlaybackControls({required this.controller});
+
+  final YoutubePlayerController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, _) {
+        final bool isPlaying = controller.value.isPlaying;
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.black.withOpacity(0.6),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                onPressed: () {
+                  if (isPlaying) {
+                    controller.pause();
+                  } else {
+                    controller.play();
+                  }
+                },
+                icon: Icon(
+                  isPlaying ? Icons.pause : Icons.play_arrow,
+                  color: Colors.white,
+                  size: 18,
+                ),
+                splashRadius: 18,
+              ),
+              IconButton(
+                onPressed: () => controller.seekTo(Duration.zero),
+                icon: const Icon(Icons.restart_alt, color: Colors.white, size: 18),
+                splashRadius: 18,
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
