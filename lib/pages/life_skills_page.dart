@@ -744,8 +744,11 @@ class _SkillCardState extends State<SkillCard>
                       ),
                       Positioned(
                         bottom: 8,
-                        right: 8,
-                        child: _PlaybackControls(controller: _youtubeController!),
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: _PlaybackControls(controller: _youtubeController!),
+                        ),
                       ),
                     ],
                   )
@@ -954,36 +957,66 @@ class _PlaybackControls extends StatelessWidget {
       controller: controller,
       builder: (context, value) {
         final bool isPlaying = value.playerState == PlayerState.playing;
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.6),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              IconButton(
-                onPressed: () {
-                  if (isPlaying) {
-                    controller.pauseVideo();
-                  } else {
+        return GestureDetector(
+          onTap: () {
+            // Absorb taps to prevent them from reaching the player and toggling pause
+          },
+          behavior: HitTestBehavior.opaque,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.6),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  onPressed: () async {
+                    final current = await controller.currentTime;
+                    controller.seekTo(seconds: current - 10);
                     controller.playVideo();
-                  }
-                },
-                icon: Icon(
-                  isPlaying ? Icons.pause : Icons.play_arrow,
-                  color: Colors.white,
-                  size: 18,
+                  },
+                  icon: const Icon(Icons.replay_10, color: Colors.white, size: 18),
+                  splashRadius: 18,
                 ),
-                splashRadius: 18,
-              ),
-              IconButton(
-                onPressed: () => controller.seekTo(seconds: 0),
-                icon: const Icon(Icons.restart_alt, color: Colors.white, size: 18),
-                splashRadius: 18,
-              ),
-            ],
+                IconButton(
+                  onPressed: () {
+                    if (isPlaying) {
+                      controller.pauseVideo();
+                    } else {
+                      controller.playVideo();
+                    }
+                  },
+                  icon: Icon(
+                    isPlaying ? Icons.pause : Icons.play_arrow,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  splashRadius: 18,
+                ),
+                IconButton(
+                  onPressed: () async {
+                    final current = await controller.currentTime;
+                    controller.seekTo(seconds: current + 10);
+                    controller.playVideo();
+                  },
+                  icon: const Icon(Icons.forward_10, color: Colors.white, size: 18),
+                  splashRadius: 18,
+                ),
+                Container(
+                  width: 1,
+                  height: 20,
+                  color: Colors.white.withOpacity(0.3),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                ),
+                IconButton(
+                  onPressed: () => controller.seekTo(seconds: 0),
+                  icon: const Icon(Icons.restart_alt, color: Colors.white, size: 18),
+                  splashRadius: 18,
+                ),
+              ],
+            ),
           ),
         );
       },
