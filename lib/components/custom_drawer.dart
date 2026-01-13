@@ -48,7 +48,7 @@ class CustomDrawer extends StatelessWidget {
                       height: 48,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFF0EA5E9), Color(0xFFFFD54F)],
+                          colors: [Color(0xFF0EA5E9), Color(0xFF1F3A8A)],
                         ),
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
