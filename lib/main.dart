@@ -75,8 +75,8 @@ class _MyAppState extends State<MyApp> {
       title: appTitle,
       onGenerateTitle: (_) => appTitle,
       theme: ThemeData(
-        primaryColor: const Color(79
-                                 ),
+        primaryColor: const Color(0xFF1F3A8A)
+      ),
         scaffoldBackgroundColor: const Color(0xFFF9FAFB),
         fontFamily: 'Poppins',
         textTheme: TextTheme(
@@ -92,7 +92,7 @@ class _MyAppState extends State<MyApp> {
           ),
           bodyLarge: const TextStyle(
             fontSize: 18,
-            color: Color(0xFF0F172A),
+            color: Color(0xFF6B7280),
             height: 1.6,
           ),
           bodyMedium: const TextStyle(
