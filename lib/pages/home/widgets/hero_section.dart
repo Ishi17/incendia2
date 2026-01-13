@@ -146,7 +146,7 @@ class HeroSection extends StatelessWidget {
                         children: [
                           // Main heading
                           Text(
-                            'Igniting Potential. Inspiring Progress.',
+                            'Premium Tuition + Life Skills for Grades 9–12 in Bangalore',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontWeight: FontWeight.w900,
@@ -161,7 +161,7 @@ class HeroSection extends StatelessWidget {
                           Column(
                             children: [
                               Text(
-                                'Academics + Life Skills + Entrepreneurial Thinking = Incendia',
+                                'Weekday academics (CBSE/ICSE/IB) + weekend life skills in small batches',
                                 style: TextStyle(
                                   fontSize: isMobile ? 18 : 26,
                                   color: Colors.white.withOpacity(0.9),
@@ -172,7 +172,7 @@ class HeroSection extends StatelessWidget {
                               ),
                               SizedBox(height: isMobile ? 6 : 8),
                               Text(
-                                'Grades 9-12 | CBSE, ICSE, IB | Banglore',
+                                'With expert faculty & proven results since 2020',
                                 style: TextStyle(
                                   fontSize: isMobile ? 13 : 16,
                                   color: Colors.white.withOpacity(0.85),
@@ -192,12 +192,12 @@ class HeroSection extends StatelessWidget {
                             alignment: WrapAlignment.center,
                             children: [
                               _GradientActionButton(
-                                text: 'Book your free consultation',
+                                text: 'Book a Discovery Call',
                                 onPressed: onConsultationPressed ?? () => navigateTo('Admissions'),
                                 isMobile: isMobile,
                               ),
                               _OutlineActionButton(
-                                text: 'Learn More',
+                                text: 'View Fees & Batches',
                                 onPressed: () => navigateTo('About'),
                                 isMobile: isMobile,
                               ),
