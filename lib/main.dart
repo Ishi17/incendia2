@@ -75,34 +75,35 @@ class _MyAppState extends State<MyApp> {
       title: appTitle,
       onGenerateTitle: (_) => appTitle,
       theme: ThemeData(
-        primaryColor: const Color(0xFF002B5B),
-        scaffoldBackgroundColor: const Color(0xFFF5F5F5),
+        primaryColor: const Color(79
+                                 ),
+        scaffoldBackgroundColor: const Color(0xFFF8FAFC),
         fontFamily: 'Poppins',
         textTheme: TextTheme(
           headlineLarge: const TextStyle(
             fontSize: 48,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF002B5B),
+            color: Color(0xFF1F2937),
           ),
           headlineMedium: const TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF002B5B),
+            color: Color(0xFF1F2937),
           ),
           bodyLarge: const TextStyle(
             fontSize: 18,
-            color: Color(0xFF333333),
+            color: Color(0xFF0F172A),
             height: 1.6,
           ),
           bodyMedium: const TextStyle(
             fontSize: 16,
-            color: Color(0xFF666666),
+            color: Color(0xFF475569),
             height: 1.5,
           ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFFFFB300),
+            backgroundColor: const Color(0xFF0EA5E9),
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
             shape: RoundedRectangleBorder(
@@ -320,27 +321,27 @@ class PlaceholderPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
-        backgroundColor: Color(0xFF002B5B),
+        backgroundColor: Color(0xFF1F2937),
         foregroundColor: Colors.white,
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.construction, size: 64, color: Color(0xFFFFB300)),
+            Icon(Icons.construction, size: 64, color: Color(0xFF0EA5E9)),
             SizedBox(height: 16),
             Text(
               '$title Page',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF002B5B),
+                color: Color(0xFF1F2937),
               ),
             ),
             SizedBox(height: 8),
             Text(
               'Coming Soon',
-              style: TextStyle(fontSize: 16, color: Color(0xFF666666)),
+              style: TextStyle(fontSize: 16, color: Color(0xFF475569)),
             ),
             SizedBox(height: 32),
             ElevatedButton(
