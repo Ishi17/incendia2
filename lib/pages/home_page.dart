@@ -13,6 +13,8 @@ import 'package:incendia_webpage/pages/home/widgets/cta_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/footer_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/hero_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/testimonials_section.dart';
+import 'package:incendia_webpage/pages/home/widgets/sticky_action_bar.dart';
+import 'package:incendia_webpage/pages/home/widgets/trust_results_section.dart';
 import 'package:incendia_webpage/components/custom_navbar.dart';
 import 'package:incendia_webpage/components/custom_drawer.dart';
 
@@ -233,6 +235,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   onConsultationPressed: _showConsultationDialog,
                   shouldStartCounting: true,
                 ),
+                            TrustResultsSection(isMobile: isMobile),
                 _IncendiaDifferenceSection(isMobile: isMobile),
                 TestimonialsSection(isMobile: isMobile),
                 CtaSection(
@@ -1797,5 +1800,6 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //         ],
 //       ),
 //     );
+          if (isMobile) StickyActionBar(onCall: () => _launchPhone(), onWhatsApp: () => _launchWhatsApp(), onEnquire: () => navigateTo('Admissions')),
 //   }
 // }
