@@ -584,7 +584,7 @@ class _GradientActionButton extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-colors: [Color(0xFF0EA5E9), Color(0xFF0284C7)],        ),
+colors: [Color(0xFFF59E0B), Color(0xFF0284C7)],        ),
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
