@@ -70,7 +70,7 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
       builder: (context, showAnnouncement, _) {
         final navBarBackground = isTransparent
             ? (isScrolled ? Colors.white : Colors.transparent)
-            : const Color(0xFF002B5B);
+            : const Color(0xFF1F2937);
 
         final navBar = AppBar(
           backgroundColor: navBarBackground,
@@ -139,12 +139,12 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
             height: isMobile ? 32 : isTablet ? 36 : 40,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFFFFB300), Color(0xFFFFD54F)],
+                colors: [Color(0xFF0EA5E9), Color(0xFFFFD54F)],
               ),
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFFFB300).withOpacity(0.3),
+                  color: const Color(0xFF0EA5E9).withOpacity(0.3),
                   blurRadius: 6,
                   offset: const Offset(0, 3),
                 ),
@@ -397,7 +397,7 @@ class _AnnouncementBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: const Color(0xFF0C1B33),
+      color: const Color(0xFF0F172A),
       child: SafeArea(
         bottom: false,
         child: Center(
@@ -438,7 +438,7 @@ class _AnnouncementBar extends StatelessWidget {
                       ElevatedButton(
                         onPressed: onAction,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFFB300),
+                          backgroundColor: const Color(0xFF0EA5E9),
                           foregroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(
                             horizontal: isMobile ? 16 : 22,
