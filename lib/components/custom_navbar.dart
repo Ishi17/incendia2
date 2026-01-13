@@ -70,7 +70,7 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
       builder: (context, showAnnouncement, _) {
         final navBarBackground = isTransparent
             ? (isScrolled ? Colors.white : Colors.transparent)
-            : const Color(0xFF1F2937);
+            : const Color(0xFFFFFFFF);
 
         final navBar = AppBar(
           backgroundColor: navBarBackground,
@@ -438,7 +438,7 @@ class _AnnouncementBar extends StatelessWidget {
                       ElevatedButton(
                         onPressed: onAction,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF6B7280),
+                          backgroundColor: const 0xFF6B7280F6B7280),
                           foregroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(
                             horizontal: isMobile ? 16 : 22,
