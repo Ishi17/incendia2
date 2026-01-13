@@ -13,8 +13,6 @@ import 'package:incendia_webpage/pages/home/widgets/cta_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/footer_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/hero_section.dart';
 import 'package:incendia_webpage/pages/home/widgets/testimonials_section.dart';
-import 'package:incendia_webpage/pages/home/widgets/sticky_action_bar.dart';
-import 'package:incendia_webpage/pages/home/widgets/trust_results_section.dart';
 import 'package:incendia_webpage/components/custom_navbar.dart';
 import 'package:incendia_webpage/components/custom_drawer.dart';
 
