@@ -31,7 +31,7 @@ class CustomDrawer extends StatelessWidget {
       child: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF002B5B), Color(0xFF004080)],
+            colors: [Color(0xFF1F2937), Color(0xFF374151)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -48,12 +48,12 @@ class CustomDrawer extends StatelessWidget {
                       height: 48,
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
-                          colors: [Color(0xFFFFB300), Color(0xFFFFD54F)],
+                          colors: [Color(0xFF0EA5E9), Color(0xFFFFD54F)],
                         ),
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFFB300).withOpacity(0.3),
+                            color: const Color(0xFF0EA5E9).withOpacity(0.3),
                             blurRadius: 8,
                             offset: const Offset(0, 4),
                           ),
@@ -140,13 +140,13 @@ class CustomDrawer extends StatelessWidget {
         child: ExpansionTile(
           leading: Icon(
             icon,
-            color: const Color(0xFFFFB300),
+            color: const Color(0xFF0EA5E9),
             size: 24,
           ),
           title: Text(
             title,
             style: const TextStyle(
-              color: Color(0xFF002B5B),
+              color: Color(0xFF1F2937),
               fontWeight: FontWeight.w600,
               fontSize: 16,
             ),
@@ -158,7 +158,7 @@ class CustomDrawer extends StatelessWidget {
                 title: Text(
                   item['name'] as String,
                   style: const TextStyle(
-                    color: Color(0xFF002B5B),
+                    color: Color(0xFF1F2937),
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
                   ),
@@ -194,13 +194,13 @@ Widget _buildNavTile(BuildContext context, Map<String, Object?> item) {
     child: ListTile(
       leading: Icon(
         item['icon'] as IconData,
-        color: const Color(0xFFFFB300),
+        color: const Color(0xFF0EA5E9),
         size: 24,
       ),
       title: Text(
         item['name'] as String,
         style: const TextStyle(
-          color: Color(0xFF002B5B),
+          color: Color(0xFF1F2937),
           fontWeight: FontWeight.w600,
           fontSize: 16,
         ),
@@ -208,7 +208,7 @@ Widget _buildNavTile(BuildContext context, Map<String, Object?> item) {
       trailing: const Icon(
         Icons.arrow_forward_ios,
         size: 16,
-        color: Color(0xFFFFB300),
+        color: Color(0xFF0EA5E9),
       ),
       onTap: () {
         Navigator.pop(context);
