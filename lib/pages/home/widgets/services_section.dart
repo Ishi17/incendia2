@@ -10,7 +10,7 @@ class ServicesSection extends StatelessWidget {
     final services = [
       {
         'icon': Icons.person,
-        'title': 'Personalized Learning',
+        'title': 'Personalized Learning',33
         'desc': 'Tailored curriculum for individual needs',
       },
       {
@@ -30,7 +30,7 @@ class ServicesSection extends StatelessWidget {
         vertical: 50,
         horizontal: isMobile ? 20 : 40,
       ),
-      color: const Color(0xFFF8F9FA),
+      color: const Color(0xFFFFFFFF),
       child: Column(
         children: [
           const Text(
@@ -211,7 +211,7 @@ class _ServiceDialog extends StatelessWidget {
           gradient: const LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Colors.white, Color(0xFFF8F9FA)],
+            colors: [Colors.white, Color(0xFFFFFFFF)],
           ),
         ),
         child: Column(
@@ -256,7 +256,7 @@ class _ServiceDialog extends StatelessWidget {
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFFB300),
+                backgroundColor: const Color(0xFFF59E0B),
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,
