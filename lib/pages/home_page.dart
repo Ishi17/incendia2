@@ -233,7 +233,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   onConsultationPressed: _showConsultationDialog,
                   shouldStartCounting: true,
                 ),
-                            TrustResultsSection(isMobile: isMobile),
                 _IncendiaDifferenceSection(isMobile: isMobile),
                 TestimonialsSection(isMobile: isMobile),
                 CtaSection(
@@ -1798,6 +1797,5 @@ class _ConsultationDialogState extends State<_ConsultationDialog> {
 //         ],
 //       ),
 //     );
-          if (isMobile) StickyActionBar(onCall: () => _launchPhone(), onWhatsApp: () => _launchWhatsApp(), onEnquire: () => navigateTo('Admissions')),
 //   }
 // }
