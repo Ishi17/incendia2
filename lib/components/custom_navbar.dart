@@ -139,12 +139,12 @@ class CustomNavbar extends StatelessWidget implements PreferredSizeWidget {
             height: isMobile ? 32 : isTablet ? 36 : 40,
             decoration: BoxDecoration(
               gradient: const LinearGradient(
-                colors: [Color(0xFF0EA5E9), Color(0xFFFFD54F)],
+                colors: [Color(0xFF6B7280), Color(0xFF1F3A8A)],
               ),
               borderRadius: BorderRadius.circular(10),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF0EA5E9).withOpacity(0.3),
+                  color: const Color(0xFF6B7280).withOpacity(0.3),
                   blurRadius: 6,
                   offset: const Offset(0, 3),
                 ),
@@ -438,7 +438,7 @@ class _AnnouncementBar extends StatelessWidget {
                       ElevatedButton(
                         onPressed: onAction,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF0EA5E9),
+                          backgroundColor: const Color(0xFF6B7280),
                           foregroundColor: Colors.white,
                           padding: EdgeInsets.symmetric(
                             horizontal: isMobile ? 16 : 22,
